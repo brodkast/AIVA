@@ -8,37 +8,24 @@ on:
         required: true
         type: string
         default: index.html
-      linode_host:
-        description: Linode hostname or IP address
-        required: true
-        default: 69.164.198.131
-        type: string
-      linode_user:
-        description: SSH username for the Linode server
-        required: true
-        default: oscar
-        type: string
-      remote_base_dir:
-        description: Base directory on Linode
-        required: true
-        default: /var/www/bluecarbon.site/html
-        type: string
+
       remote_subdirectory:
         description: Subdirectory inside the base directory
         required: true
-        type: string
-      ssh_port:
-        description: SSH port
-        required: true
-        default: "22"
         type: string
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
+  LINODE_HOST: 69.164.198.131
+  LINODE_USER: oscar
+  SSH_PORT: "22"
+  REMOTE_BASE_DIR: /var/www/bluecarbon.site/html
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
 
@@ -60,15 +47,17 @@ jobs:
           mkdir -p ~/.ssh
           printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -p "${{ inputs.ssh_port }}" -H "${{ inputs.linode_host }}" >> ~/.ssh/known_hosts
+
+          ssh-keyscan \
+            -p "$SSH_PORT" \
+            -H "$LINODE_HOST" >> ~/.ssh/known_hosts
 
       - name: Build remote directory path
         id: remote-path
         env:
-          BASE_DIR: ${{ inputs.remote_base_dir }}
           SUBDIRECTORY: ${{ inputs.remote_subdirectory }}
         run: |
-          base_dir="${BASE_DIR%/}"
+          base_dir="${REMOTE_BASE_DIR%/}"
           subdirectory="${SUBDIRECTORY#/}"
           subdirectory="${subdirectory%/}"
 
@@ -84,14 +73,14 @@ jobs:
         run: |
           ssh \
             -i ~/.ssh/id_ed25519 \
-            -p "${{ inputs.ssh_port }}" \
-            "${{ inputs.linode_user }}@${{ inputs.linode_host }}" \
+            -p "$SSH_PORT" \
+            "$LINODE_USER@$LINODE_HOST" \
             "mkdir -p '${{ steps.remote-path.outputs.remote_dir }}'"
 
       - name: Upload selected file as index.html
         run: |
           scp \
             -i ~/.ssh/id_ed25519 \
-            -P "${{ inputs.ssh_port }}" \
+            -P "$SSH_PORT" \
             "${{ inputs.source_file }}" \
-            "${{ inputs.linode_user }}@${{ inputs.linode_host }}:${{ steps.remote-path.outputs.remote_dir }}/index.html"
+            "$LINODE_USER@$LINODE_HOST:${{ steps.remote-path.outputs.remote_dir }}/index.html"
