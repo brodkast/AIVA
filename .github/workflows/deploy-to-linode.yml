@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       source_file:
-        description: HTML file to upload as index.html
+        description: HTML file to upload. Will be renamed to index.html.
         required: true
         type: string
         default: index.html
 
       remote_subdirectory:
-        description: Subdirectory inside the base directory
+        description: sub-directory: bluecarbon.site/<sub-directory>
         required: true
         type: string
 
