@@ -1,0 +1,97 @@
+name: Deploy selected HTML page to Linode
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_file:
+        description: HTML file to upload as index.html
+        required: true
+        type: string
+        default: index.html
+      linode_host:
+        description: Linode hostname or IP address
+        required: true
+        default: 69.164.198.131
+        type: string
+      linode_user:
+        description: SSH username for the Linode server
+        required: true
+        default: oscar
+        type: string
+      remote_base_dir:
+        description: Base directory on Linode
+        required: true
+        default: /var/www/bluecarbon.site/html
+        type: string
+      remote_subdirectory:
+        description: Subdirectory inside the base directory
+        required: true
+        type: string
+      ssh_port:
+        description: SSH port
+        required: true
+        default: "22"
+        type: string
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate selected file
+        run: |
+          if [ ! -f "${{ inputs.source_file }}" ]; then
+            echo "Selected file does not exist: ${{ inputs.source_file }}"
+            exit 1
+          fi
+
+      - name: Prepare SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.LINODE_SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p "${{ inputs.ssh_port }}" -H "${{ inputs.linode_host }}" >> ~/.ssh/known_hosts
+
+      - name: Build remote directory path
+        id: remote-path
+        env:
+          BASE_DIR: ${{ inputs.remote_base_dir }}
+          SUBDIRECTORY: ${{ inputs.remote_subdirectory }}
+        run: |
+          base_dir="${BASE_DIR%/}"
+          subdirectory="${SUBDIRECTORY#/}"
+          subdirectory="${subdirectory%/}"
+
+          if [ -z "$subdirectory" ]; then
+            remote_dir="$base_dir"
+          else
+            remote_dir="$base_dir/$subdirectory"
+          fi
+
+          echo "remote_dir=$remote_dir" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure remote directory exists
+        run: |
+          ssh \
+            -i ~/.ssh/id_ed25519 \
+            -p "${{ inputs.ssh_port }}" \
+            "${{ inputs.linode_user }}@${{ inputs.linode_host }}" \
+            "mkdir -p '${{ steps.remote-path.outputs.remote_dir }}'"
+
+      - name: Upload selected file as index.html
+        run: |
+          scp \
+            -i ~/.ssh/id_ed25519 \
+            -P "${{ inputs.ssh_port }}" \
+            "${{ inputs.source_file }}" \
+            "${{ inputs.linode_user }}@${{ inputs.linode_host }}:${{ steps.remote-path.outputs.remote_dir }}/index.html"
