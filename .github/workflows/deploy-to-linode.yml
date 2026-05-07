@@ -10,7 +10,7 @@ on:
         default: index.html
 
       remote_subdirectory:
-        description: sub-directory: bluecarbon.site/<sub-directory>
+        description: sub-directory: bluecarbon.site/sub-directory
         required: true
         type: string
 
