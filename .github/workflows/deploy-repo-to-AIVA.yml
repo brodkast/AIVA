@@ -1,4 +1,4 @@
-name: Deploy repo to Linode
+name: Deploy repo to bluecarbon.site/AIVA
 
 on:
   workflow_dispatch:
