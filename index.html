@@ -13202,6 +13202,17 @@ function aivaLoadPageHelp(appKey) {
   // thread and the newest card never disagree about where the user is.
   updateAivaWelcome(currentPersonaKey());
   aivaAppendReply(aivaHelpPageBlocks(pk), null);
+
+  // Collapsed, that card lands where nobody can see it. Raise the FAB
+  // badge, pulse and note so the arrival is visible. aivaNotifyPageChange
+  // no-ops when the panel is already open, so this is safe either way.
+  const page = aivaHelpPage(pk);
+  const n = (page.topics || []).length;
+  aivaNotifyPageChange(
+    appKey,
+    `${n} help topic${n === 1 ? "" : "s"} for this page.`,
+    `${page.label} — help topics`
+  );
 }
 window.aivaLoadPageHelp = aivaLoadPageHelp;
 
@@ -15358,7 +15369,7 @@ function aivaPositionFabNote() {
 }
 
 /* Called when page-level messaging changes while AIVA is collapsed. */
-function aivaNotifyPageChange(appKey, headline) {
+function aivaNotifyPageChange(appKey, headline, headText) {
   if (!aivaIsMinimized()) return;
   const fab  = document.getElementById('aivaFab');
   const note = document.getElementById('aivaFabNote');
@@ -15372,7 +15383,7 @@ function aivaNotifyPageChange(appKey, headline) {
   const label = AIVA_APP_LABEL[appKey] || appKey;
   const head = document.getElementById('aivaFabNoteHead');
   const bodyEl = document.getElementById('aivaFabNoteBody');
-  if (head) head.textContent = `${label} insights updated`;
+  if (head) head.textContent = headText || `${label} insights updated`;
   if (bodyEl) {
     bodyEl.innerHTML = AIVA_FAB_UPDATES > 1
       ? `${headline} <span style="color:var(--text-3)">· ${AIVA_FAB_UPDATES} updates waiting</span>`
