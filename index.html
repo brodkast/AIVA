@@ -8655,6 +8655,26 @@ body input, body select, body textarea, body button {
 .fav-star.is-fav, .fav-star.on { color: var(--rds-fav); }
 .mega-menu .tile .fav-star.is-fav, .sidebar-nav .tile .fav-star.is-fav { color: var(--rds-fav); }
 
+/* Listening level meter. Purely decorative — it simulates a live mic
+   level and carries no transcript. */
+.aiva-voice .av-meter { display: flex; align-items: center; gap: 3px; height: 18px; margin-top: 8px; }
+.aiva-voice .av-meter i {
+  width: 3px; border-radius: 999px;
+  background: var(--rds-primary);
+  animation: avLevel 0.9s ease-in-out infinite;
+}
+.aiva-voice .av-meter i:nth-child(1) { height: 6px;  animation-delay: 0s; }
+.aiva-voice .av-meter i:nth-child(2) { height: 12px; animation-delay: 0.12s; }
+.aiva-voice .av-meter i:nth-child(3) { height: 18px; animation-delay: 0.24s; }
+.aiva-voice .av-meter i:nth-child(4) { height: 10px; animation-delay: 0.36s; }
+.aiva-voice .av-meter i:nth-child(5) { height: 16px; animation-delay: 0.18s; }
+.aiva-voice .av-meter i:nth-child(6) { height: 8px;  animation-delay: 0.30s; }
+.aiva-voice .av-meter i:nth-child(7) { height: 13px; animation-delay: 0.06s; }
+@keyframes avLevel { 0%, 100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .aiva-voice .av-meter i { animation: none; transform: scaleY(0.7); }
+}
+
 /* ---- Rail: icon only, label on hover ----
    The type comes out of the rail and returns as a tooltip. */
 .rail-item .rail-label { display: none; }
@@ -9069,12 +9089,12 @@ body input, body select, body textarea, body button {
     <div class="aiva-compose">
       <div class="aiva-input">
         <input type="text" id="aivaInput" placeholder="Ask me anything" autocomplete="off" />
-        <button class="aiva-input-btn" title="Dictate (simulated)" id="aivaMicBtn" onclick="aivaVoiceStart()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        <button class="aiva-input-btn" title="Listen (simulated)" id="aivaMicBtn" onclick="aivaVoiceStart()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
         </button>
       </div>
       <button class="aiva-send" title="Send" id="aivaSend">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(12,12) scale(0.88) translate(-12,-12)"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></g></svg>
       </button>
     </div>
     <div class="aiva-foot-col">
@@ -14679,92 +14699,43 @@ function aivaFormProceed(intent, text, values) {
    treatment as typed input. Transcription is simulated by design:
    the deliverable is the interaction contract, not speech-to-text.
    ------------------------------------------------------------ */
-const AIVA_VOICE_LINES = {
-  owner:          "Alert me if any store's variance passes $5,000",
-  ops:            "Flag any RO older than 5 days",
-  serviceManager: "Start a write-up for Diana Reyes \u2014 rattle up front when braking, mileage's around 42,000, wants an oil change too, and she'll wait",
-  parts:          "Reorder 6 units of OEM-BP-447",
-  partsClerk:     "Counter sale \u2014 OEM-BP-447 for Marcus Hill",
-  tech:           "Add 2 quarts of oil to RO 124213",
-  arap:           "Write a check to ABC Towing for $450 for the tow on RO #98664",
-  fi:             "Log a $300 chargeback on deal 129521 for the cancelled VSC",
-  salesManager:   "Hold $750 on deal 129522 for the delivery spiff",
-  salesAssoc:     "Log a $500 deposit from David Kim on deal 129518",
-  controller:     "Accrue $1,200 to 6100 for July advertising",
-};
-let AIVA_VOICE_TICK = 170;
-let AIVA_VOICE = { active: false, el: null, timer: null };
+let AIVA_VOICE = { active: false, el: null };
 
+/* Voice is a listening state and nothing more.
+   It used to dictate a per-persona line word by word, pull entities out
+   of the partial transcript, land them into form fields and then hand
+   the sentence to askAiva, which ran the full confirm-and-commit
+   pipeline. None of that happens now: the mic opens a listening state
+   with a level meter, and that is the whole behaviour. Nothing is
+   transcribed, extracted, sent, or acted on. */
 window.aivaVoiceStart = function() {
   if (AIVA_VOICE.active) { aivaVoiceCancel(); return; }
-  const text = AIVA_VOICE_LINES[currentPersonaKey()];
-  if (!text) return;
   openAIVA();
   const body = document.getElementById("aivaBody");
   if (!body) return;
-  const intent = aivaMatchIntent(text.toLowerCase());
-  const form = intent && intent.form ? AIVA_FORMS[intent.form] : null;
   const vid = "aivaVoice" + Date.now();
   body.insertAdjacentHTML("beforeend", `
     <div class="aiva-voice" id="${vid}">
-      <div class="av-head"><span class="av-dot"></span>Listening \u2014 simulated dictation<span class="av-stop" onclick="aivaVoiceCancel()">Stop</span></div>
-      <div class="av-transcript"></div>
-      ${form ? `<div class="av-fields">${form.fields.map(f => `<div class="av-field" data-k="${f.k}"><span class="fk">${escapeHtml(f.label)}</span><span class="fv">\u2014</span></div>`).join("")}</div>` : ""}
+      <div class="av-head">
+        <span class="av-dot"></span>Listening
+        <span class="av-stop" onclick="aivaVoiceCancel()">Stop</span>
+      </div>
+      <div class="av-meter" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
     </div>`);
   body.scrollTop = body.scrollHeight;
-  const el = document.getElementById(vid);
-  const tEl = el.querySelector(".av-transcript");
   const mic = document.getElementById("aivaMicBtn");
   if (mic) mic.classList.add("mic-live");
-  const words = text.split(/\s+/);
-  let i = 0;
-  const step = () => {
-    i++;
-    const partial = words.slice(0, i).join(" ");
-    tEl.textContent = partial;
-    if (form) {
-      // The same pass, on the partial transcript: a field lands the
-      // moment its value is heard, and refines as more words arrive.
-      const ex = aivaExtractValues(partial);
-      for (const f of form.fields) {
-        const val = ex[f.from || f.k];
-        if (!val) continue;
-        const fv = el.querySelector(`.av-field[data-k="${f.k}"] .fv`);
-        if (!fv) continue;
-        if (fv.textContent !== val.label) {
-          fv.textContent = val.label;
-          fv.classList.add("landed");
-        }
-      }
-    }
-    body.scrollTop = body.scrollHeight;
-    if (i >= words.length) aivaVoiceDone(text);
-  };
-  AIVA_VOICE = { active: true, el, timer: setInterval(step, AIVA_VOICE_TICK) };
+  AIVA_VOICE = { active: true, el: document.getElementById(vid) };
 };
-
-function aivaVoiceDone(text) {
-  if (!AIVA_VOICE.active) return;
-  clearInterval(AIVA_VOICE.timer);
-  const el = AIVA_VOICE.el;
-  el.classList.add("settled");
-  const head = el.querySelector(".av-head");
-  if (head) head.innerHTML = '<span class="av-dot done"></span>Heard it \u2014 sending';
-  const mic = document.getElementById("aivaMicBtn");
-  if (mic) mic.classList.remove("mic-live");
-  AIVA_VOICE = { active: false, el: null, timer: null };
-  // Voice earns the same pipeline as typing: clarify if incomplete,
-  // confirm before acting, audit when committed.
-  setTimeout(() => askAiva(text), 480);
-}
 
 window.aivaVoiceCancel = function() {
   if (!AIVA_VOICE.active) return;
-  clearInterval(AIVA_VOICE.timer);
   if (AIVA_VOICE.el) AIVA_VOICE.el.remove();
   const mic = document.getElementById("aivaMicBtn");
   if (mic) mic.classList.remove("mic-live");
-  AIVA_VOICE = { active: false, el: null, timer: null };
+  AIVA_VOICE = { active: false, el: null };
 };
 
 function aivaRenderForm(intent, text) {
