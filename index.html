@@ -8003,16 +8003,10 @@ body input, body select, body textarea, body button {
   box-shadow: none;
   color: var(--rds-on-dark);
 }
-.header .logo {
-  background: transparent;
-  color: var(--rds-on-dark);
-  width: auto; height: auto;
-  border-radius: 0;
-  font-size: 16px; font-weight: 700;
-  letter-spacing: 0.4px;
-  padding-right: 4px;
-}
-.header .logo:hover { transform: none; opacity: 0.85; }
+/* The header mark is the white CDK dot from the base stylesheet — a
+   38px white circle with the mark in near-black. The RDS pass had
+   replaced it with a transparent white wordmark; that override is gone
+   rather than re-specified, so there is one definition of the mark. */
 .menu-btn { color: var(--rds-on-dark-70); border-radius: var(--rds-radius); }
 .menu-btn:hover { background: var(--rds-hover-dark); color: var(--rds-on-dark); }
 
@@ -8661,6 +8655,29 @@ body input, body select, body textarea, body button {
 .fav-star.is-fav, .fav-star.on { color: var(--rds-fav); }
 .mega-menu .tile .fav-star.is-fav, .sidebar-nav .tile .fav-star.is-fav { color: var(--rds-fav); }
 
+/* ---- Rail: icon only, label on hover ----
+   The type comes out of the rail and returns as a tooltip. */
+.rail-item .rail-label { display: none; }
+.rail-item { padding: 10px 2px; gap: 0; }
+
+.rail-tip {
+  position: fixed;
+  z-index: 200;
+  background: var(--rds-ink);
+  color: var(--rds-on-dark);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--rds-radius);
+  box-shadow: var(--rds-e3);
+  padding: 5px 9px;
+  font-size: 12px; line-height: 14px; font-weight: 400;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.12s ease, transform 0.12s ease;
+}
+.rail-tip.show { opacity: 1; transform: translateX(0); }
+
 /* ---- No chip behind the heart ----
    The white rounded box is removed everywhere it appeared: app tiles in
    the global nav and the sidebar, app cards, and dashboard card heads. */
@@ -8930,6 +8947,10 @@ body input, body select, body textarea, body button {
 
 <!-- Customer Care support flyout — anchored to the rail -->
 <div class="cc-flyout" id="ccFlyout" aria-hidden="true"></div>
+
+<!-- Rail hover tooltip. Fixed to the viewport, not nested in the rail,
+     because .open-apps-rail scrolls and would clip it. -->
+<div class="rail-tip" id="railTip" role="tooltip" aria-hidden="true"></div>
 
 <!-- Reveal handle: shown only while the chrome is auto-hidden -->
 <div class="chrome-reveal" id="chromeReveal" title="Show navigation">
@@ -13198,6 +13219,45 @@ window.aivaClearContext = function() {
 let AIVA_INSIGHTS_TIMER = null;
 /* Clicking through an app's own nav rail is the hunting behaviour the
    "ask me where it is" tip is watching for. */
+/* Rail tooltip. Delegated so it survives every re-render of the rail,
+   and positioned from the item's own rect so the rail's overflow cannot
+   clip it. Suppressed while dragging and over the remove (x) control,
+   which carries its own label. */
+(function () {
+  const tip = () => document.getElementById("railTip");
+  const hide = () => {
+    const t = tip();
+    if (t) { t.classList.remove("show"); t.setAttribute("aria-hidden", "true"); }
+  };
+  document.addEventListener("mouseover", (e) => {
+    const item = e.target.closest(".rail-item");
+    const t = tip();
+    if (!t) return;
+    if (!item || e.target.closest(".rail-close") || document.body.classList.contains("rail-dragging")) {
+      hide(); return;
+    }
+    const label = item.getAttribute("data-rail-tip");
+    if (!label) { hide(); return; }
+    t.textContent = label;
+    t.setAttribute("aria-hidden", "false");
+    const r = item.getBoundingClientRect();
+    t.style.left = (r.right + 8) + "px";
+    // measure after the text is in, then clamp to the viewport
+    t.style.top = "0px";
+    const h = t.offsetHeight;
+    const top = Math.min(Math.max(4, r.top + r.height / 2 - h / 2),
+                         window.innerHeight - h - 4);
+    t.style.top = top + "px";
+    t.classList.add("show");
+  });
+  document.addEventListener("mouseout", (e) => {
+    if (!e.relatedTarget || !e.relatedTarget.closest || !e.relatedTarget.closest(".rail-item")) hide();
+  });
+  document.addEventListener("dragstart", hide, true);
+  document.addEventListener("scroll", hide, true);
+  window.addEventListener("blur", hide);
+})();
+
 document.addEventListener("click", (e) => {
   if (window.AIVA_CONTEXT_OPENING) return;
   if (!e.target.closest(".app-nav-item")) return;
@@ -18711,9 +18771,8 @@ const RAIL_STATIC_BOTTOM = [
 ];
 
 function railStaticItem(item, isActive) {
-  return `<div class="rail-item ${isActive ? 'is-active' : ''}" draggable="true" data-rail-action="${item.key}" title="${item.label}">
+  return `<div class="rail-item ${isActive ? 'is-active' : ''}" draggable="true" data-rail-action="${item.key}" data-rail-tip="${escapeHtml(item.label)}">
     ${item.svg}
-    <span class="rail-label">${item.label}</span>
     <span class="rail-close" data-rail-hide-key="${item.key}" title="Remove from nav">
       <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </span>
@@ -18796,9 +18855,8 @@ function renderOpenAppsRail() {
     const t = TAB_STATE.tabs.find(x => x.id === en.tabId);
     if (!t) return '';
     const isDisplayed = onApp && !atInlineHome && TAB_STATE.displayed.includes(t.id);
-    return `<div class="rail-item ${isDisplayed ? 'is-active' : ''}" draggable="true" data-rail-tab-id="${t.id}" title="${escapeHtml(t.label)}">
+    return `<div class="rail-item ${isDisplayed ? 'is-active' : ''}" draggable="true" data-rail-tab-id="${t.id}" data-rail-tip="${escapeHtml(t.label)}">
       <div class="tile-icon ${t.iconKey}">${iconLetters(t.iconKey)}</div>
-      <span class="rail-label">${escapeHtml(t.label)}</span>
       <span class="rail-close" data-rail-close-id="${t.id}" title="Close">
         <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </span>
@@ -18824,9 +18882,8 @@ function renderOpenAppsRail() {
   // Restore chip — only when something has been removed, so users aren't
   // dead-ended in-session (state is in-memory; reload also resets).
   const restoreHTML = RAIL_HIDDEN.size ? `
-    <div class="rail-item rail-restore" draggable="false" data-rail-action="restoreHidden" title="Restore removed items">
+    <div class="rail-item rail-restore" draggable="false" data-rail-action="restoreHidden" data-rail-tip="Restore removed items (${RAIL_HIDDEN.size})">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      <span class="rail-label">Restore (${RAIL_HIDDEN.size})</span>
     </div>` : '';
 
   if (RAIL_CUSTOMIZED) {
