@@ -7951,6 +7951,8 @@
   /* --- Radius. RDS specifies 2px only for icon geometry and is silent
          on component radius, so this is read off the screenshots:
          4px on cards/tiles/buttons, 999px on search and chips. --- */
+  --rds-fav: #BA5E69;        /* favourite heart — muted red, legible on
+                                both the light canvas and the menu black */
   --rds-radius: 4px;
   --rds-radius-pill: 999px;
 }
@@ -8155,8 +8157,10 @@ body input, body select, body textarea, body button {
    4. MEGA MENU / SIDEBAR NAV / DROPDOWN SURFACES
    Menus are Elevation 3 (layout-elevation.md).
    ================================================================== */
+/* .sr-ctx-menu is deliberately absent: it is a context menu on the light
+   results page, not a nav-origin panel. */
 .mega-menu, .sidebar-nav, .app-launcher-dropdown, .search-dropdown,
-.notif-panel, .persona-dropdown, .sr-ctx-menu {
+.notif-panel, .persona-dropdown {
   background: var(--rds-ink);
   border-radius: var(--rds-radius);
   box-shadow: var(--rds-e3);
@@ -8181,26 +8185,28 @@ body input, body select, body textarea, body button {
 #prototypeScreen { background: var(--rds-on-dark); }
 #pageBody, .inline-home { background: var(--rds-on-dark); }
 
-.card, .app-card, .wf-card, .wf-sub, .widget, .stat-card,
-.form-card, .panel, .tbd-card, .resource {
+/* .widget and .resource are deliberately absent: they are nav-dropdown
+   sections built as translucent white on black, not home-canvas cards. */
+.card, .app-card, .wf-card, .wf-sub, .stat-card,
+.form-card, .panel, .tbd-card {
   background: var(--rds-on-dark);
   border: 1px solid var(--rds-gray-200);
   border-radius: var(--rds-radius);
   box-shadow: none;
 }
-.card:hover, .app-card:hover, .wf-card:hover, .wf-sub:hover, .widget:hover {
+.card:hover, .app-card:hover, .wf-card:hover, .wf-sub:hover {
   transform: none;                      /* screenshot is flat; no lift */
   border-color: var(--rds-gray-300);
   box-shadow: var(--rds-e3);
 }
-.card .card-head, .panel-head, .widget-head {
+.card .card-head, .panel-head {
   color: var(--rds-ink);
   font-size: 16px; font-weight: 500; line-height: 24px; letter-spacing: 0.1px;  /* Heading 4 */
 }
 .card .card-head:hover, .card .card-head:hover .chev { color: var(--rds-primary); }
 
 /* Section titles: Heading 3 (18px/24px Medium, 0.15 tracking) */
-.section-head h3, .pin-section-head, .ih-section-head {
+.section-head h3, .ih-section-head {
   color: var(--rds-ink);
   font-size: 18px; font-weight: 500; line-height: 24px; letter-spacing: 0.15px;
 }
@@ -8212,7 +8218,7 @@ body input, body select, body textarea, body button {
 
 /* Dashboard numbers: Display 3 (30px/40px Regular) */
 .kpi-big { color: var(--rds-ink); font-size: 30px; font-weight: 400; line-height: 40px; letter-spacing: 0.25px; }
-.kpi-sub, .widget-sub { color: var(--rds-ink-70); font-size: 12px; line-height: 14px; }
+.kpi-sub { color: var(--rds-ink-70); font-size: 12px; line-height: 14px; }
 .kpi-row { color: var(--rds-ink-70); font-size: 14px; line-height: 20px; }
 .kpi-row a { color: var(--rds-primary); font-weight: 500; }
 .kpi-row a:hover { color: var(--rds-primary-hover); }
@@ -8287,7 +8293,7 @@ body input, body select, body textarea, body button {
 .status-neutral { background: var(--rds-gray-50);   color: var(--rds-ink-70); }
 
 /* Inputs: Standard density 48px for standard fields, 36px inline. */
-.ob-form input, .ob-input-wrap input, .picker-search input {
+.ob-form input, .ob-input-wrap input {
   border-radius: var(--rds-radius);
   border: 1px solid var(--rds-ink-40);
   color: var(--rds-ink);
@@ -8304,12 +8310,15 @@ body input, body select, body textarea, body button {
    7. LOGIN + ONBOARDING
    Dialogs are Elevation 6 (layout-elevation.md).
    ================================================================== */
-.ob-card, .picker-modal {
+.ob-card {
   background: var(--rds-on-dark);
   border: 1px solid var(--rds-gray-200);
   border-radius: var(--rds-radius);
   box-shadow: var(--rds-e6);
 }
+/* The persona picker is a dark modal — it keeps its own surface and only
+   takes the RDS radius and dialog elevation. */
+.picker-modal { border-radius: var(--rds-radius); box-shadow: var(--rds-e6); }
 .ob-next {
   background: var(--rds-primary); color: var(--rds-on-dark);
   border-radius: var(--rds-radius);
@@ -8442,7 +8451,7 @@ body input, body select, body textarea, body button {
   border-radius: var(--rds-radius);
   box-shadow: none;
 }
-.vi-stat-label, .cc-act-head { color: var(--rds-ink-70); font-size: 12px; line-height: 14px; }
+.vi-stat-label { color: var(--rds-ink-70); font-size: 12px; line-height: 14px; }
 .vi-stat-val { color: var(--rds-ink); font-size: 20px; font-weight: 500; line-height: 24px; letter-spacing: 0.15px; }
 .aiva-confirm .cc-row .k, .aiva-cap-row .k, .aiva-ticket-row .k { color: var(--rds-ink-70); }
 .aiva-confirm .cc-row .v, .aiva-cap-row .v, .aiva-ticket-row .v { color: var(--rds-ink); }
@@ -8582,6 +8591,7 @@ body input, body select, body textarea, body button {
 .cc-id { color: var(--rds-on-dark-40); }
 .cc-status { border-radius: var(--rds-radius); font-weight: 500; }
 .cc-field label { color: var(--rds-on-dark-70); font-size: 10px; letter-spacing: 1.5px; }
+.cc-act-head { color: var(--rds-on-dark-40); font-size: 12px; line-height: 14px; }
 .cc-field input[type="text"], .cc-field select, .cc-field textarea, .cc-reply input {
   border-radius: var(--rds-radius); border-color: rgba(255,255,255,0.16); font-size: 14px;
 }
@@ -8611,7 +8621,14 @@ body input, body select, body textarea, body button {
 .detail-row .v { color: var(--rds-ink); }
 .picker-overlay { background: rgba(21,27,37,0.45); }
 .picker-item { border-radius: var(--rds-radius); }
-.picker-item.active, .picker-item:hover { background: var(--rds-select-light); }
+.picker-item.active, .picker-item:hover { background: rgba(255,255,255,0.08); }
+.picker-search input {
+  border-radius: var(--rds-radius);
+  border: 1px solid rgba(255,255,255,0.16);
+  color: var(--rds-on-dark);
+  font-size: 14px; line-height: 20px;
+}
+.picker-search input::placeholder { color: var(--rds-on-dark-40); }
 .persona-banner { background: var(--rds-gray-50); border: 1px solid var(--rds-gray-200); border-radius: var(--rds-radius); color: var(--rds-ink); }
 .persona-option:hover, .persona-option.active { background: var(--rds-select-light); }
 .tab-item { border-radius: var(--rds-radius) var(--rds-radius) 0 0; font-size: 14px; }
@@ -8629,17 +8646,76 @@ body input, body select, body textarea, body button {
 .sr-topbar { background: var(--rds-on-dark); color: var(--rds-ink); }
 .sr-row:hover { background: var(--rds-select-light); }
 .sr-section-title { color: var(--rds-ink); font-size: 18px; font-weight: 500; letter-spacing: 0.15px; }
-.empty-state, .myunify-empty, .widget-empty-text, .pin-empty { color: var(--rds-ink-70); font-size: 14px; line-height: 20px; }
+.empty-state, .myunify-empty { color: var(--rds-ink-70); font-size: 14px; line-height: 20px; }
+/* Pinned widgets sit in the mega menu's activity column, on black. */
+.pin-section-head { color: var(--rds-on-dark-70); }
+.pin-empty { color: var(--rds-on-dark-40); }
 .notif-item:hover { background: rgba(255,255,255,0.08); }
 .notif-message { color: var(--rds-on-dark-70); font-size: 14px; line-height: 20px; }
 .notif-time { color: var(--rds-on-dark-40); font-size: 12px; }
-.fav-star.on { color: var(--rds-warning); }
+/* Favourites read as a muted heart, not an amber star. #BA5E69 rather
+   than Cherry Bomb #DA253C so it clears 4.5:1-ish on BOTH the light home
+   canvas (4.29:1) and the mega menu's black (4.39:1); the saturated red
+   falls to 3.87:1 on black. */
+.fav-star:hover { color: var(--rds-fav); }
+.fav-star.is-fav, .fav-star.on { color: var(--rds-fav); }
+.mega-menu .tile .fav-star.is-fav, .sidebar-nav .tile .fav-star.is-fav { color: var(--rds-fav); }
+
+/* ---- No chip behind the heart ----
+   The white rounded box is removed everywhere it appeared: app tiles in
+   the global nav and the sidebar, app cards, and dashboard card heads. */
+.fav-star,
+.tile .fav-star, .app-card .fav-star,
+.mega-menu .tile .fav-star, .sidebar-nav .tile .fav-star {
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+/* The chip was doing the contrast work. On a tile the heart sits on a
+   saturated icon — 1.13:1 on Cherry Bomb, 1.19:1 on the Drive teal — so
+   a halo replaces the box: it separates the glyph's edge without drawing
+   a container. Not applied on app cards or card heads, where the heart
+   is already on white at 4.29:1. */
+.tile .fav-star,
+.mega-menu .tile .fav-star,
+.sidebar-nav .tile .fav-star {
+  filter: drop-shadow(0 0 1px rgba(0,0,0,0.9)) drop-shadow(0 1px 1px rgba(0,0,0,0.55));
+}
+/* Unfavourited stays white on a tile so the outline reads on any colour
+   (3.3:1 at worst, on Cookie Monster blue). */
+.tile .fav-star, .mega-menu .tile .fav-star, .sidebar-nav .tile .fav-star {
+  color: var(--rds-on-dark);
+}
 
 /* Icons default to Gray 700 in the light shell (iconography.md).
    Primary is never used to signal that an icon is interactive. */
 .section-head .right-actions a svg,
-.card .card-head svg,
-.widget-head svg { color: var(--rds-gray-700); }
+.card .card-head svg { color: var(--rds-gray-700); }
+
+/* ---- Nav dropdown sections (My Tasks, Resources) ----
+   These sit on the mega menu's black surface, so they take the
+   light-on-dark scale from color.md rather than the light-card one. */
+.widget {
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--rds-radius);
+}
+.widget:hover { border-color: rgba(255,255,255,0.16); }
+.widget-head { color: var(--rds-on-dark-70); }
+.widget-head svg { color: var(--rds-on-dark-40); }
+.widget-sub, .widget-empty-text { color: var(--rds-on-dark-40); }
+.widget-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--rds-on-dark-70);
+}
+.widget-btn:hover { background: rgba(255,255,255,0.08); color: var(--rds-on-dark); }
+.resource {
+  border-radius: var(--rds-radius);
+  color: var(--rds-on-dark);
+  font-size: 14px; line-height: 20px;
+}
 </style>
 </head>
 <body class="in-login">
@@ -16321,7 +16397,7 @@ function refreshFavUI() {
 function favStarHTML(id, kind, icon, label) {
   const fav = isFav(CURRENT_PERSONA_KEY, id);
   return `<span class="fav-star ${fav ? 'is-fav' : ''}" data-fav-id="${id}" data-fav-kind="${kind}" data-fav-icon="${icon || ''}" data-fav-label="${escapeHtml(label)}" title="${fav ? 'Remove from My Unify' : 'Add to My Unify'}">
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
   </span>`;
 }
 
