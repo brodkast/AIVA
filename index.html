@@ -9126,6 +9126,24 @@ body.sidebar-mode.sidebar-collapsed .mega-menu { left: 60px; }
 }
 
 /* ==================================================================
+   APP CONTENT TOP INSET — general rule, both themes
+   Every application's main container carries 16px of internal top
+   padding (RDS 8px spacing grid), so the H1 / title bar / first
+   controls sit 16px below the container top. Named mains at 3-class specificity: this must outrank
+   `.app-body .app-nav ~ * { padding-top: 0 }` (the retired floating-bar
+   clearance reset) and each app's own padding shorthand, both of which
+   sit at lower weight. Accounting is chrome-led — the inset lands above
+   its title bar, which keeps its own background and insets beneath.
+   ================================================================== */
+.app-body .app-nav ~ .svc-main,
+.app-body .app-nav ~ .parts-main,
+.app-body .app-nav ~ .fi-main,
+.app-body .app-nav ~ .crm-main,
+.app-body .app-nav ~ .is-main,
+.app-body .app-nav ~ .dm-main,
+.app-body .app-nav ~ .acct-main { padding-top: 16px; }
+
+/* ==================================================================
    DARK THEME
    color.md, Themes: Black #000000 and Dark #151B25 are the theme
    swatches; on-dark text is white / 70% / 40%. Applied by re-pointing
