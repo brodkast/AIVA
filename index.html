@@ -9192,8 +9192,17 @@ body.sidebar-mode.sidebar-collapsed .mega-menu { left: 60px; }
   border-radius: 14px;
 }
 .ci-stage-body { flex: 1; overflow-y: auto; padding: 22px 28px 30px; }
-.ci-stage-inner { max-width: 760px; margin: 0 auto; }
-.ci-stage-inner .ci-title { display: none; }   /* stg-head owns the title */
+.ci-stage-inner { max-width: 860px; margin: 0 auto; }
+/* The charts are authored for the 396px conversation column. On the
+   stage they get the full width, and the SVGs scale with it instead of
+   sitting small in the corner. */
+.ci-stage-inner .ci-card { padding: 22px 24px; margin: 0 0 20px; }
+.ci-stage-inner .ci-card-head { font-size: 16px; line-height: 22px; }
+.ci-stage-inner .ci-card-sub { font-size: 13px; line-height: 18px; margin-top: 4px; }
+.ci-stage-inner .ci-plot { width: 100%; height: auto; margin-top: 14px; }
+.ci-stage-inner .ci-chart { gap: 28px; margin-top: 16px; }
+.ci-stage-inner .ci-chart svg { width: 168px; height: 168px; flex-shrink: 0; }
+.ci-stage-inner .ci-legend { gap: 14px; }
 .ci-fs-row { margin-top: 12px; }
 
 /* Source document chip — closes the provenance loop on a help answer:
@@ -11999,7 +12008,7 @@ const AIVA_ACTIONS_BY_PERSONA = {
   tech:           ["How do I add or update tech time on a repair order?", "Where can I find the Electronic Timeclock (ETC)?", "How do I complete a Multi-Point Inspection?"],
   arap:           ["How do I split an invoice?", "How do I see my AR deposit history?", "Can I skip the authorization step in AP Payments?"],
   fi:             ["Where do I change lienholder information?", "How do I bulk sign documents?", "How do I access the Evidence Summary?"],
-  salesManager:   ["How do I unwind a sold deal?", "Where can I set up management escalation procedures?", "How do I view benchmarks?"],
+  salesManager:   ["How do I unwind a sold deal?", "Help me prepare for my appointment with Adam Jones", "How do I view benchmarks?"],
   salesAssoc:     ["How do I send a credit application?", "How do I access and use CRM Video?", "How do I adjust fees on a quote?"],
   controller:     ["How do I adjust entries?", "Can I search across companies in GL Inquiry?", "How do I create a 1099 filing?"],
 };
@@ -12646,11 +12655,31 @@ const AIVA_CI = [
 /* Appends the full-screen affordance to a CI reply's first rich block.
    Done at append time, not inside the renderers, so the stage can reuse
    render() output verbatim and no renderer has to know the stage exists. */
+/* True when a rich block carries at least one chart card. Charts live
+   in .ci-card wrappers; everything else in a CI answer is prose. */
+function ciHasVisual(h) {
+  return typeof h === "string" && /class="ci-card"/.test(h);
+}
+
+/* Extracts just the chart cards from a rich block. Parsed rather than
+   regex-sliced so nested markup can't be truncated mid-element. */
+function ciVisualsOnly(h) {
+  try {
+    const box = document.createElement("div");
+    box.innerHTML = h;
+    return Array.from(box.querySelectorAll(".ci-card")).map(n => n.outerHTML).join("");
+  } catch (e) { return ""; }
+}
+
 function aivaCiDecorate(blocks, key) {
   const first = blocks.find(b => b.t === "msg");
-  if (first) first.h += `<div class="ci-fs-row"><button class="ci-fs-btn" onclick="aivaOpenCiStage('${key}')">` +
-    `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>` +
-    `View full screen</button></div>`;
+  // Only offered where there is actually something to visualise —
+  // a prose-only answer gets no button rather than an empty stage.
+  if (first && ciHasVisual(first.h)) {
+    first.h += `<div class="ci-fs-row"><button class="ci-fs-btn" onclick="aivaOpenCiStage('${key}')">` +
+      `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>` +
+      `View data visualization</button></div>`;
+  }
   return blocks;
 }
 
@@ -12700,15 +12729,19 @@ function renderAivaWelcome(personaKey) {
   // Three chips per section on open — enough to suggest the shape of
   // what AIVA covers without turning the card into a menu.
   const CHIPS_PER_SECTION = 3;
-  const pageTopics = (page.topics || []).slice(0, CHIPS_PER_SECTION);
   // The customer question leads the first section for every persona —
-  // framed as that role's job to be done. Prepended rather than mixed
-  // in, so it is always the top chip.
+  // framed as that role's job to be done. It counts against the
+  // section's budget rather than sitting on top of it, so the first
+  // section is three chips total: the customer question plus two page
+  // topics. Resolved before the topics are sliced.
   const custQ = aivaCustomerAskQ(personaKey);
+  const pageTopics = (page.topics || [])
+    .slice(0, CHIPS_PER_SECTION - (custQ ? 1 : 0));
   const pageSites = aivaHelpSiteLine(aivaHelpPageSites(page));
   // Role topics that are not already offered by the page, so the two
   // tiers never repeat each other.
   const onPage = new Set(pageTopics.map(t => aivaHelpNorm(t.q)));
+  if (custQ) onPage.add(aivaHelpNorm(custQ));
   const actions = (AIVA_ACTIONS_BY_PERSONA[personaKey] || [])
     .filter(a => !onPage.has(aivaHelpNorm(a))).slice(0, CHIPS_PER_SECTION);
   const now = new Date();
@@ -15740,20 +15773,22 @@ window.aivaOpenCiStage = function(key) {
   panel.classList.add("expanded", "aiva-fs");
   const st = document.getElementById("aivaStage");
   if (!st) return;
-  // Undecorated render(): the stage shows the answer, not the button
+  // Undecorated render(): the stage shows the data, not the button
   // that opened it, and can never drift from the in-thread message.
   const rich = entry.render().find(b => b.t === "msg");
+  const visuals = rich ? ciVisualsOnly(rich.h) : "";
+  if (!visuals) { toast("No data visualization for this answer"); return; }
   st.innerHTML = `
     <div class="stg-head">
       <div class="sh-top">
         <div>
           <div class="sh-t">${escapeHtml(entry.title)}</div>
-          <div class="sh-sub">AIVA Insights \u00b7 Customer Intelligence</div>
+          <div class="sh-sub">Data visualization \u00b7 AIVA Insights</div>
         </div>
         <div class="stg-close" onclick="aivaCloseCiStage()">Close</div>
       </div>
     </div>
-    <div class="stg-body ci-stage-body"><div class="ci-stage-inner">${rich ? rich.h : ""}</div></div>`;
+    <div class="stg-body ci-stage-body"><div class="ci-stage-inner">${visuals}</div></div>`;
 };
 
 window.aivaCloseCiStage = function() {
