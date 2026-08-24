@@ -9129,19 +9129,47 @@ body.sidebar-mode.sidebar-collapsed .mega-menu { left: 60px; }
    APP CONTENT TOP INSET — general rule, both themes
    Every application's main container carries 16px of internal top
    padding (RDS 8px spacing grid), so the H1 / title bar / first
-   controls sit 16px below the container top. Named mains at 3-class specificity: this must outrank
+   controls sit 16px below the container top. Accounting is exempt: it is chrome-led — its AR
+   Dashboard title bar sits flush and carries its own insets, and
+   column padding painted a band above it. Named mains at 3-class
+   specificity: this must outrank
    `.app-body .app-nav ~ * { padding-top: 0 }` (the retired floating-bar
    clearance reset) and each app's own padding shorthand, both of which
-   sit at lower weight. Accounting is chrome-led — the inset lands above
-   its title bar, which keeps its own background and insets beneath.
+   sit at lower weight.
    ================================================================== */
 .app-body .app-nav ~ .svc-main,
 .app-body .app-nav ~ .parts-main,
 .app-body .app-nav ~ .fi-main,
 .app-body .app-nav ~ .crm-main,
 .app-body .app-nav ~ .is-main,
-.app-body .app-nav ~ .dm-main,
-.app-body .app-nav ~ .acct-main { padding-top: 16px; }
+.app-body .app-nav ~ .dm-main { padding-top: 16px; }
+
+/* ==================================================================
+   AIVA FULL-SCREEN STAGE (build 10)
+   A geometry variant of the build-09 expanded stage: .aiva-fs pins the
+   panel to the viewport beside the 48px header and 60px rail. The
+   stage shows the VIP message's own rich block (ciTopVips), so every
+   grounded figure stays single-sourced; the conversation column,
+   composer, and footer remain live on the right. All colours ride on
+   tokens — no theme-specific rules needed.
+   ================================================================== */
+.aiva-panel.expanded.aiva-fs {
+  top: 54px; left: 66px; right: 6px; bottom: 6px;
+  width: auto; max-height: none; min-height: 0;
+  border-radius: 14px;
+}
+.vip-stage-body { flex: 1; overflow-y: auto; padding: 22px 28px 30px; }
+.vip-stage-inner { max-width: 760px; margin: 0 auto; }
+.vip-stage-inner .ci-title { display: none; }   /* stg-head owns the title */
+.vip-stage-inner .ci-fs-row { display: none; }  /* no re-entry from inside the stage */
+.ci-fs-row { margin-top: 12px; }
+.ci-fs-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--brand);
+  background: transparent; border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 12px; cursor: pointer;
+}
+.ci-fs-btn:hover { border-color: var(--brand); }
 
 /* ==================================================================
    DARK THEME
@@ -12253,7 +12281,10 @@ function ciTopVips() {
         <li><span class="lead">Jim Jones</span> &mdash; Major service-lane conversion gap: 11 vehicles, only 2 ROs. Push maintenance plans and an F&amp;I product review.</li>
         <li><span class="lead">All three</span> &mdash; Executive-level relationship review with personalized GM outreach; explore referrals given their volume.</li>
         <li><span class="lead">Account protection</span> &mdash; Flag in CRM for priority treatment, a dedicated BDC contact, and competitive retention monitoring.</li>
-      </ol>`),
+      </ol>
+      <div class="ci-fs-row"><button class="ci-fs-btn" onclick="aivaOpenVipStage()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+        View full screen</button></div>`),
     _fb(),
     _nx([{ t: "Why is Jim's margin so low?" },
          { t: "Show service gaps by customer" },
@@ -15313,6 +15344,37 @@ window.aivaCloseStage = function() {
   const st = document.getElementById("aivaStage");
   if (st) st.innerHTML = "";
   AIVA_APPT_WALK = -1;
+};
+
+/* ---- VIP full-screen stage (build 10) -------------------------------
+   Pulls the "Who are my top three VIP customers?" rich message onto
+   the stage at full size. The content is re-taken from ciTopVips() at
+   open time, so the stage can never drift from the in-thread message. */
+window.aivaOpenVipStage = function() {
+  const panel = document.getElementById("aivaPanel");
+  if (!panel) return;
+  openAIVA();
+  panel.classList.add("expanded", "aiva-fs");
+  const st = document.getElementById("aivaStage");
+  if (!st) return;
+  const rich = ciTopVips().find(b => b.t === "msg");
+  st.innerHTML = `
+    <div class="stg-head">
+      <div class="sh-top">
+        <div>
+          <div class="sh-t">Your Top 3 VIP Customers</div>
+          <div class="sh-sub">AIVA Insights \u00b7 Customer Intelligence</div>
+        </div>
+        <div class="stg-close" onclick="aivaCloseVipStage()">Close</div>
+      </div>
+    </div>
+    <div class="stg-body vip-stage-body"><div class="vip-stage-inner">${rich ? rich.h : ""}</div></div>`;
+};
+
+window.aivaCloseVipStage = function() {
+  const panel = document.getElementById("aivaPanel");
+  if (panel) panel.classList.remove("aiva-fs");
+  aivaCloseStage();
 };
 
 /* The conversation drives the surface: each step scrolls the list to
