@@ -8437,10 +8437,15 @@ body input, body select, body textarea, body button {
   font-size: 14px; font-weight: 400; line-height: 20px;
   padding: 7px 14px;
 }
+/* Hover: the fill goes neutral grey and the label carries the state in
+   Primary blue at Medium weight. The hairline stays neutral — a blue
+   fill AND a blue border AND blue text read as a selected/primary chip,
+   which these are not; only .primary owns that treatment. */
 .aiva-action:hover {
-  background: var(--rds-select-light);
-  border-color: var(--rds-primary-on);
-  color: var(--rds-primary-hover);
+  background: var(--rds-surface-2);
+  border-color: var(--rds-line);
+  color: var(--rds-primary-on);
+  font-weight: 500;
 }
 .aiva-action.primary {
   background: var(--rds-primary); border-color: var(--rds-primary-on);
@@ -8468,8 +8473,35 @@ body input, body select, body textarea, body button {
 .aiva-confirm .cc-row .k, .aiva-cap-row .k, .aiva-ticket-row .k { color: var(--rds-ink-70); }
 .aiva-confirm .cc-row .v, .aiva-cap-row .v, .aiva-ticket-row .v { color: var(--rds-ink); }
 .aiva-confirm .cc-warn { color: #9A5D00; background: rgba(250,156,25,0.12); border-radius: var(--rds-radius); }
-.aiva-thinking { color: var(--rds-ink-70); font-size: 14px; line-height: 20px; }
-.aiva-thinking .tdot { background: var(--rds-primary); }
+/* Loading state: a self-contained pill with a rotating ring, so the
+   wait reads as a discrete object in the thread rather than a line of
+   text. Sized off the RDS 8px grid; colours are tokens, so the dark
+   theme inherits it without a rule. The label still comes from
+   askAiva() — "Checking <source> ...", "Invoking <capability> ..." —
+   so the pill says what AIVA is actually doing. */
+.aiva-thinking {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--rds-ink); font-size: 13px; font-weight: 600; line-height: 18px;
+  background: var(--rds-surface-2); border-radius: 999px;
+  padding: 8px 16px 8px 12px; margin: 2px 0;
+  align-self: flex-start; width: fit-content; max-width: 100%;
+}
+.aiva-thinking .tdot {
+  width: 15px; height: 15px; border-radius: 50%;
+  background: none;
+  /* Longhands, not the `border` shorthand: a var() inside the shorthand
+     is dropped by some CSS parsers (jsdom among them), which would make
+     the ring unverifiable in the test suite. */
+  border-width: 2px; border-style: solid;
+  border-color: var(--rds-line);
+  border-top-color: var(--rds-ink-70);
+  animation: aivaSpin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes aivaSpin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .aiva-thinking .tdot { animation-duration: 2.4s; }
+}
 
 /* ---- Footer, measured off the reference screenshot ----
    Pill 48px tall on a 6px radius, mic inside at the right, send OUTSIDE
@@ -9148,9 +9180,10 @@ body.sidebar-mode.sidebar-collapsed .mega-menu { left: 60px; }
    AIVA FULL-SCREEN STAGE (build 10)
    A geometry variant of the build-09 expanded stage: .aiva-fs pins the
    panel to the viewport beside the 48px header and 60px rail. The
-   stage shows the VIP message's own rich block (ciTopVips), so every
-   grounded figure stays single-sourced; the conversation column,
-   composer, and footer remain live on the right. All colours ride on
+   stage shows a CI experience's own rich block, re-taken from its
+   renderer, so every grounded figure stays single-sourced; the
+   conversation column, composer, and footer remain live on the right.
+   Applies to every entry in AIVA_CI. All colours ride on
    tokens — no theme-specific rules needed.
    ================================================================== */
 .aiva-panel.expanded.aiva-fs {
@@ -9158,11 +9191,30 @@ body.sidebar-mode.sidebar-collapsed .mega-menu { left: 60px; }
   width: auto; max-height: none; min-height: 0;
   border-radius: 14px;
 }
-.vip-stage-body { flex: 1; overflow-y: auto; padding: 22px 28px 30px; }
-.vip-stage-inner { max-width: 760px; margin: 0 auto; }
-.vip-stage-inner .ci-title { display: none; }   /* stg-head owns the title */
-.vip-stage-inner .ci-fs-row { display: none; }  /* no re-entry from inside the stage */
+.ci-stage-body { flex: 1; overflow-y: auto; padding: 22px 28px 30px; }
+.ci-stage-inner { max-width: 760px; margin: 0 auto; }
+.ci-stage-inner .ci-title { display: none; }   /* stg-head owns the title */
 .ci-fs-row { margin-top: 12px; }
+
+/* Source document chip — closes the provenance loop on a help answer:
+   the steps came from an indexed site, and this is the way back to it.
+   Sits on the RDS neutral surface so it reads as a document reference
+   rather than a primary action. Tokens only; dark inherits below. */
+.aiva-srcdoc { margin: 10px 0 2px; }
+.aiva-srcdoc-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  max-width: 100%;
+  font-size: 13px; font-weight: 500; line-height: 18px;
+  color: var(--rds-ink);
+  background: var(--rds-surface-2);
+  border-width: 1px; border-style: solid; border-color: var(--rds-line);
+  border-radius: 999px;
+  padding: 7px 16px 7px 13px;
+  cursor: pointer; text-align: left;
+}
+.aiva-srcdoc-btn:hover { border-color: var(--rds-ink-70); }
+.aiva-srcdoc-btn svg { flex-shrink: 0; color: var(--rds-ink-70); }
+.aiva-srcdoc-btn .sd-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ci-fs-btn {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 12px; font-weight: 600; color: var(--brand);
@@ -9246,6 +9298,11 @@ body.theme-dark .aiva-head, body.theme-dark .aiva-body,
 body.theme-dark .aiva-foot, body.theme-dark .aiva-panel { background: var(--rds-surface); }
 body.theme-dark .aiva-input { background: var(--rds-surface); }
 body.theme-dark .aiva-action { background: var(--rds-surface); }
+body.theme-dark .aiva-action:hover {
+  background: var(--surface-tint);
+  border-color: var(--border);
+  color: var(--brand);
+}
 body.theme-dark .aiva-welcome-head::before { background: var(--rds-nav); }
 body.theme-dark .header .avatar { background: rgba(255,255,255,0.16); }
 body.theme-dark .search { background: var(--rds-surface); border-color: var(--rds-line); }
@@ -9385,6 +9442,10 @@ body.theme-dark .cr-seg-gold.cr-seg-badge { background: rgba(251,191,36,0.18); c
 body.theme-dark .vi-badge { background: var(--warning-soft); color: var(--warning); }
 /* AIVA stage + appointments board */
 body.theme-dark .aiva-panel.expanded .aiva-stage { background: var(--bg); }
+body.theme-dark .aiva-thinking { background: var(--surface-tint); }
+body.theme-dark .aiva-srcdoc-btn { background: var(--surface-tint); border-color: var(--border); }
+body.theme-dark .aiva-srcdoc-btn:hover { border-color: var(--text-3); }
+body.theme-dark .aiva-thinking .tdot { border-color: rgba(255,255,255,0.22); border-top-color: var(--text-2); }
 body.theme-dark .stg-head,
 body.theme-dark .stg-close,
 body.theme-dark .stg-kpi,
@@ -11930,17 +11991,17 @@ const AIVA_HELP_TOPICS = {
    action prompts live in this branch.
    ============================================================ */
 const AIVA_ACTIONS_BY_PERSONA = {
-  owner:          ["Help me prepare for my appointment with Adam Jones", "How do I set a goal?", "How do I export a report for offline viewing?", "Where can I find my DMS enterprise administrator?"],
-  ops:            ["Help me prepare for my appointment with Adam Jones", "What's the best report for gross profit and sales?", "How do I view benchmarks?", "How do I prepare for a PartScan Physical Inventory?"],
-  serviceManager: ["Help me prepare for my appointment with Adam Jones", "How do I dispatch work to a technician?", "How do I override tech time on a repair order?", "How do I set up a Mobile ASR?"],
-  parts:          ["Help me prepare for my appointment with Adam Jones", "How do I prepare for a PartScan Physical Inventory?", "How do you create, modify, or delete an SOR?", "Where can I see parts history?"],
-  partsClerk:     ["Help me prepare for my appointment with Adam Jones", "How do I print SOR labels with PartScan?", "How can I quickly receipt FedEx and UPS shipments with PartScan?", "How do you set up a price code?"],
-  tech:           ["Help me prepare for my appointment with Adam Jones", "How do I add or update tech time on a repair order?", "Where can I find the Electronic Timeclock (ETC)?", "How do I complete a Multi-Point Inspection?"],
-  arap:           ["Help me prepare for my appointment with Adam Jones", "How do I split an invoice?", "How do I see my AR deposit history?", "Can I skip the authorization step in AP Payments?"],
-  fi:             ["Help me prepare for my appointment with Adam Jones", "Where do I change lienholder information?", "How do I bulk sign documents?", "How do I access the Evidence Summary?"],
-  salesManager:   ["Help me prepare for my appointment with Adam Jones", "How do I unwind a sold deal?", "Where can I set up management escalation procedures?", "How do I view benchmarks?"],
-  salesAssoc:     ["Help me prepare for my appointment with Adam Jones", "How do I send a credit application?", "How do I access and use CRM Video?", "How do I adjust fees on a quote?"],
-  controller:     ["Help me prepare for my appointment with Adam Jones", "How do I adjust entries?", "Can I search across companies in GL Inquiry?", "How do I create a 1099 filing?"],
+  owner:          ["How do I set a goal?", "How do I export a report for offline viewing?", "Where can I find my DMS enterprise administrator?"],
+  ops:            ["What's the best report for gross profit and sales?", "How do I view benchmarks?", "How do I prepare for a PartScan Physical Inventory?"],
+  serviceManager: ["How do I dispatch work to a technician?", "How do I override tech time on a repair order?", "How do I set up a Mobile ASR?"],
+  parts:          ["How do I prepare for a PartScan Physical Inventory?", "How do you create, modify, or delete an SOR?", "Where can I see parts history?"],
+  partsClerk:     ["How do I print SOR labels with PartScan?", "How can I quickly receipt FedEx and UPS shipments with PartScan?", "How do you set up a price code?"],
+  tech:           ["How do I add or update tech time on a repair order?", "Where can I find the Electronic Timeclock (ETC)?", "How do I complete a Multi-Point Inspection?"],
+  arap:           ["How do I split an invoice?", "How do I see my AR deposit history?", "Can I skip the authorization step in AP Payments?"],
+  fi:             ["Where do I change lienholder information?", "How do I bulk sign documents?", "How do I access the Evidence Summary?"],
+  salesManager:   ["How do I unwind a sold deal?", "Where can I set up management escalation procedures?", "How do I view benchmarks?"],
+  salesAssoc:     ["How do I send a credit application?", "How do I access and use CRM Video?", "How do I adjust fees on a quote?"],
+  controller:     ["How do I adjust entries?", "Can I search across companies in GL Inquiry?", "How do I create a 1099 filing?"],
 };
 
 /* ============================================================
@@ -12084,6 +12145,11 @@ function aivaHelpTopicBlocks(topic) {
     out.push(_lim(escapeHtml(topic.note)));
   }
 
+
+  // Provenance: name the indexed source this answer came from and give
+  // the user a way to open it. Emitted for every branch above —
+  // sourced steps, gap topics, and indexed-but-uncaptured alike.
+  if (AIVA_HELP_SITES[topic.s]) out.push(_src(topic.s));
 
   const page = aivaHelpPage();
   const related = (page.topics || []).filter(t => t.q !== topic.q).slice(0, 3).map(t => ({ t: t.q }));
@@ -12281,10 +12347,7 @@ function ciTopVips() {
         <li><span class="lead">Jim Jones</span> &mdash; Major service-lane conversion gap: 11 vehicles, only 2 ROs. Push maintenance plans and an F&amp;I product review.</li>
         <li><span class="lead">All three</span> &mdash; Executive-level relationship review with personalized GM outreach; explore referrals given their volume.</li>
         <li><span class="lead">Account protection</span> &mdash; Flag in CRM for priority treatment, a dedicated BDC contact, and competitive retention monitoring.</li>
-      </ol>
-      <div class="ci-fs-row"><button class="ci-fs-btn" onclick="aivaOpenVipStage()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
-        View full screen</button></div>`),
+      </ol>`),
     _fb(),
     _nx([{ t: "Why is Jim's margin so low?" },
          { t: "Show service gaps by customer" },
@@ -12292,10 +12355,313 @@ function ciTopVips() {
   ];
 }
 
+/* ============================================================
+   CUSTOMER SEARCH — ONE QUESTION PER PERSONA
+   The top chip of the first section is always a customer question,
+   framed as that role's job to be done (jobs, KPIs and goals per the
+   CDK Persona Standardization Project). Every answer is about the
+   SAME customer, Adam Jones, so the eleven views are eleven readings
+   of one record rather than eleven records.
+
+   Grounded from the existing Adam Jones profile: $27,071 lifetime /
+   $6,408 GP / 23.7% margin; $25,365 variable ops (1 vehicle, May 7
+   2026) and $1,706 fixed ops (all labor, $546 customer-pay, no parts);
+   6 ROs Jul 15 2020 - Nov 20 2025; 2-yr service forecast $2K-$5K at
+   48% confidence. Figures beyond that set are placeholders for SME
+   review — flagged in each answer, not presented as system truth.
+   ============================================================ */
+const CUST_PROVISIONAL = "Figures beyond the customer record are placeholder values for review \u2014 the shape of the answer is the point, not the numbers.";
+
+function ciCustomerBlocks(d) {
+  const metrics = d.metrics.map(m =>
+    `<div class="ci-metric"><span class="k">${m[0]}</span><span class="v">${m[1]}</span></div>`).join("");
+  const body = (d.secs || []).map(s => {
+    if (s.list) return `<div class="ci-sub">${s.h}</div><ul class="ci-list">` +
+      s.list.map(li => `<li>${li}</li>`).join("") + `</ul>`;
+    return `<div class="ci-sec">${s.h}</div>` + (s.ps || []).map(p => `<p class="ci-p">${p}</p>`).join("");
+  }).join("");
+  return [
+    _rich(`<div class="ci-title">${d.title}</div>
+      <div class="ci-metrics">${metrics}</div>
+      <p class="ci-note">${d.note}</p>
+      ${body}
+      <div class="ci-sec">Talk Track</div>
+      <div class="ci-talk">&ldquo;${d.talk}&rdquo;</div>
+      <div class="ci-sec">Suggested Actions</div>
+      <ol class="ci-actions">${d.acts.map(a =>
+        `<li><span class="lead">${a[0]}</span> &mdash; ${a[1]}</li>`).join("")}</ol>`),
+    _lim(CUST_PROVISIONAL),
+    _fb(),
+    _nx(d.next.map(t => ({ t })), "Suggested"),
+  ];
+}
+
+/* Keyed by persona. `q` is the chip label and the matched question. */
+const AIVA_CUSTOMER_ASK = {
+  owner: {
+    q: "What is Adam Jones worth to the store?",
+    title: "Customer Value: Adam Jones",
+    metrics: [["Lifetime Sales", "$27,071"], ["Lifetime GP", "$6,408"], ["Margin", "23.7%"]],
+    note: "Store S000091899 &middot; cross-channel customer since 2020",
+    secs: [
+      { h: "Where the value sits", list: [
+        "<span class=\"lead\">$25,365 variable ops</span> &middot; 93.7% &mdash; one vehicle, May 7, 2026",
+        "<span class=\"lead\">$1,706 fixed ops</span> &middot; 6.3% &mdash; all labor, $546 customer-pay",
+        "6 repair orders over 5+ years <span class=\"muted\">(Jul 2020 &ndash; Nov 2025)</span>"]},
+      { h: "Why this matters at your level", ps: [
+        "Adam is the service-to-sales journey working exactly as intended: nearly six years in the service drive before he bought. That pattern is the cheapest unit you sell, and it is worth knowing how many more like him you have.",
+        "The risk is on the other side. Predicted 2-year service spend is $2K&ndash;$5K at only 48% confidence &mdash; retention after the sale is the weak link, and it is a store-level pattern, not one customer's."]},
+    ],
+    talk: "Adam represents over $27,000 in lifetime value and came to us through the service drive, not an ad. He serviced here for almost six years before buying in May. That's our lowest-cost acquisition path, and right now our confidence in keeping him in the service lane afterwards is under 50%. That gap is the number I'd want the team working on.",
+    acts: [["Ask for the cohort", "Adam is one case. Request the count of service-first buyers and their retention rate before setting a goal."],
+           ["Set a service-absorption target", "Post-sale service retention is the lever; make it a departmental number, not an anecdote."],
+           ["Review with the GM", "Bring the service-to-sales conversion rate to the next leadership meeting."]],
+    next: ["Who are my top three VIP customers?", "How do I set a goal?", "What's the best report for gross profit and sales?"],
+  },
+
+  ops: {
+    q: "Will Adam Jones keep servicing with us after the sale?",
+    title: "Service Retention Risk: Adam Jones",
+    metrics: [["Service Revenue", "$1,706"], ["Repair Orders", "6"], ["2-yr Confidence", "48%"]],
+    note: "Last visit Nov 20, 2025 &middot; bought May 7, 2026 &middot; no visit since",
+    secs: [
+      { h: "The retention picture", list: [
+        "6 ROs between Jul 15, 2020 and Nov 20, 2025 &mdash; <span class=\"muted\">steady, roughly annual</span>",
+        "<span class=\"lead\">No visit since the purchase</span> &mdash; 3 months and counting",
+        "All labor, no parts &mdash; <span class=\"muted\">routine maintenance, not repair work</span>",
+        "2-yr service forecast $2K&ndash;$5K at <span class=\"lead\">48% confidence</span>"]},
+      { h: "Read on it", ps: [
+        "A six-year service customer who has not been back since buying is the classic post-sale drop-off. He is still in warranty, so nothing is lost yet &mdash; but the habit is what you retain, and his has been interrupted.",
+        "Labor-heavy with zero parts spend means his visits are low-value individually. The reason to fight for him is the decade of them, and the post-warranty work that follows."]},
+    ],
+    talk: "Adam serviced with us every year for six years, then bought from us in May, and we haven't seen him since. He's still in warranty so there's no revenue lost yet, but the pattern break is the warning. If we get his first visit on the new vehicle booked, we keep a customer who's already proven he'll come back for a decade.",
+    acts: [["Book the first service now", "Reach out and put the new vehicle's first maintenance visit on the schedule."],
+           ["Check the cohort", "Pull every customer who bought in May and has not returned to the drive."],
+           ["Protect post-warranty", "A maintenance plan converts warranty visits into paid ones later."]],
+    next: ["What's the best report for gross profit and sales?", "How do I view benchmarks?", "Who are my top three VIP customers?"],
+  },
+
+  serviceManager: {
+    q: "Is Adam Jones due for a service visit?",
+    title: "Service Status: Adam Jones",
+    metrics: [["Last Visit", "Nov 2025"], ["Lifetime ROs", "6"], ["Service Revenue", "$1,706"]],
+    note: "Purchased May 7, 2026 &middot; new vehicle has no service history yet",
+    secs: [
+      { h: "Where he stands", list: [
+        "<span class=\"lead\">Due now</span> &mdash; first maintenance on the new vehicle, ~3 months post-delivery",
+        "Last RO Nov 20, 2025 <span class=\"muted\">(on his previous vehicle)</span>",
+        "6 ROs, all labor &mdash; <span class=\"muted\">$546 customer-pay, remainder warranty and internal</span>",
+        "No open RO, no declined work carried forward"]},
+      { h: "How to handle the visit", ps: [
+        "He has no history on the current vehicle, so there is no declined-work list to reopen and no MPI baseline. The first visit sets both &mdash; worth an unhurried inspection rather than an oil change and out.",
+        "Six years of annual visits says he is a scheduler, not a walk-in. An outbound booking will land better than waiting for him to call."]},
+    ],
+    talk: "Adam's due for the first service on the vehicle he bought in May. He's been coming here since 2020, so he's a known quantity &mdash; books ahead, keeps appointments, routine maintenance only. Let's get a full MPI on this first visit so we have a baseline on the new vehicle, and get him on the schedule rather than waiting.",
+    acts: [["Schedule the first maintenance", "Outbound call or text; he books ahead and keeps appointments."],
+           ["Full MPI on arrival", "No history on this vehicle &mdash; establish the baseline."],
+           ["Assign a consistent advisor", "Six-year customers respond to a familiar face."]],
+    next: ["What needs my approval right now?", "How do I dispatch work to a technician?", "Who are my top three VIP customers?"],
+  },
+
+  tech: {
+    q: "What should I inspect on Adam Jones's vehicle?",
+    title: "Inspection Brief: Adam Jones",
+    metrics: [["Prior ROs", "6"], ["Parts History", "None"], ["Open Recalls", "Check"]],
+    note: "First visit on the vehicle purchased May 7, 2026",
+    secs: [
+      { h: "What the history tells you", list: [
+        "<span class=\"lead\">All labor, zero parts</span> across 6 ROs &mdash; <span class=\"muted\">maintenance only, no repairs</span>",
+        "No declined work outstanding from prior visits",
+        "New vehicle &mdash; <span class=\"muted\">no MPI baseline on file yet</span>",
+        "Owner services annually &mdash; <span class=\"muted\">next touch likely 12 months out</span>"]},
+      { h: "Where the flagged hours are", ps: [
+        "Nothing on this vehicle has been inspected here before, so a full MPI is the job &mdash; it is also where the sellable recommendations come from. A customer with zero parts history has never been sold anything beyond labor.",
+        "Document thoroughly. His next visit is likely a year away, so anything you note now is what the advisor works from then."]},
+    ],
+    talk: "This is the first time this vehicle's been on our lift. No baseline, no prior declined work, and the customer's never bought a part from us in six years. Full MPI, photograph anything worth showing, and write the recommendations up properly &mdash; whatever I flag today is what the advisor has to work with a year from now.",
+    acts: [["Full multi-point inspection", "No baseline exists on this vehicle; establish one."],
+           ["Photograph findings", "Documented recommendations sell; verbal ones don't."],
+           ["Check open campaigns", "Confirm any open recalls before release."]],
+    next: ["What's next for me?", "How do I complete a Multi-Point Inspection?", "How do I add or update tech time on a repair order?"],
+  },
+
+  parts: {
+    q: "What parts revenue has Adam Jones generated?",
+    title: "Parts Opportunity: Adam Jones",
+    metrics: [["Parts Revenue", "$0"], ["Service Labor", "$1,706"], ["Repair Orders", "6"]],
+    note: "Six years of service visits with no parts attached",
+    secs: [
+      { h: "The gap", list: [
+        "<span class=\"lead\">$0 parts across 6 ROs</span> &mdash; <span class=\"muted\">100% labor</span>",
+        "No over-the-counter or retail purchases on file",
+        "No special orders, ever",
+        "$546 of the labor was customer-pay &mdash; <span class=\"muted\">the rest warranty or internal</span>"]},
+      { h: "What it means for the department", ps: [
+        "A six-year maintenance customer with zero parts revenue is unusual enough to check the data before acting on it &mdash; either the work genuinely carried no parts, or parts were not being captured against these ROs.",
+        "If the history is accurate, he is a clean-sheet customer for accessories and maintenance items on a vehicle he has owned for three months. That is the easiest parts sale there is."]},
+    ],
+    talk: "Adam's been in the service drive six times over six years and we've never sold him a single part. That's either a capture problem on the ROs or a genuinely untouched opportunity &mdash; worth knowing which. He bought a new vehicle in May, so if it's the latter, accessories and maintenance items are wide open.",
+    acts: [["Verify the capture", "Confirm parts were genuinely not attached to these ROs rather than mis-posted."],
+           ["Stock for the first visit", "Filters and maintenance items for his model, ready when he books."],
+           ["Accessory offer", "Three months into ownership is prime accessory timing."]],
+    next: ["How do I prepare for a PartScan Physical Inventory?", "Where can I see parts history?", "Who are my top three VIP customers?"],
+  },
+
+  partsClerk: {
+    q: "What parts will Adam Jones's visit need?",
+    title: "Parts Prep: Adam Jones",
+    metrics: [["Open RO Parts", "None"], ["Special Orders", "0"], ["Prior Parts", "$0"]],
+    note: "No open repair order &mdash; first maintenance visit expected",
+    secs: [
+      { h: "What's on file", list: [
+        "<span class=\"lead\">Nothing on hold</span> &mdash; no open RO, no parts allocated",
+        "No special orders outstanding, none in his history",
+        "Never a front-counter retail purchase",
+        "Vehicle purchased May 7, 2026 &mdash; <span class=\"muted\">first service due</span>"]},
+      { h: "How to be ready", ps: [
+        "Until the appointment is booked and an RO is opened, there is nothing to pick. What you can do is check that the routine maintenance items for his model are on the shelf so the first visit does not become a special order.",
+        "A first-visit special order on a three-month-old vehicle is the kind of delay a new owner remembers."]},
+    ],
+    talk: "There's nothing on hold for Adam right now &mdash; no open RO and no special orders. He's due for his first service on the vehicle he bought in May, so I'd make sure we've got the standard maintenance items for his model in stock. Last thing we want is a special order on a customer's first visit with a new car.",
+    acts: [["Check stock for his model", "Standard maintenance items, before the appointment lands."],
+           ["Watch for the RO", "Pick immediately once the back counter has the ticket."],
+           ["Flag any shortfall early", "A special order found at check-in is already late."]],
+    next: ["How do I print SOR labels with PartScan?", "How can I quickly receipt FedEx and UPS shipments with PartScan?", "Where can I see parts history?"],
+  },
+
+  arap: {
+    q: "Does Adam Jones have any open balances?",
+    title: "Account Status: Adam Jones",
+    metrics: [["Open Balance", "$0.00"], ["Past Due", "$0.00"], ["Lifetime Billed", "$27,071"]],
+    note: "No receivable activity outstanding",
+    secs: [
+      { h: "Position", list: [
+        "<span class=\"lead\">Nothing open</span> &mdash; no invoice awaiting payment",
+        "$546 customer-pay service across 6 ROs, <span class=\"muted\">all settled at time of service</span>",
+        "Vehicle purchase May 7, 2026 &mdash; <span class=\"muted\">funded, nothing in transit</span>",
+        "No collection history, no write-offs, no disputes"]},
+      { h: "Nothing to chase", ps: [
+        "This is a clean account. He has never carried a balance and has never been part of an aging bucket, which is worth as much as knowing who to chase.",
+        "If a balance does appear later, the absence of any prior dispute means a single reminder is likely all it takes."]},
+    ],
+    talk: "Adam's account is clean &mdash; nothing open, nothing past due, no history of either. Everything he's been billed has been paid at the time of service, and the May vehicle purchase funded without anything sitting in transit. There's nothing here that needs working.",
+    acts: [["No action required", "Clean account; nothing to pursue."],
+           ["Confirm contact details", "Worth verifying the billing address on file before the next invoice."],
+           ["Note the payment pattern", "Pays at time of service &mdash; useful if a future balance arises."]],
+    next: ["How do I see my AR deposit history?", "How do I split an invoice?", "Who are my top three VIP customers?"],
+  },
+
+  fi: {
+    q: "What F&I products did Adam Jones take?",
+    title: "F&I Position: Adam Jones",
+    metrics: [["Deal GP", "$6,408"], ["Margin", "23.7%"], ["Deal Status", "Funded"]],
+    note: "Vehicle delivered May 7, 2026 &middot; deal closed and funded",
+    secs: [
+      { h: "The deal", list: [
+        "$25,365 vehicle sale &middot; <span class=\"lead\">$6,408 gross</span> at 23.7% margin",
+        "Delivered May 7, 2026 &mdash; <span class=\"muted\">funded, nothing pending with the lender</span>",
+        "Cross-channel customer &mdash; <span class=\"muted\">6 years in service before buying</span>",
+        "Product penetration on file is <span class=\"lead\">incomplete</span> &mdash; needs verification"]},
+      { h: "The retention angle", ps: [
+        "The reason to pull his product detail is the service forecast: $2K&ndash;$5K over two years at 48% confidence. A maintenance or service contract is the single most reliable way to move that number, and he is a proven service customer.",
+        "He is three months post-delivery, which is still inside the window where a back-end product conversation is normal rather than intrusive."]},
+    ],
+    talk: "Adam's deal funded clean in May &mdash; $25,365, $6,408 gross, 23.7% margin. What's interesting isn't the deal, it's the service side: he's been servicing here since 2020 but our confidence he'll keep doing it is under 50%. A service contract on a customer who already trusts the drive is the easiest back-end conversation we've got.",
+    acts: [["Verify product penetration", "Confirm what was and wasn't sold on the May deal before contacting him."],
+           ["Service contract review", "A proven service customer with 48% retention confidence is the ideal candidate."],
+           ["Post-delivery check-in", "Three months in, still a natural time to call."]],
+    next: ["Where do I change lienholder information?", "How do I access the Evidence Summary?", "Who are my top three VIP customers?"],
+  },
+
+  salesManager: {
+    q: "Is Adam Jones a trade-in opportunity?",
+    title: "Trade Opportunity: Adam Jones",
+    metrics: [["Last Purchase", "May 2026"], ["Lifetime Sales", "$27,071"], ["5-yr Forecast", "$0&ndash;$40K"]],
+    note: "One vehicle purchased &middot; 3 months into ownership",
+    secs: [
+      { h: "Timing", list: [
+        "Purchased May 7, 2026 &mdash; <span class=\"lead\">too early to trade</span>",
+        "2-yr forecast $0&ndash;$30K total sales <span class=\"muted\">(100% conf.)</span>",
+        "5-yr forecast $0&ndash;$40K &mdash; <span class=\"muted\">suggests one more vehicle, not two</span>",
+        "Household ID on file &mdash; <span class=\"muted\">other members not yet checked</span>"]},
+      { h: "Where the real opportunity is", ps: [
+        "He is three months into a new vehicle, so equity is nowhere near a trade position. Working him for a trade now costs goodwill for no realistic unit.",
+        "The household is the better lead. There is a household ID on file and nobody has looked at who else is on it &mdash; a second driver at the same address is a warmer prospect than a customer who just bought."]},
+    ],
+    talk: "Adam bought three months ago, so he's not a trade &mdash; the equity isn't there and pushing it would just annoy a good customer. What I'd chase instead is the household. There's a household ID on his record we've never looked into. If there's a second driver at that address, that's a warm lead attached to a customer who already trusts us.",
+    acts: [["Work the household, not the trade", "Check who else is on the household ID."],
+           ["Set an equity alert", "Revisit when he reaches a realistic trade position, not before."],
+           ["Keep him in service", "Service visits are how we stay in front of him until then."]],
+    next: ["How do I unwind a sold deal?", "How do I view benchmarks?", "Who are my top three VIP customers?"],
+  },
+
+  controller: {
+    q: "How does Adam Jones affect my receivables?",
+    title: "Receivables View: Adam Jones",
+    metrics: [["Open AR", "$0.00"], ["Days Sales Outstanding", "&mdash;"], ["Lifetime Billed", "$27,071"]],
+    note: "No exposure &middot; nothing in any aging bucket",
+    secs: [
+      { h: "Exposure", list: [
+        "<span class=\"lead\">No open receivable</span> &mdash; contributes nothing to DSO",
+        "$25,365 vehicle sale funded, <span class=\"muted\">nothing in contracts-in-transit</span>",
+        "$546 customer-pay service, <span class=\"muted\">settled at point of sale</span>",
+        "No write-offs, disputes, or collection activity in 6 years"]},
+      { h: "What it says about the file", ps: [
+        "Individually there is nothing here to manage. The value of the record is as a reference point: this is what a clean six-year customer file looks like, and it is the pattern worth comparing aging accounts against.",
+        "Worth confirming the May sale posted to the correct period, since it is the only material transaction on the account."]},
+    ],
+    talk: "Adam carries no receivable exposure at all &mdash; nothing open, nothing aged, no history of write-offs across six years. His May purchase funded and cleared transit. From a receivables standpoint there's nothing to manage here; the only thing I'd confirm is that the sale posted to the right period.",
+    acts: [["Confirm period posting", "Verify the May 7 sale landed in the correct accounting period."],
+           ["No collection action", "Clean file; excluded from any aging follow-up."],
+           ["Use as a baseline", "Reference pattern for what a healthy customer file looks like."]],
+    next: ["Can I search across companies in GL Inquiry?", "How do I adjust entries?", "Who are my top three VIP customers?"],
+  },
+};
+
+/* Sales Associate keeps the original appointment-prep question and the
+   full ciAdamJones experience — that role's job to be done IS the
+   face-to-face appointment, so nothing needed re-framing. */
+const CUSTOMER_ASK_ALIAS = { salesAssoc: "adamJones" };
+
+/* Chip label for a persona's customer question. */
+function aivaCustomerAskQ(personaKey) {
+  if (CUSTOMER_ASK_ALIAS[personaKey]) {
+    const e = AIVA_CI.find(c => c.key === CUSTOMER_ASK_ALIAS[personaKey]);
+    return e ? e.q : null;
+  }
+  const d = AIVA_CUSTOMER_ASK[personaKey];
+  return d ? d.q : null;
+}
+
+/* Every entry is full-screen capable: `key` addresses it from the stage
+   button, `title` heads the stage. Adding an experience here is enough —
+   the affordance and the stage are wired centrally below. */
 const AIVA_CI = [
-  { q: "Help me prepare for my appointment with Adam Jones", render: ciAdamJones },
-  { q: "Who are my top three VIP customers?", render: ciTopVips },
+  { key: "adamJones", title: "Customer Profile: Adam Jones",
+    q: "Help me prepare for my appointment with Adam Jones", render: ciAdamJones },
+  { key: "topVips", title: "Your Top 3 VIP Customers",
+    q: "Who are my top three VIP customers?", render: ciTopVips },
 ];
+
+/* Appends the full-screen affordance to a CI reply's first rich block.
+   Done at append time, not inside the renderers, so the stage can reuse
+   render() output verbatim and no renderer has to know the stage exists. */
+function aivaCiDecorate(blocks, key) {
+  const first = blocks.find(b => b.t === "msg");
+  if (first) first.h += `<div class="ci-fs-row"><button class="ci-fs-btn" onclick="aivaOpenCiStage('${key}')">` +
+    `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>` +
+    `View full screen</button></div>`;
+  return blocks;
+}
+
+/* Fold the per-persona customer questions into the CI registry, so they
+   inherit matching, the full-screen affordance and the stage without a
+   second code path. */
+Object.keys(AIVA_CUSTOMER_ASK).forEach(function (k) {
+  const d = AIVA_CUSTOMER_ASK[k];
+  AIVA_CI.push({ key: "cust_" + k, title: d.title, q: d.q,
+                 render: function () { return ciCustomerBlocks(d); } });
+});
 
 function aivaCiFind(text) {
   const q = aivaHelpNorm(text);
@@ -12314,7 +12680,7 @@ function aivaHelpHandle(text) {
   // Customer intelligence answers ahead of the help set: these are data
   // questions, not documentation questions.
   const ci = aivaCiFind(text);
-  if (ci) { AIVA_UNANSWERED = 0; aivaAppendReply(ci.render(), null); return true; }
+  if (ci) { AIVA_UNANSWERED = 0; aivaAppendReply(aivaCiDecorate(ci.render(), ci.key), null); return true; }
   if (aivaIsPageTopicsAsk(text)) { aivaAppendReply(aivaHelpPageBlocks(), null); return true; }
   const topic = aivaHelpFind(text);
   if (!topic) return false;
@@ -12335,6 +12701,10 @@ function renderAivaWelcome(personaKey) {
   // what AIVA covers without turning the card into a menu.
   const CHIPS_PER_SECTION = 3;
   const pageTopics = (page.topics || []).slice(0, CHIPS_PER_SECTION);
+  // The customer question leads the first section for every persona —
+  // framed as that role's job to be done. Prepended rather than mixed
+  // in, so it is always the top chip.
+  const custQ = aivaCustomerAskQ(personaKey);
   const pageSites = aivaHelpSiteLine(aivaHelpPageSites(page));
   // Role topics that are not already offered by the page, so the two
   // tiers never repeat each other.
@@ -12360,6 +12730,7 @@ function renderAivaWelcome(personaKey) {
       ` : `
       <div class="aiva-next-actions-label">Help topics on this page — ${escapeHtml(page.label)}</div>
       <div class="aiva-actions">
+        ${custQ ? `<button class="aiva-action" onclick="askAiva('${escapeHtml(custQ).replace(/&#39;/g, "\\'")}')">${escapeHtml(custQ)}</button>` : ''}
         ${pageTopics.map(t => `<button class="aiva-action" onclick="askAiva('${escapeHtml(t.q).replace(/&#39;/g, "\\'")}')">${escapeHtml(t.q)}</button>`).join('')}
       </div>
       ${actions.length ? `
@@ -12417,6 +12788,10 @@ const _ctl = (src, h, acts)   => ({ t: "ctl",  src, h, acts });
 const _cfm = (rows, warn, acts) => ({ t: "cfm", rows, warn, acts });
 const _nx  = (acts, h)        => ({ t: "acts", acts, h });
 const _fb  = ()               => ({ t: "fb" });
+/* Source document: `s` is an AIVA_HELP_SITES key. The label is read
+   from the registry at render time, so a chip can never name a site
+   that isn't in the index. */
+const _src = (s)              => ({ t: "src",  s });
 
 /* Action shapes: { t:"Label", p:true } routes label back through askAiva;
    { t, open:"appKey" } opens the app; { t, res:"KEY" } runs a resolution. */
@@ -13435,6 +13810,13 @@ function aivaRenderBlocks(blocks) {
         return `<div class="aiva-confirm">${b.cap ? `<div class="cc-cap">${b.cap}</div>` : ""}${b.rows.map(r => `<div class="cc-row"><span class="k">${escapeHtml(r.k)}</span><span class="v">${escapeHtml(r.v)}</span></div>`).join("")}${b.warn ? `<div class="cc-warn">${b.warn}</div>` : ""}</div><div class="aiva-inline-acts">${(b.acts || []).map(a => aivaActBtn(a, cardIdx)).join("")}</div>`;
       }
       case "acts": return `${b.h ? `<div class="aiva-msg">${b.h}</div>` : ""}<div class="aiva-actions">${(b.acts || []).map(a => aivaActBtn(a)).join("")}</div>`;
+      case "src": {
+        const site = AIVA_HELP_SITES[b.s];
+        if (!site) return "";
+        return `<div class="aiva-srcdoc"><button class="aiva-srcdoc-btn" onclick="aivaOpenHelpSite('${b.s}')" title="Open ${escapeHtml(site.label)}">` +
+          `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>` +
+          `<span class="sd-label">${escapeHtml(site.label)}</span></button></div>`;
+      }
       case "ticket": return "";
       default:     return "";
     }
@@ -15350,28 +15732,31 @@ window.aivaCloseStage = function() {
    Pulls the "Who are my top three VIP customers?" rich message onto
    the stage at full size. The content is re-taken from ciTopVips() at
    open time, so the stage can never drift from the in-thread message. */
-window.aivaOpenVipStage = function() {
+window.aivaOpenCiStage = function(key) {
+  const entry = AIVA_CI.find(c => c.key === key);
   const panel = document.getElementById("aivaPanel");
-  if (!panel) return;
+  if (!entry || !panel) return;
   openAIVA();
   panel.classList.add("expanded", "aiva-fs");
   const st = document.getElementById("aivaStage");
   if (!st) return;
-  const rich = ciTopVips().find(b => b.t === "msg");
+  // Undecorated render(): the stage shows the answer, not the button
+  // that opened it, and can never drift from the in-thread message.
+  const rich = entry.render().find(b => b.t === "msg");
   st.innerHTML = `
     <div class="stg-head">
       <div class="sh-top">
         <div>
-          <div class="sh-t">Your Top 3 VIP Customers</div>
+          <div class="sh-t">${escapeHtml(entry.title)}</div>
           <div class="sh-sub">AIVA Insights \u00b7 Customer Intelligence</div>
         </div>
-        <div class="stg-close" onclick="aivaCloseVipStage()">Close</div>
+        <div class="stg-close" onclick="aivaCloseCiStage()">Close</div>
       </div>
     </div>
-    <div class="stg-body vip-stage-body"><div class="vip-stage-inner">${rich ? rich.h : ""}</div></div>`;
+    <div class="stg-body ci-stage-body"><div class="ci-stage-inner">${rich ? rich.h : ""}</div></div>`;
 };
 
-window.aivaCloseVipStage = function() {
+window.aivaCloseCiStage = function() {
   const panel = document.getElementById("aivaPanel");
   if (panel) panel.classList.remove("aiva-fs");
   aivaCloseStage();
@@ -16400,7 +16785,7 @@ window.askAiva = function(text) {
     : (AIVA_HELP_ONLY && aivaIsPageTopicsAsk(text)) ? "Listing the topics on this page ..."
     : capLabel ? "Invoking " + escapeHtml(capLabel) + " ..."
     : (intent && intent.form) ? "Reading the details ..."
-    : src ? "Checking " + escapeHtml(src) + " ..." : "Thinking ...";
+    : src ? "Checking " + escapeHtml(src) + " ..." : "Processing..";
   const thinkId = "aivaThink" + Date.now();
   body.insertAdjacentHTML("beforeend",
     `<div class="aiva-thinking" id="${thinkId}"><span class="tdot"></span>${thinkTxt}</div>`);
@@ -17668,7 +18053,12 @@ document.addEventListener("click", (e) => {
   const act = item.getAttribute("data-pm");
   if (item.classList.contains("has-sub")) { item.classList.toggle("open"); return; }
   document.getElementById("personaDropdown")?.classList.remove("open");
-  if (act === "signOut") { showScreen("login"); return; }
+  if (act === "signOut") {
+    // Explicit sign-out revokes the returning-visitor flag, otherwise
+    // the next boot would skip straight past the login screen again.
+    if (typeof unifyClearSeen === "function") unifyClearSeen();
+    showScreen("login"); return;
+  }
   if (act === "dealerAdmin") { toast("Dealer Admin"); return; }
   if (act === "cdkTeam") { toast("My CDK Team"); return; }
 });
@@ -22057,7 +22447,49 @@ function renderDocMgmtApp() {
 }
 
 
+/* ============================================================
+   RETURNING VISITOR — SKIP LOGIN
+   Once someone has clicked Sign In, this browser is treated as
+   already signed in and boots straight to My Unify.
+
+   The key is intentionally build-independent (no rds** version in
+   it) and dated a year out, so shipping a new build does not sign
+   the reviewer out again.
+
+   Cookies are written first, as specified. They are unavailable on
+   file:// origins in Chrome and Safari, which is exactly how these
+   single-file builds are usually opened, so localStorage carries
+   the same flag as a fallback and either one is enough to skip.
+   Both are cleared on Sign Out — an explicit sign-out has to mean
+   something, or there is no way back to the login screen.
+   ============================================================ */
+var UNIFY_SEEN_KEY = "unifyReturningUser";
+
+function unifySetSeen() {
+  try {
+    var exp = new Date(Date.now() + 365 * 864e5).toUTCString();
+    document.cookie = UNIFY_SEEN_KEY + "=1; expires=" + exp + "; path=/; SameSite=Lax";
+  } catch (e) {}
+  try { localStorage.setItem(UNIFY_SEEN_KEY, "1"); } catch (e) {}
+}
+
+function unifyHasSeen() {
+  try {
+    if (new RegExp("(?:^|; )" + UNIFY_SEEN_KEY + "=1(?:;|$)").test(document.cookie)) return true;
+  } catch (e) {}
+  try { if (localStorage.getItem(UNIFY_SEEN_KEY) === "1") return true; } catch (e) {}
+  return false;
+}
+
+function unifyClearSeen() {
+  try {
+    document.cookie = UNIFY_SEEN_KEY + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
+  } catch (e) {}
+  try { localStorage.removeItem(UNIFY_SEEN_KEY); } catch (e) {}
+}
+
 document.getElementById('signInBtn').addEventListener('click', () => {
+  unifySetSeen();
   showScreen('prototype');
   if (typeof goMyUnify === 'function') goMyUnify();  // default landing view
 });
@@ -22547,6 +22979,17 @@ document.getElementById('obNext').addEventListener('click', () => {
   goToStep(obStep + 1);
 });
 document.getElementById('obSkip').addEventListener('click', () => goToStep(obStep + 1));
+
+/* Returning visitor: land on My Unify instead of the login screen.
+   Runs last, after every screen and view function is defined, and only
+   when the login screen is the one showing — so it cannot fight a
+   deep-link or the onboarding wizard. */
+(function bootReturningUser() {
+  if (!unifyHasSeen()) return;
+  if (!document.body.classList.contains("in-login")) return;
+  showScreen("prototype");
+  if (typeof goMyUnify === "function") goMyUnify();
+})();
 </script>
 
 <!-- Customer Golden Record Overlay -->
