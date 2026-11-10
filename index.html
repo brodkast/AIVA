@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f6f7f9" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0e1014" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0e1014">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>AIVA — Unify Chat (v3)</title>
+<title>AIVA — Unify Chat (v5)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -49,6 +48,10 @@ button{font:inherit;color:inherit;cursor:pointer}
 .rail-top{display:flex;align-items:center;gap:10px;padding:14px 14px 10px}
 .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px;letter-spacing:.2px;white-space:nowrap}
 .brand small{font-weight:500;color:var(--text-3);font-size:11.5px;margin-left:2px}
+/* CDK dot — from the master prototype's .logo: white circle, near-black mark, weight 900 */
+.cdk-dot{--dot:32px;width:var(--dot);height:var(--dot);border-radius:50%;background:#fff;color:#0a0a0c;border:2px solid #0a0a0c;box-sizing:border-box;font-family:inherit;font-size:calc(var(--dot) * .316);font-weight:900;letter-spacing:-.3px;line-height:1;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;cursor:pointer;transition:transform .18s}
+.cdk-dot:hover{transform:scale(1.04)}
+html[data-theme="dark"] .cdk-dot{border-color:#fff}
 .mark{flex-shrink:0;display:inline-block}
 .icon-btn{border:0;background:transparent;width:32px;height:32px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:var(--text-2);flex-shrink:0}
 .icon-btn:hover{background:var(--surface-3);color:var(--text)}
@@ -388,7 +391,7 @@ html.mobile-ua .app.m.preview{width:auto;height:100dvh;border:0;border-radius:0;
   <!-- ============================ RAIL ============================ -->
   <aside class="rail" aria-label="Threads">
     <div class="rail-top">
-      <div class="brand"><span class="mark-slot" data-size="22"></span><span class="hide-min">AIVA <small>Unify</small></span></div>
+      <div class="brand"><button class="cdk-dot" id="cdkLogoBtn" title="My Dashboard" aria-label="CDK — go to today's briefing">CDK</button><span class="hide-min">Unify</span></div>
       <button class="icon-btn hide-min" id="railMin" title="Collapse sidebar" aria-label="Collapse sidebar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg></button>
     </div>
     <button class="rail-new" id="newChat" title="New chat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg><span class="hide-min">New chat</span></button>
@@ -516,7 +519,7 @@ const AUTOMATIONS = [
    STATE — one store; renderers read from it.
    ========================================================================== */
 const S = {
-  persona:"serviceManager", threads:{}, cur:null, streaming:null,
+  persona:"tech", threads:{}, cur:null, streaming:null,
   log:[], canvas:{open:false,kind:null,app:null,rec:null,doc:null,run:0,tab:null}, seq:1
 };
 const $ = s => document.querySelector(s);
@@ -1152,7 +1155,8 @@ document.addEventListener("click",e=>{
   if(!g("#personaMenu")) $("#personaMenu").classList.remove("show");
   if(!g(".composer")) closePop();
   if(g("#newChat")) return newChatClick();
-  if(g("#navToday")){ closeDrawer(); return ask("/today"); }
+  if(g("#cdkLogoBtn")&&$("#app").classList.contains("rail-min")&&!isMobile()) return $("#app").classList.remove("rail-min");
+  if(g("#navToday")||g("#cdkLogoBtn")){ closeDrawer(); return ask("/today"); }
   if(g("#navApps")){ closeDrawer(); return openCanvas({kind:"launcher"}); }
   if(g("#navActivity")){ closeDrawer(); return openCanvas({kind:"activity"}); }
   if(g("#menuBtn")) return $("#app").classList.add("drawer");
@@ -1185,7 +1189,7 @@ $("#input").addEventListener("keydown",e=>{
    ========================================================================== */
 (function boot(){
   let th=null; try{ th=localStorage.getItem("aiva-theme"); }catch(e){}
-  document.documentElement.dataset.theme = th || (window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+  document.documentElement.dataset.theme = th || "dark";
   document.querySelectorAll(".mark-slot").forEach(s=>s.innerHTML=markSVG(+s.dataset.size));
   try{ S.preview=localStorage.getItem("aiva-preview")==="1"; }catch(e){}
   applyMode(); if(MQ.addEventListener) MQ.addEventListener("change",applyMode);
