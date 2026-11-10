@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AIVA — Unify Chat (v1)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f7f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e1014" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>AIVA — Unify Chat (v3)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -289,9 +292,95 @@ button{font:inherit;color:inherit;cursor:pointer}
   .app.canvas-open{grid-template-columns:var(--rail-w) minmax(0,1fr) 0}
   .app.canvas-open .canvas{position:fixed;right:0;top:0;bottom:0;width:min(560px,92vw);z-index:50;box-shadow:-8px 0 32px rgba(0,0,0,.18)}
 }
-@media (max-width:760px){
-  .app{--rail-w:0px}.rail{display:none}.legend{display:none}.col{padding:18px 14px 30px}.composer-wrap{padding:0 12px 12px}
-}
+
+/* ============================================================
+   MOBILE — one mode, keyed on .app.m (phone width OR preview toggle)
+   ============================================================ */
+.m-only{display:none!important}
+.scrim{display:none}
+.starters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.hero{text-align:center;padding:12vh 0 24px}
+.app.m{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:100%;height:100vh;height:100dvh;position:relative}
+.app.m .m-only{display:inline-flex!important}
+.app.m .d-only{display:none!important}
+.app.m .rail{position:absolute;top:0;bottom:0;left:0;width:min(86%,320px);z-index:60;transform:translateX(-102%);transition:transform .28s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 40px rgba(0,0,0,.25);padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+.app.m.drawer .rail{transform:none}
+.app.m .scrim{display:block;position:absolute;inset:0;background:rgba(0,0,0,.38);z-index:59;opacity:0;pointer-events:none;transition:opacity .25s}
+.app.m.drawer .scrim{opacity:1;pointer-events:auto}
+.app.m .rail-top .icon-btn{display:none}
+.app.m .rail-link,.app.m .th{min-height:44px}
+.app.m .th .icon-btn{opacity:1;width:36px;height:36px}
+.app.m .top{height:auto;min-height:52px;padding:env(safe-area-inset-top) 6px 0;gap:4px}
+.app.m .top h1{flex:1;text-align:center;font-size:15px}
+.app.m .top .sp,.app.m .legend,.app.m .chip-store,.app.m #canvasToggle{display:none}
+.app.m .icon-btn{width:44px;height:44px;border-radius:12px}
+.app.m .col{padding:14px 16px 20px}
+.app.m .turn{margin-bottom:22px}
+.app.m .turn.ai{grid-template-columns:minmax(0,1fr);gap:0}
+.app.m .ai-av{display:none}
+.app.m .turn.user .bubble{max-width:86%;border-radius:20px 20px 6px 20px}
+.app.m .lead{font-size:15.5px}
+.app.m .parts{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;margin:0 -16px;padding:2px 16px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.app.m .parts::-webkit-scrollbar{display:none}
+.app.m .parts{align-items:flex-start}
+.app.m .parts>.card{flex:0 0 80%;scroll-snap-align:start;scroll-margin-left:16px}
+.app.m .parts>.card:only-child{flex-basis:100%}
+.app.m .cv-body .parts{display:grid;grid-template-columns:minmax(0,1fr);margin:0;padding:0;overflow:visible}
+.app.m .cv-body .parts>.card{flex:none}
+.app.m .task{grid-template-columns:32px minmax(0,1fr);row-gap:8px;padding:12px}
+.app.m .task .tx{grid-column:2;justify-content:flex-start}
+.app.m .task .btn{min-height:36px}
+.app.m .tbl{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.app.m .tbl td,.app.m .tbl th{white-space:nowrap}
+.app.m .chip{min-height:38px;padding:8px 14px}
+.app.m .acts{gap:8px;flex-wrap:nowrap;overflow-x:auto;margin-left:-16px;margin-right:-16px;padding:0 16px 2px;scrollbar-width:none}
+.app.m .acts::-webkit-scrollbar{display:none}
+.app.m .acts .chip{white-space:nowrap;flex-shrink:0}
+.app.m .feedback{opacity:1}
+.app.m .clar button{min-height:52px}
+.app.m .cfm .row{flex-wrap:wrap}
+.app.m .cfm .btn{min-height:42px;padding:8px 18px}
+.app.m .cfm .row .lbl{margin-left:0!important;width:100%}
+.app.m .starters{grid-template-columns:minmax(0,1fr);gap:8px}
+.app.m .starters .card{padding:12px 14px}
+.app.m .hero{padding:6vh 0 18px}
+.app.m .hero h2{font-size:22px!important}
+.app.m .composer-wrap{padding:6px 10px calc(8px + env(safe-area-inset-bottom));background:var(--bg)}
+.app.m .composer{border-radius:24px;padding:8px 6px 6px 14px}
+.app.m .composer textarea{font-size:16px}
+.app.m .send{width:40px;height:40px}
+.app.m .fine{font-size:10.5px;margin-top:6px}
+.app.m .fine .long,.app.m .fine .dsk{display:none}
+.fine .mob{display:none}
+.app.m .fine .mob{display:inline}
+.app.m .pop{max-height:46vh}
+.app.m .pop button{min-height:44px}
+.app.m .canvas{position:absolute!important;inset:0!important;width:auto!important;z-index:55;transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1);box-shadow:none;border-left:0;padding-bottom:env(safe-area-inset-bottom)}
+.app.m.canvas-open .canvas{transform:none}
+.app.m .cv-head{padding:env(safe-area-inset-top) 8px 0 14px;height:auto;min-height:52px}
+.app.m .cv-body{padding:14px 14px 28px}
+.app.m .cv-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.app.m .cv-tabs button{min-height:36px;white-space:nowrap}
+.app.m .paper{padding:20px 18px}
+.app.m .lanes{grid-template-columns:76px minmax(0,1fr)}
+.app.m .menu{left:8px;right:8px;width:auto;bottom:calc(100% + 4px);max-height:60vh}
+.app.m .menu button{min-height:44px}
+.app.m .toast{bottom:auto;top:calc(64px + env(safe-area-inset-top));transform:translateX(-50%) translateY(-10px);text-align:center;width:max-content;max-width:86%}
+.app.m .toast.show{transform:translateX(-50%) translateY(0)}
+.app.m.preview .toast{top:84px}
+/* Desktop preview: the same mobile mode in a phone frame */
+body.preview-on{display:flex;align-items:center;justify-content:center;background:var(--surface-3);min-height:100vh}
+.app.m.preview{width:390px;height:min(844px,calc(100vh - 48px));border-radius:44px;border:10px solid #0b0c0f;box-shadow:0 30px 80px rgba(0,0,0,.35);overflow:hidden;transform:translateZ(0);background:var(--bg)}
+.app.m.preview .top{padding-top:22px}
+.app.m.preview .cv-head{padding-top:22px}
+.app.m.preview .composer-wrap{padding-bottom:18px}
+.exit-preview{position:fixed;top:16px;right:16px;z-index:100;display:none}
+body.preview-on .exit-preview{display:inline-flex}
+html.mobile-ua .exit-preview,html.mobile-ua #modeBtn{display:none!important}
+html.mobile-ua body.preview-on{display:block;background:var(--bg)}
+html.mobile-ua .app.m.preview{width:auto;height:100dvh;border:0;border-radius:0;box-shadow:none;transform:none}
+.toast{position:absolute}
+@media (hover:none){.th .icon-btn{opacity:1}.feedback{opacity:1}}
 </style>
 </head>
 <body>
@@ -314,18 +403,21 @@ button{font:inherit;color:inherit;cursor:pointer}
       <button class="persona-btn" id="personaBtn" aria-haspopup="menu"></button>
       <div class="foot-row">
         <button class="rail-link" id="themeBtn" title="Toggle theme"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><span class="hide-min">Theme</span></button>
-        <button class="rail-link" id="classicBtn" title="Open classic Unify"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg><span class="hide-min">Classic Unify</span></button>
+        <button class="rail-link" id="modeBtn" title="Preview the mobile layout" aria-pressed="false"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg><span class="hide-min" id="modeLabel">Mobile view</span></button>
       </div>
     </div>
   </aside>
 
+  <div class="scrim" id="scrim"></div>
   <!-- ============================ MAIN ============================ -->
   <main class="main">
     <header class="top">
+      <button class="icon-btn m-only" id="menuBtn" title="Threads" aria-label="Open threads"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h16M4 12h11M4 17h16"/></svg></button>
       <h1 id="threadTitle">Today</h1>
       <span class="sp"></span>
       <div class="legend" id="legend"></div>
       <span class="chip-store" title="Store context">Statler Toyota</span>
+      <button class="icon-btn m-only" id="mNewBtn" title="New chat" aria-label="New chat"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
       <button class="icon-btn" id="canvasToggle" title="Toggle canvas" aria-label="Toggle canvas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M14 4v16"/></svg></button>
     </header>
     <div class="scroll" id="scroll"><div class="col" id="thread"></div></div>
@@ -341,17 +433,18 @@ button{font:inherit;color:inherit;cursor:pointer}
           <button class="send" id="sendBtn" aria-label="Send" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
         </div>
       </div>
-      <div class="fine">AIVA answers from Unify product data. <b>†</b> marks placeholder figures awaiting SME sign-off. Nothing is written without your confirmation.</div>
+      <div class="fine"><span class="long">AIVA answers from Unify product data. </span><span class="dsk"><b>†</b> marks placeholder figures awaiting SME sign-off. Nothing is written without your confirmation.</span><span class="mob"><b>†</b> placeholder figure · nothing is written without your OK</span></div>
     </div>
   </main>
 
   <!-- ============================ CANVAS ============================ -->
   <section class="canvas" id="canvas" aria-label="Canvas">
-    <div class="cv-head"><span id="cvTile"></span><h2 id="cvTitle">Canvas</h2><button class="icon-btn" id="cvClose" title="Close canvas" aria-label="Close canvas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="cv-head"><span id="cvTile"></span><h2 id="cvTitle">Canvas</h2><button class="btn ghost m-only" id="cvDone" style="font-weight:600;color:var(--brand)">Done</button><button class="icon-btn d-only" id="cvClose" title="Close canvas" aria-label="Close canvas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="cv-body" id="cvBody"></div>
   </section>
+  <div class="toast" id="toast"></div>
 </div>
-<div class="toast" id="toast"></div>
+<button class="btn exit-preview" id="exitPreview">Exit mobile view</button>
 
 <script>
 "use strict";
@@ -998,14 +1091,33 @@ function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("show")
 function toggleTheme(){ const r=document.documentElement; r.dataset.theme=r.dataset.theme==="dark"?"light":"dark"; try{localStorage.setItem("aiva-theme",r.dataset.theme);}catch(e){} }
 function switchPersona(pk){
   if(S.streaming) S.streaming.stop();
-  S.persona=pk; $("#personaMenu").classList.remove("show"); aivaCloseStage(); startBriefing(pk);
+  S.persona=pk; $("#personaMenu").classList.remove("show"); closeDrawer(); aivaCloseStage(); startBriefing(pk);
   toast("Now working as "+PERSONAS[pk].label);
 }
+function closeDrawer(){ $("#app").classList.remove("drawer"); }
+function isMobile(){ return $("#app").classList.contains("m"); }
+const MQ = window.matchMedia ? matchMedia("(max-width:760px)") : {matches:false,addEventListener(){}};
+/* A phone is a phone at any width: Android, iPhone, iPod, or a UA that says Mobile. */
+const MOBILE_UA = (()=>{ const n=navigator||{}, ua=n.userAgent||"";
+  return /Android|iPhone|iPod|Mobi/i.test(ua) || !!(n.userAgentData&&n.userAgentData.mobile); })();
+function applyMode(){
+  const app=$("#app"), small=MQ.matches||MOBILE_UA, m=small||(!MOBILE_UA&&S.preview);
+  document.documentElement.classList.toggle("mobile-ua",MOBILE_UA);
+  app.classList.toggle("m",m);
+  app.classList.toggle("preview",!small&&!!S.preview);
+  document.body.classList.toggle("preview-on",!small&&!!S.preview);
+  if(m) app.classList.remove("rail-min"); else closeDrawer();
+  const b=$("#modeBtn"); b.hidden=small; b.setAttribute("aria-pressed",String(!!S.preview));
+  $("#modeLabel").textContent=S.preview?"Desktop view":"Mobile view";
+  $("#input").placeholder=m?"Message AIVA":"Ask AIVA anything — / for commands, @ for records";
+}
+function toggleMode(){ S.preview=!S.preview; try{localStorage.setItem("aiva-preview",S.preview?"1":"0");}catch(e){} closeDrawer(); applyMode(); scrollDown(); toast(S.preview?"Mobile view — same app, phone layout":"Desktop view"); }
 function newChatClick(){
+  closeDrawer();
   if(S.streaming) S.streaming.stop();
   const th=newThread(S.persona,"New chat"); S.cur=th.id; renderThread();
   const p=P();
-  $("#thread").innerHTML=`<div style="text-align:center;padding:12vh 0 24px">${markSVG(40)}<h2 style="margin:16px 0 6px;font-size:26px;letter-spacing:-.4px">${greetingWord()}. What can I help with?</h2><p class="lbl" style="font-size:14px">${esc(p.label)} · Statler Toyota</p></div><div class="parts" style="grid-template-columns:repeat(2,minmax(0,1fr))">${starters(S.persona).map(s=>`<button class="card" style="text-align:left;cursor:pointer" data-prompt="${esc(s.prompt)}"><b style="font-size:13.5px">${esc(s.label)}</b><span class="lbl">${esc(s.prompt===s.label?"Ask AIVA":s.prompt)}</span></button>`).join("")}</div><p style="text-align:center;margin-top:14px"><button class="chip" data-prompt="/help">Show every command</button></p>`;
+  $("#thread").innerHTML=`<div class="hero">${markSVG(40)}<h2 style="margin:16px 0 6px;font-size:26px;letter-spacing:-.4px">${greetingWord()}. What can I help with?</h2><p class="lbl" style="font-size:14px">${esc(p.label)} · Statler Toyota</p></div><div class="starters">${starters(S.persona).map(s=>`<button class="card" style="text-align:left;cursor:pointer" data-prompt="${esc(s.prompt)}"><b style="font-size:13.5px">${esc(s.label)}</b><span class="lbl">${esc(s.prompt===s.label?"Ask AIVA":s.prompt)}</span></button>`).join("")}</div><p style="text-align:center;margin-top:14px"><button class="chip" data-prompt="/help">Show every command</button></p>`;
   $("#input").focus();
 }
 function micClick(){
@@ -1031,7 +1143,7 @@ document.addEventListener("click",e=>{
   if((el=g("[data-cvtab]"))){ S.canvas.tab=el.dataset.cvtab; return renderCanvas(); }
   if((el=g("[data-pin]"))){ e.stopPropagation(); const t=S.threads[el.dataset.pin]; t.pinned=!t.pinned; return renderRail(); }
   if((el=g("[data-del]"))){ e.stopPropagation(); const id=el.dataset.del; delete S.threads[id]; if(S.cur===id){ const rest=Object.values(S.threads).filter(t=>t.persona===S.persona); if(rest.length){ S.cur=rest[0].id; renderThread(); } else newChatClick(); } return renderRail(); }
-  if((el=g("[data-thread]"))){ if(S.streaming) S.streaming.stop(); S.cur=el.dataset.thread; return renderThread(); }
+  if((el=g("[data-thread]"))){ closeDrawer(); if(S.streaming) S.streaming.stop(); S.cur=el.dataset.thread; return renderThread(); }
   if((el=g("[data-persona]"))) return switchPersona(el.dataset.persona);
   if((el=g("[data-copy]"))){ const t=Object.values(S.threads).flatMap(x=>x.turns).find(x=>x.id===el.dataset.copy); const txt=htmlToText(t.r.lead); try{ navigator.clipboard.writeText(txt).then(()=>toast("Copied"),()=>toast("Copy isn't available here")); }catch(_){ toast("Copy isn't available here"); } return; }
   if((el=g("[data-fb]"))){ const box=el.closest(".feedback"); box.querySelectorAll("[data-fb]").forEach(b=>b.classList.toggle("on",b===el)); let tags=box.nextElementSibling; if(!tags||!tags.classList.contains("fb-tags")){ box.insertAdjacentHTML("afterend",`<div class="fb-tags">${FB_TAGS.map(t=>`<button data-fbtag>${t}</button>`).join("")}</div>`); } return; }
@@ -1040,11 +1152,15 @@ document.addEventListener("click",e=>{
   if(!g("#personaMenu")) $("#personaMenu").classList.remove("show");
   if(!g(".composer")) closePop();
   if(g("#newChat")) return newChatClick();
-  if(g("#navToday")) return ask("/today");
-  if(g("#navApps")) return openCanvas({kind:"launcher"});
-  if(g("#navActivity")) return openCanvas({kind:"activity"});
+  if(g("#navToday")){ closeDrawer(); return ask("/today"); }
+  if(g("#navApps")){ closeDrawer(); return openCanvas({kind:"launcher"}); }
+  if(g("#navActivity")){ closeDrawer(); return openCanvas({kind:"activity"}); }
+  if(g("#menuBtn")) return $("#app").classList.add("drawer");
+  if(g("#scrim")) return closeDrawer();
+  if(g("#mNewBtn")) return newChatClick();
+  if(g("#modeBtn")||g("#exitPreview")) return toggleMode();
+  if(g("#cvDone")) return aivaCloseStage();
   if(g("#themeBtn")) return toggleTheme();
-  if(g("#classicBtn")) return toast("In the full build this switches to the classic Unify shell and mega menu, then back to this thread.");
   if(g("#railMin")||(g(".app.rail-min .rail-top"))) return $("#app").classList.toggle("rail-min");
   if(g("#cvClose")) return aivaCloseStage();
   if(g("#canvasToggle")) return S.canvas.open?aivaCloseStage():openCanvas(S.canvas.kind?{kind:S.canvas.kind,app:S.canvas.app,doc:S.canvas.doc,run:S.canvas.run}:{kind:"app",app:P().apps[0]});
@@ -1060,7 +1176,8 @@ $("#input").addEventListener("keydown",e=>{
     if(e.key==="Enter"||e.key==="Tab"){ e.preventDefault(); return choosePop(POP.sel); }
     if(e.key==="Escape"){ return closePop(); }
   }
-  if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); send(); }
+  // Phone convention: Return makes a new line; the send button sends.
+  if(e.key==="Enter"&&!e.shiftKey&&!(isMobile()&&MQ.matches)){ e.preventDefault(); send(); }
 });
 
 /* ==========================================================================
@@ -1070,6 +1187,8 @@ $("#input").addEventListener("keydown",e=>{
   let th=null; try{ th=localStorage.getItem("aiva-theme"); }catch(e){}
   document.documentElement.dataset.theme = th || (window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
   document.querySelectorAll(".mark-slot").forEach(s=>s.innerHTML=markSVG(+s.dataset.size));
+  try{ S.preview=localStorage.getItem("aiva-preview")==="1"; }catch(e){}
+  applyMode(); if(MQ.addEventListener) MQ.addEventListener("change",applyMode);
   $("#legend").innerHTML=Object.keys(AIVA_NODES).map(nodeTag).join("");
   const h=(location.hash||"").slice(1); if(PERSONAS[h]) S.persona=h;
   startBriefing(S.persona);
