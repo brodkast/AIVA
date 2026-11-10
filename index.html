@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0e1014">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>AIVA — Unify Chat (v5)</title>
+<title>AIVA — Unify Chat (v6)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -86,6 +86,8 @@ html[data-theme="dark"] .cdk-dot{border-color:#fff}
 .app.rail-min .foot-row{flex-direction:column}
 .menu{position:absolute;bottom:calc(100% - 4px);left:10px;width:280px;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:6px;z-index:40;display:none;max-height:70vh;overflow:auto}
 .menu.show{display:block}
+.menu.float{position:fixed;z-index:200}
+.rail-foot{margin-top:auto}
 .menu .mh{font-size:11px;color:var(--text-3);padding:6px 8px;text-transform:uppercase;letter-spacing:.6px;font-weight:600}
 .menu button{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:7px 8px;border-radius:8px;text-align:left}
 .menu button:hover{background:var(--surface-2)}
@@ -1097,6 +1099,22 @@ function switchPersona(pk){
   S.persona=pk; $("#personaMenu").classList.remove("show"); closeDrawer(); aivaCloseStage(); startBriefing(pk);
   toast("Now working as "+PERSONAS[pk].label);
 }
+/* Persona fly-out: fixed to the button on desktop so the rail cannot clip it. */
+function placePersonaMenu(){
+  const mn=$("#personaMenu"), b=$("#personaBtn");
+  if(isMobile()){ mn.classList.remove("float"); mn.removeAttribute("style"); return; }
+  const r=b.getBoundingClientRect(), app=$("#app");
+  const o=app.classList.contains("preview")?app.getBoundingClientRect():{left:0,top:0,height:window.innerHeight};
+  const vh=app.classList.contains("preview")?o.height:window.innerHeight;
+  mn.classList.add("float");
+  const above=r.top-o.top, below=vh-(r.bottom-o.top);
+  mn.style.left=Math.max(8,r.left-o.left)+"px";
+  mn.style.width="280px";
+  if(above>=260||above>=below){ mn.style.top="auto"; mn.style.bottom=(vh-above+6)+"px"; mn.style.maxHeight=(above-16)+"px"; }
+  else { mn.style.bottom="auto"; mn.style.top=(r.bottom-o.top+6)+"px"; mn.style.maxHeight=(below-22)+"px"; }
+}
+function closePersonaMenu(){ $("#personaMenu").classList.remove("show"); }
+window.addEventListener("resize",closePersonaMenu);
 function closeDrawer(){ $("#app").classList.remove("drawer"); }
 function isMobile(){ return $("#app").classList.contains("m"); }
 const MQ = window.matchMedia ? matchMedia("(max-width:760px)") : {matches:false,addEventListener(){}};
@@ -1151,7 +1169,7 @@ document.addEventListener("click",e=>{
   if((el=g("[data-copy]"))){ const t=Object.values(S.threads).flatMap(x=>x.turns).find(x=>x.id===el.dataset.copy); const txt=htmlToText(t.r.lead); try{ navigator.clipboard.writeText(txt).then(()=>toast("Copied"),()=>toast("Copy isn't available here")); }catch(_){ toast("Copy isn't available here"); } return; }
   if((el=g("[data-fb]"))){ const box=el.closest(".feedback"); box.querySelectorAll("[data-fb]").forEach(b=>b.classList.toggle("on",b===el)); let tags=box.nextElementSibling; if(!tags||!tags.classList.contains("fb-tags")){ box.insertAdjacentHTML("afterend",`<div class="fb-tags">${FB_TAGS.map(t=>`<button data-fbtag>${t}</button>`).join("")}</div>`); } return; }
   if((el=g("[data-fbtag]"))){ el.classList.toggle("on"); return toast("Thanks — feedback noted"); }
-  if(g("#personaBtn")){ $("#personaMenu").classList.toggle("show"); return; }
+  if(g("#personaBtn")){ const mn=$("#personaMenu"); mn.classList.toggle("show"); if(mn.classList.contains("show")) placePersonaMenu(); return; }
   if(!g("#personaMenu")) $("#personaMenu").classList.remove("show");
   if(!g(".composer")) closePop();
   if(g("#newChat")) return newChatClick();
@@ -1193,6 +1211,7 @@ $("#input").addEventListener("keydown",e=>{
   document.querySelectorAll(".mark-slot").forEach(s=>s.innerHTML=markSVG(+s.dataset.size));
   try{ S.preview=localStorage.getItem("aiva-preview")==="1"; }catch(e){}
   applyMode(); if(MQ.addEventListener) MQ.addEventListener("change",applyMode);
+  $("#threadList").addEventListener("scroll",closePersonaMenu);
   $("#legend").innerHTML=Object.keys(AIVA_NODES).map(nodeTag).join("");
   const h=(location.hash||"").slice(1); if(PERSONAS[h]) S.persona=h;
   startBriefing(S.persona);
