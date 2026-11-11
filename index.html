@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0e1014">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>AIVA — Unify Chat (v10)</title>
+<title>AIVA — Unify Chat (v14)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -42,6 +42,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 .app{display:grid;grid-template-columns:var(--rail-w) minmax(0,1fr) 0;grid-template-rows:100vh;height:100vh;overflow:hidden;transition:grid-template-columns .25s ease}
 .app.rail-min{--rail-w:64px}
 .app.canvas-open{grid-template-columns:var(--rail-w) minmax(0,1fr) var(--canvas-w)}
+.app.canvas-open.canvas-wide{grid-template-columns:var(--rail-w) 0 minmax(0,1fr)}
+.app.canvas-open.canvas-wide .canvas{border-left:1px solid var(--border)}
 
 /* ============================================================ RAIL */
 .rail{background:var(--surface-2);border-right:1px solid var(--border);display:flex;flex-direction:column;min-width:0;overflow:hidden}
@@ -487,6 +489,35 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--surface-2);border:
 @keyframes chatIn{0%,6%{opacity:0;transform:translateY(8px)}16%,82%{opacity:1;transform:none}95%,100%{opacity:0}}
 @keyframes grow{0%,10%{transform:scaleX(0)}30%,85%{transform:scaleX(1)}100%{transform:scaleX(0)}}
 @media (prefers-reduced-motion:reduce){.tour-ptr svg,.ob-mark,.demo-done,.tour-hole::after,.ob-spark{animation:none}.demo-keys .k,.dc-user,.dc-ai,.ob-points>div{animation:none;opacity:1;transform:none}.dc-card i{animation:none}.tour-hole,.tour-ptr,.tour-card{transition:none}}
+
+/* tour v11: nav step, service demos */
+.tour-card.nav{width:min(320px,calc(100% - 16px))}
+.tour-dots i.gap{margin-left:8px}
+.nav-pips{display:flex;align-items:center;gap:5px;margin:2px 0 4px}
+.nav-pips button{width:8px;height:8px;border-radius:50%;border:0;padding:0;background:var(--surface-3);cursor:pointer;transition:all .25s}
+.nav-pips button.done{background:var(--text-3)}
+.nav-pips button.on{background:var(--brand);transform:scale(1.35)}
+.nav-pips span{margin-left:auto;font-size:11.5px;color:var(--text-3);font-family:var(--mono)}
+.tour-ptr.left svg{animation-name:pokeLeft}
+@keyframes pokeLeft{0%,100%{transform:translate(0,0) rotate(-90deg)}50%{transform:translate(-8px,0) rotate(-90deg)}}
+.demo-queue{display:flex;flex-direction:column;gap:5px;font-size:12px}
+.dq-row{display:flex;justify-content:space-between;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:5px 8px}
+.dq-row span{color:var(--text-3)}
+.dq-row.r1{animation:rowPing 4.4s ease infinite}
+.dq-ro{display:flex;flex-direction:column;gap:2px;background:color-mix(in srgb,var(--n-auto) 8%,var(--surface));border:1.5px solid var(--n-auto);border-radius:8px;padding:6px 8px;opacity:0;animation:chatIn 4.4s ease infinite;animation-delay:1.1s}
+.dq-ro span{color:var(--text-3)}
+.dc-tag.auto{color:var(--n-auto)}
+.demo-donut{display:flex;align-items:center;gap:12px}
+.demo-donut .seg{opacity:.35;animation:segPulse 4.5s ease infinite}
+.demo-donut .s1{animation-delay:0s}.demo-donut .s2{animation-delay:1.2s}.demo-donut .s3{animation-delay:2.4s;opacity:.6}
+.dd-legend{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--text-2)}
+.dd-legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px}
+.dd-legend .hl{color:var(--text);font-weight:600;animation:hlPulse 4.5s ease infinite;animation-delay:2.4s}
+@keyframes rowPing{0%,12%{border-color:var(--border)}20%,40%{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 10%,var(--surface))}60%,100%{border-color:var(--border)}}
+@keyframes segPulse{0%,100%{opacity:.35}15%,30%{opacity:1}}
+@keyframes hlPulse{0%,100%{opacity:.7}15%,30%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.dq-row.r1,.dq-ro,.demo-donut .seg,.dd-legend .hl{animation:none;opacity:1}}
+@media (max-width:1280px){ .app:not(.m).canvas-open.canvas-wide .canvas{left:var(--rail-w);width:auto;box-shadow:none} }
 </style>
 </head>
 <body>
@@ -546,7 +577,7 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--surface-2);border:
 
   <!-- ============================ CANVAS ============================ -->
   <section class="canvas" id="canvas" aria-label="Canvas">
-    <div class="cv-head"><span id="cvTile"></span><h2 id="cvTitle">Canvas</h2><button class="btn ghost m-only" id="cvDone" style="font-weight:600;color:var(--brand)">Done</button><button class="icon-btn d-only" id="cvClose" title="Close canvas" aria-label="Close canvas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="cv-head"><button class="btn ghost sm" id="cvBack" hidden title="Back to Products">← Products</button><span id="cvTile"></span><h2 id="cvTitle">Canvas</h2><button class="btn ghost m-only" id="cvDone" style="font-weight:600;color:var(--brand)">Done</button><button class="icon-btn d-only" id="cvClose" title="Close canvas" aria-label="Close canvas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="cv-body" id="cvBody"></div>
   </section>
   <div class="toast" id="toast"></div>
@@ -1167,12 +1198,29 @@ RESPONDERS.wtcust=()=>({node:"monitor",trace:["Walkthrough"],lead:"To look up a 
   chips:[{label:"Try it: Bonita Murray",prompt:"Tell me about Bonita Murray"},{label:"Next: meet your products",prompt:"/apps"}]});
 
 /* ---------------- first-load modal + 3-step tour ---------------- */
-const TOUR = [
-  {sel:".composer",title:"Ask anything — or type /",body:"Start every task here in plain words. Type <kbd>/</kbd> to see every command AIVA knows — that's the fastest way to find something new.",demo:"type"},
-  {sel:"#kbdHint",alt:".composer",title:"Your Drive commands still work",body:`Press <kbd>${MOD}</kbd><kbd>K</kbd> from anywhere, type a Drive code like <kbd>TCE</kbd>, and press <kbd>↵</kbd>.`,demo:"keys"},
-  {sel:"#scroll",title:"…and they open right here",body:"The function you called opens inside this conversation, and bigger tools slide in beside it. No new windows, no hunting through menus.",demo:"open"}
+const NAV_ITEMS = [
+  {sel:"#cdkLogoBtn",title:"The CDK dot — home",body:"Tap it from anywhere to come back to Today. It's the one button that always takes you home."},
+  {sel:"#newChat",title:"New chat",body:"Start fresh when you switch tasks. Each chat keeps its own context, so a customer question never leaks into an RO lookup."},
+  {sel:"#navToday",title:"Today",body:"Your briefing. Each morning AIVA builds it from Service, Parts and the rest — the few things that need you first."},
+  {sel:"#navApps",title:"Products",body:"All nine Unify products. They open beside the chat, so the conversation you were having stays put."},
+  {sel:"#navActivity",title:"Activity",body:"Everything AIVA has written for you, and who confirmed it. Nothing writes itself — every change here was a yes from a person."},
+  {sel:"#threadList",title:"Your conversations",body:"Chats grouped by day. Pin the ones you keep coming back to — a regular customer, a long-running repair."},
+  {sel:"#personaBtn",title:"Your role",body:"Your role and store. It decides what AIVA shows you, so a number always means what you expect it to."},
+  {sel:".foot-row",title:"Theme and Mobile view",body:"Switch light or dark, and preview the phone layout you'll use on the lot."}
 ];
-const TOUR_STATE={i:0,on:false,timer:null};
+const TOUR = [
+  {part:"Basics",n:1,sel:".composer",title:"Ask anything — or type /",body:"Start every task here in plain words. Type <kbd>/</kbd> to see every command AIVA knows — that's the fastest way to find something new.",demo:"type"},
+  {part:"Basics",n:2,sel:"#kbdHint",alt:".composer",title:"Your Drive commands still work",body:`Press <kbd>${MOD}</kbd><kbd>K</kbd> from anywhere, type a Drive code like <kbd>TCE</kbd>, and press <kbd>↵</kbd>.`,demo:"keys"},
+  {part:"Basics",n:3,sel:"#scroll",title:"…and they open right here",body:"The function you called opens inside this conversation, and bigger tools slide in beside it. No new windows, no hunting through menus.",demo:"open"},
+  {checkpoint:true},
+  {part:"Explore",n:1,nav:true,place:"right",prep:"nav"},
+  {part:"Explore",n:2,sel:"#cvBody .cv-sec",pick:0,place:"left",prep:"service",title:"Service · Needs attention",
+    body:"This is your queue. Every row is a customer waiting on something. When Kapoor checks in for his 10:00, his row lights up — tap it and AIVA drafts the RO from his appointment notes, so you start the walk-around with the paperwork already done. Inspection approvals wait here too, until the customer says yes to the photos AIVA texted them.",demo:"queue"},
+  {part:"Explore",n:3,sel:"#cvBody .cv-sec",pick:1,place:"left",prep:"service",title:"Service · Dashboards",
+    body:"The numbers behind your lane. Open ROs splits into waiting on parts, in the bay, and ready for review. When Ready for Review climbs, that's your cue — each one is a customer to call with good news, and AIVA can draft the text before you pick up the phone.",demo:"donut"},
+  {final:true}
+];
+const TOUR_STATE={i:0,sub:0,on:false,timer:null,prepped:null};
 function frameOffset(){ const app=$("#app"); if(app.classList.contains("preview")){ const r=app.getBoundingClientRect(); return {x:r.left,y:r.top,w:r.width,h:r.height}; } return {x:0,y:0,w:window.innerWidth,h:window.innerHeight}; }
 function obLayer(){ let el=$("#obLayer"); if(!el){ el=document.createElement("div"); el.id="obLayer"; el.className="ob-layer"; $("#app").appendChild(el); } return el; }
 function showWelcome(){
@@ -1196,10 +1244,15 @@ function tourTarget(st){ let t=document.querySelector(st.sel); if(!tourVisible(t
 function startTour(){
   closeWelcome(); if(S.streaming) S.streaming.stop(); aivaCloseStage(); closeDrawer();
   let el=$("#tour"); if(!el){ el=document.createElement("div"); el.id="tour"; el.className="tour"; el.innerHTML=`<div class="tour-hole" id="tourHole"></div><div class="tour-ptr" id="tourPtr"><svg width="34" height="34" viewBox="0 0 24 24"><path d="M5 3l14 7-6.2 1.8L10 18z" fill="#fff" stroke="#0a0a0c" stroke-width="1.4" stroke-linejoin="round"/></svg></div><div class="tour-card" id="tourCard" role="dialog" aria-live="polite"></div>`; $("#app").appendChild(el); }
-  TOUR_STATE.on=true; TOUR_STATE.i=0; el.classList.add("show"); renderTour();
+  TOUR_STATE.on=true; TOUR_STATE.i=0; TOUR_STATE.sub=0; TOUR_STATE.prepped=null; el.classList.add("show"); renderTour();
 }
-function endTour(){ TOUR_STATE.on=false; clearInterval(TOUR_STATE.timer); const el=$("#tour"); if(el) el.classList.remove("show"); }
+function endTour(){ TOUR_STATE.on=false; clearInterval(TOUR_STATE.timer); TOUR_STATE.prepped=null; const el=$("#tour"); if(el) el.classList.remove("show");
+  // Back to the conversation: close every sheet the tour opened, then focus the message box.
+  closeDrawer(); aivaCloseStage(); closePersonaMenu(); closePop();
+  setTimeout(()=>{ scrollDown(); const inp=$("#input"); if(inp&&!isMobile()) inp.focus(); },320); }
 function demoHTML(kind){
+  if(kind==="queue") return `<div class="demo-queue"><div class="dq-row r1"><b>10:00 Arrival</b><span>Kapoor, K. · checked in</span></div><div class="dq-row r2"><b>MPI Approval</b><span>RO #98664 · Lacy, C.</span></div><div class="dq-ro"><span class="dc-tag auto">AUTOMATION</span><b>Draft RO for Kapoor, K.</b><span>From appointment notes · confirm to save</span></div></div>`;
+  if(kind==="donut") return `<div class="demo-donut"><svg width="64" height="64" viewBox="0 0 68 68"><circle cx="34" cy="34" r="26" fill="none" stroke="var(--surface-3)" stroke-width="10"/><circle class="seg s1" cx="34" cy="34" r="26" fill="none" stroke="var(--warning)" stroke-width="10" stroke-dasharray="27.8 135.6" transform="rotate(-90 34 34)"/><circle class="seg s2" cx="34" cy="34" r="26" fill="none" stroke="var(--brand)" stroke-width="10" stroke-dasharray="83.3 80.1" stroke-dashoffset="-27.8" transform="rotate(-90 34 34)"/><circle class="seg s3" cx="34" cy="34" r="26" fill="none" stroke="var(--success)" stroke-width="10" stroke-dasharray="52.3 111.1" stroke-dashoffset="-111.1" transform="rotate(-90 34 34)"/></svg><div class="dd-legend"><span><i style="background:var(--warning)"></i>Waiting on parts</span><span><i style="background:var(--brand)"></i>In the bay</span><span class="hl"><i style="background:var(--success)"></i>Ready — call the customer</span></div></div>`;
   if(kind==="type") return `<div class="demo-comp"><span id="demoText"></span><i class="demo-caret"></i></div><div class="demo-pop" id="demoPop"><div><kbd>/today</kbd><small>Your briefing</small></div><div><kbd>/drive</kbd><small>Drive commands</small></div><div><kbd>/learn</kbd><small>Tutorials</small></div></div>`;
   if(kind==="keys") return `<div class="demo-keys"><kbd class="k k1">${MOD}</kbd><kbd class="k k2">K</kbd><span class="k k3 arrow">→</span><kbd class="k k4">T</kbd><kbd class="k k5">C</kbd><kbd class="k k6">E</kbd><kbd class="k k7">↵</kbd></div>`;
   if(kind==="open") return `<div class="demo-chat"><div class="dc-user">TCE</div><div class="dc-ai"><span class="dc-tag">MONITORING</span><div class="dc-card"><b>Hours Logged</b><span>5.2 today</span><i></i></div></div></div>`;
@@ -1217,33 +1270,87 @@ function runDemo(kind){
     if(ci>=seq[si].length){ hold=seq[si]==="/"?34:16; if(seq[si]==="/") pop.classList.add("show"); }
   },70);
 }
+function tourPrep(st,cb){
+  const app=$("#app");
+  if(st.prep==="nav"){
+    aivaCloseStage();
+    if(isMobile()){ const was=app.classList.contains("drawer"); app.classList.add("drawer"); return setTimeout(cb,was?0:320); }
+    app.classList.remove("rail-min"); return setTimeout(cb,TOUR_STATE.prepped==="nav"?0:260);
+  }
+  if(st.prep==="service"){
+    closeDrawer();
+    const already=S.canvas.open&&S.canvas.kind==="app"&&S.canvas.app==="se";
+    if(!already) openCanvas({kind:"app",app:"se",tab:"Overview"});
+    const t=document.querySelectorAll(st.sel)[st.pick||0]; if(t&&t.scrollIntoView) t.scrollIntoView({block:"start"});
+    return setTimeout(cb,already?120:380);
+  }
+  closeDrawer(); if(S.canvas.open) aivaCloseStage();
+  cb();
+}
+function tourLabel(st){ return `${st.part} · ${st.n} of 3`; }
+function tourDots(i){
+  const steps=TOUR.filter(s=>s.part), cur=TOUR[i];
+  return `<div class="tour-dots">${steps.map(s=>{ const k=TOUR.indexOf(s); return `<i class="${k<i||(cur&&cur.final)?"done":k===i?"on":""}${s.part==="Explore"&&s.n===1?" gap":""}"></i>`; }).join("")}</div>`;
+}
+function placeCard(card,rect,o,place){
+  const cw=card.offsetWidth, ch=card.offsetHeight, m=12;
+  let cx,cy;
+  const rail=document.querySelector(".rail"), rr=rail?rail.getBoundingClientRect():null, railRight=rr?rr.right-(o.x||0):0;
+  const rx=place==="right"?Math.max(rect.x+rect.w,railRight):0;
+  if(place==="right"&&rx+m+cw<=o.w-8){ cx=rx+m; cy=Math.min(Math.max(8,rect.y+rect.h/2-ch/2),o.h-ch-8); }
+  else if(place==="left"&&rect.x-m-cw>=8){ cx=rect.x-m-cw; cy=Math.min(Math.max(8,rect.y),o.h-ch-8); }
+  else if(rect.y-m-ch>=8){ cx=rect.x+rect.w/2-cw/2; cy=rect.y-m-ch; }
+  else if(rect.y+rect.h+m+ch<=o.h-8){ cx=rect.x+rect.w/2-cw/2; cy=rect.y+rect.h+m; }
+  else { cx=(o.w-cw)/2; cy=o.h-ch-12; }
+  cx=Math.max(8,Math.min(o.w-cw-8,cx));
+  card.style.left=cx+"px"; card.style.top=Math.max(8,cy)+"px";
+  return {cx,cy,cw,ch};
+}
 function renderTour(){
   if(!TOUR_STATE.on) return;
-  const i=TOUR_STATE.i, done=i>=TOUR.length, card=$("#tourCard"), hole=$("#tourHole"), ptr=$("#tourPtr"), o=frameOffset();
-  const dots=`<div class="tour-dots">${TOUR.map((_,k)=>`<i class="${k<i||done?"done":k===i?"on":""}"></i>`).join("")}</div>`;
-  if(done){
-    hole.style.cssText=`left:${o.w/2}px;top:${o.h/2}px;width:0;height:0;`; ptr.classList.add("gone");
+  const st=TOUR[TOUR_STATE.i];
+  if(!st) return endTour();
+  if(st.part&&TOUR_STATE.prepped!==TOUR_STATE.i){ const at=TOUR_STATE.i; return tourPrep(st,()=>{ if(TOUR_STATE.on&&TOUR_STATE.i===at){ TOUR_STATE.prepped=at; drawTour(); } }); }
+  if(!st.part){ TOUR_STATE.prepped=TOUR_STATE.i; closeDrawer(); }
+  drawTour();
+}
+function drawTour(){
+  const i=TOUR_STATE.i, st=TOUR[i], card=$("#tourCard"), hole=$("#tourHole"), ptr=$("#tourPtr"), o=frameOffset();
+  if(st.checkpoint||st.final){
+    hole.style.cssText=`left:${o.w/2}px;top:${o.h/2}px;width:0;height:0;`; ptr.classList.add("gone"); clearInterval(TOUR_STATE.timer);
     card.className="tour-card center";
-    card.innerHTML=`${demoHTML("done")}<h3>That's the basics</h3><p>You can ask in plain words, find any command with <kbd>/</kbd>, and use your Drive codes with <kbd>${MOD}</kbd><kbd>K</kbd>.</p>${dots}<div class="tour-actions"><button class="btn ghost" data-tour-act="done">Done</button><button class="btn primary" data-tour-act="explore">Next: explore more →</button></div>`;
-    card.style.left=Math.max(12,(o.w-card.offsetWidth)/2)+"px"; card.style.top=Math.max(12,(o.h-card.offsetHeight)/2)+"px";
+    card.innerHTML=st.checkpoint
+      ?`${demoHTML("done")}<h3>That's the basics</h3><p>You can ask in plain words, find any command with <kbd>/</kbd>, and use your Drive codes with <kbd>${MOD}</kbd><kbd>K</kbd>.</p>${tourDots(i)}<div class="tour-actions"><button class="btn ghost" data-tour-act="done">Done</button><button class="btn primary" data-tour-act="explore">Next: explore more →</button></div>`
+      :`${demoHTML("done")}<h3>You're ready</h3><p>You know where everything lives, and how your day runs in Service. The rest you'll pick up by asking.</p>${tourDots(i)}<div class="tour-actions"><button class="btn ghost" data-tour-act="done">Done</button><button class="btn primary" data-tour-act="learn">Show all tutorials →</button></div>`;
+    card.style.left=Math.max(8,(o.w-card.offsetWidth)/2)+"px"; card.style.top=Math.max(8,(o.h-card.offsetHeight)/2)+"px";
     return;
   }
-  const st=TOUR[i], t=tourTarget(st);
-  const r=t.getBoundingClientRect(), pad=8, x=r.left-o.x-pad, y=r.top-o.y-pad, w=r.width+pad*2, hh=r.height+pad*2;
+  let title=st.title, body=st.body, sel=st.sel, demo=st.demo, subNav="";
+  if(st.nav){
+    const it=NAV_ITEMS[TOUR_STATE.sub]; title=it.title; body=it.body; sel=it.sel; demo=null;
+    subNav=`<div class="nav-pips">${NAV_ITEMS.map((x,k)=>`<button class="${k===TOUR_STATE.sub?"on":k<TOUR_STATE.sub?"done":""}" data-tour-sub="${k}" title="${esc(x.title)}"></button>`).join("")}<span>${TOUR_STATE.sub+1} / ${NAV_ITEMS.length}</span></div>`;
+  }
+  const t=st.pick!=null?(document.querySelectorAll(sel)[st.pick]||tourTarget({sel:"#canvas"})):tourTarget({sel,alt:st.alt});
+  const r=t.getBoundingClientRect(), pad=st.nav?4:8;
+  let x=r.left-o.x-pad, y=r.top-o.y-pad, w=r.width+pad*2, hh=r.height+pad*2;
+  const y2=Math.min(o.h-6,y+hh); y=Math.max(6,y); hh=Math.max(24,y2-y);   // clip to what's visible
   hole.style.cssText=`left:${x}px;top:${y}px;width:${w}px;height:${hh}px;`;
-  card.className="tour-card";
-  card.innerHTML=`<div class="tour-step">Step ${i+1} of ${TOUR.length}</div><h3>${st.title}</h3><p>${st.body}</p><div class="tour-demo">${demoHTML(st.demo)}</div>${dots}<div class="tour-actions"><button class="btn ghost sm" data-tour-act="skip">Skip tour</button><span style="flex:1"></span>${i>0?'<button class="btn sm" data-tour-act="back">Back</button>':""}<button class="btn primary sm" data-tour-act="next">Next</button></div>`;
-  const cw=card.offsetWidth, ch=card.offsetHeight;
-  const above=y-12-ch>=8, cy=above?y-12-ch:Math.min(o.h-ch-8,y+hh+12);
-  const cx=Math.max(8,Math.min(o.w-cw-8,x+w/2-cw/2));
-  card.style.left=cx+"px"; card.style.top=Math.max(8,cy)+"px";
+  card.className="tour-card"+(st.nav?" nav":"");
+  const lastSub=st.nav&&TOUR_STATE.sub<NAV_ITEMS.length-1;
+  card.innerHTML=`<div class="tour-step">${tourLabel(st)}${st.nav?" · Global navigation":""}</div><h3>${title}</h3><p>${body}</p>${demo?`<div class="tour-demo">${demoHTML(demo)}</div>`:""}${subNav}${tourDots(i)}<div class="tour-actions"><button class="btn ghost sm" data-tour-act="skip">Skip tour</button><span style="flex:1"></span><button class="btn sm" data-tour-act="back">Back</button><button class="btn primary sm" data-tour-act="next">${lastSub?"Next item":"Next"}</button></div>`;
+  const pc=placeCard(card,{x,y,w,h:hh},o,st.place);
   ptr.classList.remove("gone");
-  const px=Math.min(x+w-28,Math.max(x+12,x+w/2+40)), py=above?y-4:y+hh-26;
-  ptr.style.left=px+"px"; ptr.style.top=py+"px"; ptr.classList.toggle("up",!above);
-  runDemo(st.demo);
+  const besideRight=st.place==="right"&&pc.cx>=x+w, besideLeft=st.place==="left"&&pc.cx+pc.cw<=x;
+  const above=!besideRight&&!besideLeft&&pc.cy+pc.ch<=y;
+  let px,py;
+  if(besideRight){ px=pc.cx-30; py=y+hh/2-14; ptr.className="tour-ptr left"; }
+  else if(besideLeft){ px=x+10; py=Math.min(y+30,y+hh-30); ptr.className="tour-ptr"; }
+  else { px=Math.min(x+w-28,Math.max(x+12,x+w/2+40)); py=above?y-4:y+hh-26; ptr.className="tour-ptr"+(above?"":" up"); }
+  ptr.style.left=px+"px"; ptr.style.top=py+"px";
+  runDemo(demo);
 }
 function maybeWelcome(pk){ if(pk==="newHire") setTimeout(()=>{ if(S.persona==="newHire"&&!TOUR_STATE.on) showWelcome(); },700); }
-window.addEventListener("resize",()=>{ if(TOUR_STATE.on) renderTour(); });
+window.addEventListener("resize",()=>{ if(TOUR_STATE.on) drawTour(); });
 document.addEventListener("keydown",e=>{
   if(e.key==="Escape"){ if(TOUR_STATE.on) return endTour(); if($("#obLayer.show")) return closeWelcome(); }
   if((e.ctrlKey||e.metaKey)&&!e.altKey&&e.key&&e.key.toLowerCase()==="k"){
@@ -1419,7 +1526,8 @@ function resolveCfm(id,yes){
 /* ==========================================================================
    CANVAS — one state object; every Open card reads from it
    ========================================================================== */
-function openCanvas(st){ Object.assign(S.canvas,{open:true,kind:null,app:null,rec:null,doc:null,tab:null,set:null},st); $("#app").classList.add("canvas-open"); renderCanvas(); syncOpenButtons(); }
+const WIDE_SHEETS=["launcher","activity"];
+function openCanvas(st){ const inside=S.canvas.open&&S.canvas.wide, fromKind=S.canvas.open?S.canvas.kind:null, prevBack=S.canvas.back; Object.assign(S.canvas,{open:true,kind:null,app:null,rec:null,doc:null,tab:null,set:null,wide:false,back:null},st); if(WIDE_SHEETS.includes(S.canvas.kind)||inside||st.wide) S.canvas.wide=true; if(st.back===undefined) S.canvas.back=(inside&&fromKind==="launcher"&&S.canvas.kind!=="launcher")?"launcher":(inside&&st.kind!=="launcher"&&prevBack)||null; $("#app").classList.add("canvas-open"); $("#app").classList.toggle("canvas-wide",!!S.canvas.wide); $("#cvBack").hidden=!S.canvas.back; renderCanvas(); syncOpenButtons(); }
 function aivaCloseStage(){ S.canvas.open=false; $("#app").classList.remove("canvas-open"); clearInterval(S.runTimer); S.runTimer=null; syncOpenButtons(); }
 function syncOpenButtons(){
   const c=S.canvas;
@@ -1430,7 +1538,7 @@ function renderCanvas(){
   const c=S.canvas, body=$("#cvBody");
   if(c.kind==="app"){
     const a=APPS[c.app]; $("#cvTile").innerHTML=tileHTML(c.app); $("#cvTitle").innerHTML=`${esc(a.name)}<small>Statler Toyota</small>`;
-    const items=allItems().filter(i=>i.icon===c.app), cards=allCards().filter(x=>cardApp(x)===c.app);
+    const items=allItems().filter(i=>i.icon===c.app&&i.persona!=="newHire"), cards=allCards().filter(x=>cardApp(x)===c.app);
     const tabs=["Overview","Needs attention","Dashboards"].concat(c.app==="dm"?["Documents"]:[]);
     const tab=c.tab||(c.rec?"Overview":"Overview");
     const recItem=c.rec?(allItems().find(i=>i.text===c.rec)||CUSTOMERS.map(x=>({text:x.name,sub:x.sub,icon:x.app})).find(i=>i.text===c.rec)):null;
@@ -1579,10 +1687,13 @@ document.addEventListener("click",e=>{
   if((el=g("[data-pop]"))) return choosePop(+el.dataset.pop);
   if((el=g("[data-ob]"))){ const a=el.dataset.ob; if(a==="tour") return startTour(); closeWelcome(); return $("#input").focus(); }
   if((el=g("[data-tour-act]"))){ const a=el.dataset.tourAct;
-    if(a==="next"){ TOUR_STATE.i++; return renderTour(); }
-    if(a==="back"){ TOUR_STATE.i=Math.max(0,TOUR_STATE.i-1); return renderTour(); }
-    if(a==="explore"){ endTour(); return ask("/learn"); }
+    const st=TOUR[TOUR_STATE.i]||{};
+    if(a==="next"){ if(st.nav&&TOUR_STATE.sub<NAV_ITEMS.length-1){ TOUR_STATE.sub++; return drawTour(); } TOUR_STATE.i++; return renderTour(); }
+    if(a==="back"){ if(st.nav&&TOUR_STATE.sub>0){ TOUR_STATE.sub--; return drawTour(); } TOUR_STATE.i=Math.max(0,TOUR_STATE.i-1); if(TOUR[TOUR_STATE.i].nav) TOUR_STATE.sub=NAV_ITEMS.length-1; return renderTour(); }
+    if(a==="explore"){ TOUR_STATE.i++; TOUR_STATE.sub=0; return renderTour(); }
+    if(a==="learn"){ endTour(); return ask("/learn"); }
     return endTour(); }
+  if((el=g("[data-tour-sub]"))){ TOUR_STATE.sub=+el.dataset.tourSub; return drawTour(); }
   if(g("#kbdHint")){ const inp=$("#input"); inp.value=""; inp.focus(); POP.start=0; return openPop("k",""); }
   if((el=g("[data-tour]"))) return startTour();
   if((el=g("[data-cfm-yes]"))) return resolveCfm(el.dataset.cfmYes,true);
@@ -1621,7 +1732,8 @@ document.addEventListener("click",e=>{
   if(g("#themeBtn")) return toggleTheme();
   if(g("#railMin")||(g(".app.rail-min .rail-top"))) return $("#app").classList.toggle("rail-min");
   if(g("#cvClose")) return aivaCloseStage();
-  if(g("#canvasToggle")) return S.canvas.open?aivaCloseStage():openCanvas(S.canvas.kind?{kind:S.canvas.kind,app:S.canvas.app,doc:S.canvas.doc,run:S.canvas.run,set:S.canvas.set,tab:S.canvas.tab,rec:S.canvas.rec}:{kind:"app",app:P().apps[0]});
+  if(g("#cvBack")) return openCanvas({kind:"launcher"});
+  if(g("#canvasToggle")) return S.canvas.open?aivaCloseStage():openCanvas(S.canvas.kind?{kind:S.canvas.kind,app:S.canvas.app,doc:S.canvas.doc,run:S.canvas.run,set:S.canvas.set,tab:S.canvas.tab,rec:S.canvas.rec,wide:S.canvas.wide,back:S.canvas.back}:{kind:"app",app:P().apps[0]});
   if(g("#atBtn")){ const i=$("#input"); i.value+=(i.value&&!/\s$/.test(i.value)?" ":"")+"@"; i.focus(); i.selectionStart=i.value.length; return onInput(); }
   if(g("#slashBtn")){ const i=$("#input"); i.value="/"; i.focus(); return onInput(); }
   if(g("#micBtn")) return micClick();
