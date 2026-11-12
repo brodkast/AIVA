@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0e1014">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>AIVA — Unify Chat (v14)</title>
+<title>AIVA — Unify Chat (v16)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -69,6 +69,13 @@ html[data-theme="dark"] .cdk-dot{border-color:#fff}
 .th{display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:8px;cursor:pointer;color:var(--text-2)}
 .th:hover{background:var(--surface-3)}
 .th.on{background:var(--surface);color:var(--text);box-shadow:inset 0 0 0 1px var(--border)}
+.rc{display:flex;align-items:center;gap:9px;padding:6px 10px;border-radius:8px;cursor:pointer;min-width:0}
+.rc:hover{background:var(--surface-3)}
+.rc .tile.sm{--tile-px:20px}
+.rc-t{min-width:0;display:flex;flex-direction:column;line-height:1.3}
+.rc-t b{font-weight:500;font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rc-t small{font-size:11.5px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app.m .rc{min-height:44px}
 .th span.t{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .th .icon-btn{width:24px;height:24px;opacity:0}
 .th:hover .icon-btn,.th .icon-btn.pinned{opacity:1}
@@ -518,6 +525,11 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--surface-2);border:
 @keyframes hlPulse{0%,100%{opacity:.7}15%,30%{opacity:1}}
 @media (prefers-reduced-motion:reduce){.dq-row.r1,.dq-ro,.demo-donut .seg,.dd-legend .hl{animation:none;opacity:1}}
 @media (max-width:1280px){ .app:not(.m).canvas-open.canvas-wide .canvas{left:var(--rail-w);width:auto;box-shadow:none} }
+.tbl .pri{white-space:nowrap}
+.demo-typed{gap:1px;font-family:var(--mono);font-size:14px}
+.demo-typed .k{opacity:0;animation:keypress 4.2s ease infinite}
+.demo-typed .k5{animation-delay:.3s}.demo-typed .k6{animation-delay:.6s}.demo-typed .k7{animation-delay:1s;margin-left:auto;color:var(--brand);border-color:var(--brand)}
+.demo-typed .k4{animation-delay:0s}
 </style>
 </head>
 <body>
@@ -565,7 +577,6 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--surface-2);border:
         <div class="c-row">
           <button class="icon-btn" id="atBtn" title="Mention a record (@)" aria-label="Mention a record"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg></button>
           <button class="icon-btn" id="slashBtn" title="Commands (/)" aria-label="Commands"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M14 7l-4 10"/></svg></button>
-          <span class="kbd-hint d-only" id="kbdHint" title="CDK Drive commands"><kbd class="modk">Ctrl</kbd><kbd>K</kbd> Drive commands</span>
           <span class="sp"></span>
           <button class="icon-btn mic" id="micBtn" title="Voice (simulated)" aria-label="Voice input"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
           <button class="send" id="sendBtn" aria-label="Send" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
@@ -599,7 +610,7 @@ PERSONAS.newHire = {label:"Service Advisor (new hire)",short:"New Hire",
   banner:"Your first week — orientation, walkthroughs and the commands you'll use most.",
   activity:[
     {icon:"se",text:"Welcome tour",sub:"3 steps · about a minute"},
-    {icon:"se",text:"Your Drive commands in Unify",sub:"TCE and the codes you know · keyboard first"},
+    {icon:"se",text:"Your Drive commands in Unify",sub:"TCE, CHK and the codes you know · type them in the message box"},
     {icon:"se",text:"Walkthrough: find a repair order",sub:"One line — try RO 124210"},
     {icon:"crm-red",text:"Walkthrough: look up a customer",sub:"Use @ to pick a record"},
     {icon:"is",text:"Meet your products",sub:"9 Unify products · they open beside the chat"}],
@@ -1028,6 +1039,7 @@ function srcLine(apps,extra){ return {t:"src",apps:[...new Set(apps)],text:extra
 function openChip(app,rec){ return {label:`Open in ${APPS[app].name}`,open:app,rec:rec||null}; }
 function respond(text){
   const dc = driveMatch(text); if(dc) return driveAnswer(dc.cmd,dc.arg);   // Drive codes are commands, like /
+  const ac = acctMatch(text); if(ac) return acctAnswer(ac);                 // accounting codes: recognised, not wired
   const ref = /^\//.test(text) ? null : aivaCiFind(text);   // 1. context items first
   if(ref && ref.hits.length){
     // Guard: a record reference never unlocks an unsourced spec.
@@ -1086,7 +1098,7 @@ const RESPONDERS = {
     return {node:"monitor",trace:["Product catalog"],lead:`I can reach <b>${Object.keys(APPS).length-AIVA_UNSUPPORTED_APPS.length} of ${Object.keys(APPS).length}</b> Unify products. Pick one to open it beside the chat.`,blocks:[{t:"tbl",head:["Product","What I can see"],rows,click:Object.keys(APPS).map(k=>"Open "+APPS[k].name)},srcLine(Object.keys(APPS).filter(k=>!AIVA_UNSUPPORTED_APPS.includes(k)))],chips:(P().apps||[]).slice(0,3).map(a=>openChip(a))};
   },
   help(){
-    const rows=[["<kbd>/today</kbd>","Your briefing: what needs you today"],["<kbd>/apps</kbd>","Every product and what I can see in it"],["<kbd>/runner</kbd>","Play the cross-product flow on the canvas"],["<kbd>/learn</kbd>","Tutorials, walkthroughs and the welcome tour"],["<kbd>/drive</kbd>","Your CDK Drive codes — they still work, with "+MOD+" K"],["<kbd>/activity</kbd>","Everything AIVA has written, and who confirmed it"],["<kbd>/duplicates</kbd>","Duplicate customers, and a gated merge"],["<kbd>@</kbd>","Reference an RO, deal, PO, customer or document"],["Ask about a number","“Show my Open ROs”, “What's my PVR?”"],["Ask about a record","“What's going on with RO #124211?”"],["Ask me to act","“Send the MPI to the customer” — I'll ask before I do it"]];
+    const rows=[["<kbd>/today</kbd>","Your briefing: what needs you today"],["<kbd>/apps</kbd>","Every product and what I can see in it"],["<kbd>/runner</kbd>","Play the cross-product flow on the canvas"],["<kbd>/learn</kbd>","Tutorials, walkthroughs and the welcome tour"],["<kbd>/drive</kbd>","Your CDK Drive codes — type one in the message box and press Enter"],["<kbd>/activity</kbd>","Everything AIVA has written, and who confirmed it"],["<kbd>/duplicates</kbd>","Duplicate customers, and a gated merge"],["<kbd>@</kbd>","Reference an RO, deal, PO, customer or document"],["Ask about a number","“Show my Open ROs”, “What's my PVR?”"],["Ask about a record","“What's going on with RO #124211?”"],["Ask me to act","“Send the MPI to the customer” — I'll ask before I do it"]];
     return {node:"monitor",trace:[],lead:`Here's everything I can do as your <b>${esc(P().label)}</b> assistant.`,blocks:[{t:"tbl",head:["Try","What happens"],rows},{t:"msg",html:`Every answer is tagged with what produced it: ${nodeTag("monitor")} reads, ${nodeTag("rules")} recommends, ${nodeTag("auto")} acts — and only after you confirm.`}],chips:starters(S.persona)};
   },
   priorPeriod(){
@@ -1145,13 +1157,34 @@ const DRIVE_CMDS = [
   {code:"CI",label:"Customer inquiry",note:"Pick a customer, or type @ and a name.",run:()=>({customers:true,app:"crm-red"})},
   {code:"MPI",label:"Multi-point inspections",note:"Inspections waiting on approval.",run:()=>({prompt:"MPI Approval"})}
 ];
+
+/* CDK Drive accounting codes — "Dealership Accounting Re-Imagined / Accounting Connect".
+   Grouped as in the deck; each area lists the modern workflows the deck maps it to.
+   Not wired yet: recognised in the message box, but they do nothing until connected. */
+const ACCT_AREAS = [
+  {key:"ar",name:"Accounts Receivable",codes:["CAP","ARP","ARC","AFC","ACT","ARSPT","ARS","ATB","ARO","ARAD","ACR"],workflows:["Accounts Receivable Dashboard","Apply Payments","Statements"]},
+  {key:"ap",name:"Accounts Payable",codes:["DPO","MPH","POA","MCP","AOMD","AOMQ","BCP","OPR","PER","CVR","CPO","AOMM","AOMI","AOMS","AOMV","EIV","API","PCK","APR","DIV","CHK","REG","CRI"],workflows:["Purchase Order","AP Invoice","AP Payments","On-Demand Payments","Payment Register"]},
+  {key:"gl",name:"General Ledger",codes:["AGJE","AGJP","AGJA","AGJV","AGRI"],workflows:["Create Journal Entry","Adjust/Reverse Journal Entry","GL Inquiry"]},
+  {key:"fs",name:"1099 & Financial Statements",codes:["YER","CPC","DIT","FSF","FSP","FST","FSV","PCL","SFL","SFS","SFT","TFD","FSH","SFA"],workflows:["1099","Financial Statements"]}
+];
+const ACCT_CODES = ACCT_AREAS.flatMap(a=>a.codes.map(code=>({code,area:a.key,areaName:a.name,workflows:a.workflows,wired:false})));
+function acctMatch(text){
+  const m=/^\s*([A-Za-z]{3,5})\s*$/.exec(text||""); if(!m) return null;
+  return ACCT_CODES.find(c=>c.code===m[1].toUpperCase())||null;
+}
+function acctAnswer(c){
+  return {node:"monitor",trace:["Drive command "+c.code],lead:`<b>${esc(c.code)}</b> is a CDK Drive ${esc(c.areaName)} command. It isn't connected yet.`,
+    blocks:[{t:"msg",html:`In Accounting Connect, ${esc(c.areaName)} is handled by ${c.workflows.map(w=>`<b>${esc(w)}</b>`).join(", ")}. Once ${esc(c.code)} is wired up, typing it here will open that work in this conversation.`},
+      srcLine(["dr"],"Accounting Connect · Drive code map")],
+    chips:[{label:"All Drive commands",prompt:"/drive"}]};
+}
 function driveMatch(text){
   const m=/^\s*([A-Za-z]{2,5})(?:\s+#?(\d{4,7}))?\s*$/.exec(text||""); if(!m) return null;
   const cmd=DRIVE_CMDS.find(c=>c.code===m[1].toUpperCase()); if(!cmd) return null;
   if(m[1]!==m[1].toUpperCase()&&m[1].length<3) return null;   // "ro" in lower case is a word, not a code
   return {cmd,arg:m[2]||null};
 }
-function driveKbd(code){ return `<span class="keys"><kbd>${MOD}</kbd><kbd>K</kbd> <span class="lbl">then</span> ${code.split("").map(c=>`<kbd>${c}</kbd>`).join("")} <kbd>↵</kbd></span>`; }
+function driveKbd(code){ return `<span class="keys"><span class="lbl">type</span> ${code.split("").map(c=>`<kbd>${c}</kbd>`).join("")} <kbd>↵</kbd> <span class="lbl">in the message box</span></span>`; }
 function driveAnswer(cmd,arg){
   const r=cmd.run(arg), dag=cmd.grounded?"":'<span class="dag">†</span>';
   if(r.prompt){ const inner=respond(r.prompt); inner.lead=`<b>${esc(cmd.code)}${arg?" "+esc(arg):""}</b>${dag} — ${esc(cmd.label)}. `+inner.lead; inner.trace=["Drive command "+cmd.code].concat(inner.trace||[]); return inner; }
@@ -1174,7 +1207,7 @@ function newHireBriefing(first){
 }
 function learnAnswer(){
   const rows=[["Welcome tour","3 steps · the composer, your Drive commands, where things open","/tour"],
-    ["Your Drive commands","Every code, with its keyboard shortcut","/drive"],
+    ["Your Drive commands","Every code you know, typed straight into the message box","/drive"],
     ["Find a repair order","One line, every product it appears in","Walk me through finding a repair order"],
     ["Look up a customer","Use @ to pick a record","Walk me through looking up a customer"],
     ["Meet your products","All nine Unify products, opened beside the chat","/apps"],
@@ -1186,12 +1219,15 @@ function learnAnswer(){
 }
 RESPONDERS.tour=()=>({node:"monitor",trace:[],lead:"Starting the welcome tour — three steps.",blocks:[],chips:[{label:"Show all tutorials",prompt:"/learn"}],after:()=>startTour()});
 RESPONDERS.learn=learnAnswer;
-RESPONDERS.drivelist=()=>({node:"monitor",trace:["Drive command map"],lead:`Your CDK Drive codes work here. Press <kbd>${MOD}</kbd><kbd>K</kbd> anywhere — or just type the code — and the function opens in this chat.`,
+RESPONDERS.drivelist=()=>({node:"monitor",trace:["Drive command map"],lead:`Your CDK Drive codes work here. Type the code in the message box and press <kbd>↵</kbd> — no special keys.`,
   blocks:[{t:"tbl",head:["Drive code","Opens","Keyboard"],rows:DRIVE_CMDS.map(c=>[`<kbd>${esc(c.code)}</kbd>${c.grounded?"":'<span class="dag">†</span>'}`,`<b>${esc(c.label)}</b><div class="lbl">${esc(c.note)}</div>`,driveKbd(c.code)]),click:DRIVE_CMDS.map(c=>c.code+(c.arg?" 124210":""))},
-    {t:"lim",html:"<b>TCE</b> is confirmed: it was Drive's quick-launch code for the timeclock, and Unify's equivalent is the ETC tile. Codes marked † are placeholders awaiting SME confirmation."}],
+    {t:"lim",html:"<b>TCE</b> is confirmed: it was Drive's quick-launch code for the timeclock, and Unify's equivalent is the ETC tile. Codes marked † are placeholders awaiting SME confirmation."},
+    {t:"h",text:"Accounting · from Accounting Connect"},
+    {t:"tbl",head:["Area","Drive codes","Modern workflows","Status"],rows:ACCT_AREAS.map(a=>[`<b>${esc(a.name)}</b><div class="lbl">${a.codes.length} codes</div>`,a.codes.map(c=>`<kbd>${c}</kbd>`).join(" "),a.workflows.map(esc).join("<br>"),'<span class="pri low">Not wired yet</span>'])},
+    srcLine(["dr"],"Dealership Accounting Re-Imagined · Accounting Connect")],
   chips:[{label:"Try TCE",prompt:"TCE"},{label:"Try RO 124210",prompt:"RO 124210"}]});
 RESPONDERS.wtro=()=>({node:"monitor",trace:["Walkthrough"],lead:"Finding a repair order takes one line.",
-  blocks:[{t:"ol",items:[`Type the RO number — <kbd>RO 124210</kbd> — or press <kbd>${MOD}</kbd><kbd>K</kbd> and use your Drive code.`,"AIVA shows every product the RO appears in: Service, Parts, and who's working it.","Open it in Service beside the chat. The conversation stays where it is."]}],
+  blocks:[{t:"ol",items:[`Type the RO number — <kbd>RO 124210</kbd> — straight into the message box, the way you'd type a Drive code.`,"AIVA shows every product the RO appears in: Service, Parts, and who's working it.","Open it in Service beside the chat. The conversation stays where it is."]}],
   chips:[{label:"Try it: RO 124210",prompt:"RO 124210"},{label:"Next: look up a customer",prompt:"Walk me through looking up a customer"}]});
 RESPONDERS.wtcust=()=>({node:"monitor",trace:["Walkthrough"],lead:"To look up a customer, name them — or pick them.",
   blocks:[{t:"ol",items:["Type <kbd>@</kbd> in the message box to pick from the records AIVA can reach.","Choose a customer, add your question, and send.","Every product that knows them answers at once — no switching screens."]}],
@@ -1202,6 +1238,7 @@ const NAV_ITEMS = [
   {sel:"#cdkLogoBtn",title:"The CDK dot — home",body:"Tap it from anywhere to come back to Today. It's the one button that always takes you home."},
   {sel:"#newChat",title:"New chat",body:"Start fresh when you switch tasks. Each chat keeps its own context, so a customer question never leaks into an RO lookup."},
   {sel:"#navToday",title:"Today",body:"Your briefing. Each morning AIVA builds it from Service, Parts and the rest — the few things that need you first."},
+  {sel:"#recentList",alt:"#threadList",title:"Recently opened",body:"The ROs, deals and documents you've been working on, one tap from picking up where you left off. It fills in as you work — on your first day it's empty."},
   {sel:"#navApps",title:"Products",body:"All nine Unify products. They open beside the chat, so the conversation you were having stays put."},
   {sel:"#navActivity",title:"Activity",body:"Everything AIVA has written for you, and who confirmed it. Nothing writes itself — every change here was a yes from a person."},
   {sel:"#threadList",title:"Your conversations",body:"Chats grouped by day. Pin the ones you keep coming back to — a regular customer, a long-running repair."},
@@ -1210,7 +1247,7 @@ const NAV_ITEMS = [
 ];
 const TOUR = [
   {part:"Basics",n:1,sel:".composer",title:"Ask anything — or type /",body:"Start every task here in plain words. Type <kbd>/</kbd> to see every command AIVA knows — that's the fastest way to find something new.",demo:"type"},
-  {part:"Basics",n:2,sel:"#kbdHint",alt:".composer",title:"Your Drive commands still work",body:`Press <kbd>${MOD}</kbd><kbd>K</kbd> from anywhere, type a Drive code like <kbd>TCE</kbd>, and press <kbd>↵</kbd>.`,demo:"keys"},
+  {part:"Basics",n:2,sel:".composer",title:"Your Drive commands still work",body:`Type a Drive code like <kbd>TCE</kbd> or <kbd>CHK</kbd> right in the message box and press <kbd>↵</kbd>. No special keys — it's a command like any other.`,demo:"keys"},
   {part:"Basics",n:3,sel:"#scroll",title:"…and they open right here",body:"The function you called opens inside this conversation, and bigger tools slide in beside it. No new windows, no hunting through menus.",demo:"open"},
   {checkpoint:true},
   {part:"Explore",n:1,nav:true,place:"right",prep:"nav"},
@@ -1231,7 +1268,7 @@ function showWelcome(){
     <p>You're set up as a <b>Service Advisor</b> at Statler Toyota. Everything starts with a conversation — ask for what you need and AIVA brings the right tool to you.</p>
     <div class="ob-points">
       <div><span class="ob-ic">${markSVG(18)}</span><span><b>Ask in plain words</b><small>Type <kbd>/</kbd> to discover every command</small></span></div>
-      <div><span class="ob-ic"><kbd>${MOD}</kbd></span><span><b>Your CDK Drive commands still work</b><small><kbd>${MOD}</kbd><kbd>K</kbd> then a code like <kbd>TCE</kbd></small></span></div>
+      <div><span class="ob-ic"><kbd>TCE</kbd></span><span><b>Your CDK Drive commands still work</b><small>Type a code like <kbd>TCE</kbd> or <kbd>CHK</kbd> in the message box</small></span></div>
       <div><span class="ob-ic">↗</span><span><b>Functions open right in the chat</b><small>No new windows to manage</small></span></div>
     </div>
     <div class="ob-actions"><button class="btn primary" data-ob="tour">Show me around · 3 steps</button><button class="btn ghost" data-ob="skip">I'll explore on my own</button></div>
@@ -1254,7 +1291,7 @@ function demoHTML(kind){
   if(kind==="queue") return `<div class="demo-queue"><div class="dq-row r1"><b>10:00 Arrival</b><span>Kapoor, K. · checked in</span></div><div class="dq-row r2"><b>MPI Approval</b><span>RO #98664 · Lacy, C.</span></div><div class="dq-ro"><span class="dc-tag auto">AUTOMATION</span><b>Draft RO for Kapoor, K.</b><span>From appointment notes · confirm to save</span></div></div>`;
   if(kind==="donut") return `<div class="demo-donut"><svg width="64" height="64" viewBox="0 0 68 68"><circle cx="34" cy="34" r="26" fill="none" stroke="var(--surface-3)" stroke-width="10"/><circle class="seg s1" cx="34" cy="34" r="26" fill="none" stroke="var(--warning)" stroke-width="10" stroke-dasharray="27.8 135.6" transform="rotate(-90 34 34)"/><circle class="seg s2" cx="34" cy="34" r="26" fill="none" stroke="var(--brand)" stroke-width="10" stroke-dasharray="83.3 80.1" stroke-dashoffset="-27.8" transform="rotate(-90 34 34)"/><circle class="seg s3" cx="34" cy="34" r="26" fill="none" stroke="var(--success)" stroke-width="10" stroke-dasharray="52.3 111.1" stroke-dashoffset="-111.1" transform="rotate(-90 34 34)"/></svg><div class="dd-legend"><span><i style="background:var(--warning)"></i>Waiting on parts</span><span><i style="background:var(--brand)"></i>In the bay</span><span class="hl"><i style="background:var(--success)"></i>Ready — call the customer</span></div></div>`;
   if(kind==="type") return `<div class="demo-comp"><span id="demoText"></span><i class="demo-caret"></i></div><div class="demo-pop" id="demoPop"><div><kbd>/today</kbd><small>Your briefing</small></div><div><kbd>/drive</kbd><small>Drive commands</small></div><div><kbd>/learn</kbd><small>Tutorials</small></div></div>`;
-  if(kind==="keys") return `<div class="demo-keys"><kbd class="k k1">${MOD}</kbd><kbd class="k k2">K</kbd><span class="k k3 arrow">→</span><kbd class="k k4">T</kbd><kbd class="k k5">C</kbd><kbd class="k k6">E</kbd><kbd class="k k7">↵</kbd></div>`;
+  if(kind==="keys") return `<div class="demo-comp demo-typed"><span class="k k4">T</span><span class="k k5">C</span><span class="k k6">E</span><i class="demo-caret"></i><kbd class="k k7">↵</kbd></div>`;
   if(kind==="open") return `<div class="demo-chat"><div class="dc-user">TCE</div><div class="dc-ai"><span class="dc-tag">MONITORING</span><div class="dc-card"><b>Hours Logged</b><span>5.2 today</span><i></i></div></div></div>`;
   if(kind==="done") return `<div class="demo-done">${markSVG(40)}<i class="ob-spark s1"></i><i class="ob-spark s2"></i><i class="ob-spark s3"></i></div>`;
   return "";
@@ -1320,7 +1357,7 @@ function drawTour(){
     hole.style.cssText=`left:${o.w/2}px;top:${o.h/2}px;width:0;height:0;`; ptr.classList.add("gone"); clearInterval(TOUR_STATE.timer);
     card.className="tour-card center";
     card.innerHTML=st.checkpoint
-      ?`${demoHTML("done")}<h3>That's the basics</h3><p>You can ask in plain words, find any command with <kbd>/</kbd>, and use your Drive codes with <kbd>${MOD}</kbd><kbd>K</kbd>.</p>${tourDots(i)}<div class="tour-actions"><button class="btn ghost" data-tour-act="done">Done</button><button class="btn primary" data-tour-act="explore">Next: explore more →</button></div>`
+      ?`${demoHTML("done")}<h3>That's the basics</h3><p>You can ask in plain words, find any command with <kbd>/</kbd>, and type your Drive codes right in the message box.</p>${tourDots(i)}<div class="tour-actions"><button class="btn ghost" data-tour-act="done">Done</button><button class="btn primary" data-tour-act="explore">Next: explore more →</button></div>`
       :`${demoHTML("done")}<h3>You're ready</h3><p>You know where everything lives, and how your day runs in Service. The rest you'll pick up by asking.</p>${tourDots(i)}<div class="tour-actions"><button class="btn ghost" data-tour-act="done">Done</button><button class="btn primary" data-tour-act="learn">Show all tutorials →</button></div>`;
     card.style.left=Math.max(8,(o.w-card.offsetWidth)/2)+"px"; card.style.top=Math.max(8,(o.h-card.offsetHeight)/2)+"px";
     return;
@@ -1330,7 +1367,7 @@ function drawTour(){
     const it=NAV_ITEMS[TOUR_STATE.sub]; title=it.title; body=it.body; sel=it.sel; demo=null;
     subNav=`<div class="nav-pips">${NAV_ITEMS.map((x,k)=>`<button class="${k===TOUR_STATE.sub?"on":k<TOUR_STATE.sub?"done":""}" data-tour-sub="${k}" title="${esc(x.title)}"></button>`).join("")}<span>${TOUR_STATE.sub+1} / ${NAV_ITEMS.length}</span></div>`;
   }
-  const t=st.pick!=null?(document.querySelectorAll(sel)[st.pick]||tourTarget({sel:"#canvas"})):tourTarget({sel,alt:st.alt});
+  const t=st.pick!=null?(document.querySelectorAll(sel)[st.pick]||tourTarget({sel:"#canvas"})):tourTarget({sel,alt:st.nav?NAV_ITEMS[TOUR_STATE.sub].alt:st.alt});
   const r=t.getBoundingClientRect(), pad=st.nav?4:8;
   let x=r.left-o.x-pad, y=r.top-o.y-pad, w=r.width+pad*2, hh=r.height+pad*2;
   const y2=Math.min(o.h-6,y+hh); y=Math.max(6,y); hh=Math.max(24,y2-y);   // clip to what's visible
@@ -1353,10 +1390,6 @@ function maybeWelcome(pk){ if(pk==="newHire") setTimeout(()=>{ if(S.persona==="n
 window.addEventListener("resize",()=>{ if(TOUR_STATE.on) drawTour(); });
 document.addEventListener("keydown",e=>{
   if(e.key==="Escape"){ if(TOUR_STATE.on) return endTour(); if($("#obLayer.show")) return closeWelcome(); }
-  if((e.ctrlKey||e.metaKey)&&!e.altKey&&e.key&&e.key.toLowerCase()==="k"){
-    e.preventDefault(); if(TOUR_STATE.on) endTour(); closeWelcome();
-    const inp=$("#input"); inp.value=""; autosize(inp); setComposerState(); inp.focus(); POP.start=0; openPop("k","");
-  }
 });
 
 function briefingAnswer(pk,first){
@@ -1494,12 +1527,19 @@ function startBriefing(pk){
   S.cur=th.id; renderThread();
   const t=addAI(th,briefingAnswer(pk,true)); streamTurn(t);
 }
+/* Recently opened — the role's activity feed from the master prototype (v30 renderRecentlyOpened(p.activity)). */
+function recentHTML(){
+  if(S.persona==="newHire") return "";   // new at the company: nothing opened yet
+  const items=(P().activity||[]).slice(0,6);
+  if(!items.length) return "";
+  return `<div id="recentList"><div class="rail-h">Recently opened</div>${items.map(a=>`<div class="rc" data-prompt="${esc("What's happening with "+a.text+"?")}" title="${esc(a.text+" · "+a.sub)}">${tileHTML(a.icon,"sm")}<span class="rc-t"><b>${esc(a.text)}</b><small>${esc(a.sub)}</small></span></div>`).join("")}</div>`;
+}
 function renderRail(){
   const list=Object.values(S.threads).filter(t=>t.persona===S.persona).sort((a,b)=>b.created-a.created);
   const day=d=>{ const t=new Date(); t.setHours(0,0,0,0); return d>=t?"Today":d>=new Date(t-864e5)?"Yesterday":"Earlier"; };
   const groups={Pinned:[],Today:[],Yesterday:[],Earlier:[]};
   list.forEach(t=>(t.pinned?groups.Pinned:groups[day(t.created)]).push(t));
-  $("#threadList").innerHTML=Object.entries(groups).filter(g=>g[1].length).map(([g,ts])=>`<div class="rail-h">${g}</div>`+ts.map(t=>`<div class="th${t.id===S.cur?" on":""}" data-thread="${t.id}"><span class="t">${esc(t.title)}</span><button class="icon-btn${t.pinned?" pinned":""}" data-pin="${t.id}" title="${t.pinned?"Unpin":"Pin"}"><svg width="13" height="13" viewBox="0 0 24 24" fill="${t.pinned?"currentColor":"none"}" stroke="currentColor" stroke-width="2"><path d="M12 17v5M8 3h8l-1 6 3 4H6l3-4z"/></svg></button><button class="icon-btn" data-del="${t.id}" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div>`).join("")).join("");
+  $("#threadList").innerHTML=recentHTML()+Object.entries(groups).filter(g=>g[1].length).map(([g,ts])=>`<div class="rail-h">${g}</div>`+ts.map(t=>`<div class="th${t.id===S.cur?" on":""}" data-thread="${t.id}"><span class="t">${esc(t.title)}</span><button class="icon-btn${t.pinned?" pinned":""}" data-pin="${t.id}" title="${t.pinned?"Unpin":"Pin"}"><svg width="13" height="13" viewBox="0 0 24 24" fill="${t.pinned?"currentColor":"none"}" stroke="currentColor" stroke-width="2"><path d="M12 17v5M8 3h8l-1 6 3 4H6l3-4z"/></svg></button><button class="icon-btn" data-del="${t.id}" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div>`).join("")).join("");
   const p=P(), ini=p.short.split(/[ /&]+/).filter(Boolean).map(w=>w[0]).join("").slice(0,2).toUpperCase();
   $("#personaBtn").innerHTML=`<span class="avatar" style="background:${PERSONA_COLOR[S.persona]}">${ini}</span><span class="who hide-min"><b>${esc(p.label)}</b><small>Statler Toyota · switch role</small></span>`;
   $("#personaMenu").innerHTML=`<div class="mh">Role — switching starts a new thread</div>`+PERSONA_ORDER.map(k=>{const q=PERSONAS[k]; const i=q.short.split(/[ /&]+/).filter(Boolean).map(w=>w[0]).join("").slice(0,2).toUpperCase(); return `<button data-persona="${k}" class="${k===S.persona?"on":""}"><span class="avatar" style="background:${PERSONA_COLOR[k]}">${i}</span>${esc(q.label)}</button>`;}).join("");
@@ -1576,13 +1616,15 @@ const COMMANDS=[["/today","Your briefing for today"],["/apps","Every product and
 let POP={mode:null,items:[],sel:0,start:0};
 function openPop(mode,q){
   let items;
-  if(mode==="k") items=DRIVE_CMDS.filter(c=>c.code.startsWith((q||"").toUpperCase())).map(c=>({label:`<kbd>${c.code}</kbd> ${esc(c.label)}${c.grounded?"":'<span class="dag">†</span>'}`,sub:c.grounded?"Drive · ETC in Unify":"Drive code",val:c.code+(c.arg?" ":"")}));
+  if(mode==="k"){ const Q=(q||"").toUpperCase();
+    items=DRIVE_CMDS.filter(c=>c.code.startsWith(Q)).map(c=>({label:`<kbd>${c.code}</kbd> ${esc(c.label)}${c.grounded?"":'<span class="dag">†</span>'}`,sub:c.grounded?"Drive · ETC in Unify":"Drive code",val:c.code+(c.arg?" ":"")}))
+      .concat(ACCT_CODES.filter(c=>c.code.startsWith(Q)).map(c=>({label:`<kbd>${c.code}</kbd> ${esc(c.areaName)}`,sub:"Accounting · not wired yet",val:c.code}))).slice(0,8); }
   else if(mode==="/") items=COMMANDS.filter(c=>c[0].startsWith("/"+q)).map(c=>({label:`<kbd>${c[0]}</kbd>`,sub:c[1],val:c[0]}));
   else { INDEX=INDEX||buildIndex(); const ql=q.toLowerCase(); items=INDEX.filter(e=>!ql||e.hay.includes(ql)).slice(0,8).map(e=>({label:tileHTML(e.app,"sm")+" "+esc(e.label),sub:e.kind==="customer"?"Customer":e.kind==="doc"?"Document":APPS[e.app]?APPS[e.app].name:"",val:e.label})); }
   POP={mode,items,sel:0,start:POP.start};
   const pop=$("#pop");
   if(!items.length){ closePop(); return; }
-  pop.innerHTML=`<div class="ph">${mode==="/"?"Commands":mode==="k"?`CDK Drive commands · ${MOD} K`:"Records"}</div>`+items.map((it,i)=>`<button data-pop="${i}" class="${i===0?"sel":""}" role="option">${it.label}<small>${esc(it.sub)}</small></button>`).join("");
+  pop.innerHTML=`<div class="ph">${mode==="/"?"Commands":mode==="k"?"CDK Drive commands · press Enter to run":"Records"}</div>`+items.map((it,i)=>`<button data-pop="${i}" class="${i===0?"sel":""}" role="option">${it.label}<small>${esc(it.sub)}</small></button>`).join("");
   pop.classList.add("show");
 }
 function closePop(){ POP.mode=null; $("#pop").classList.remove("show"); }
@@ -1602,7 +1644,7 @@ function onInput(){
   const inp=$("#input"); autosize(inp); setComposerState();
   const v=inp.value, pos=inp.selectionStart, before=v.slice(0,pos);
   const m1=/^\/(\w*)$/.exec(before); if(m1){ POP.start=0; openPop("/",m1[1]); return; }
-  const mk=/^([A-Z]{1,4})$/.exec(v); if(mk&&DRIVE_CMDS.some(c=>c.code.startsWith(mk[1]))){ POP.start=0; openPop("k",mk[1]); return; }
+  const mk=/^([A-Z]{1,5})$/.exec(v); if(mk&&(DRIVE_CMDS.some(c=>c.code.startsWith(mk[1]))||ACCT_CODES.some(c=>c.code.startsWith(mk[1])))){ POP.start=0; openPop("k",mk[1]); return; }
   const m2=/(^|\s)@([\w#\- ]{0,24})$/.exec(before); if(m2){ POP.start=before.lastIndexOf("@"); openPop("@",m2[2]); return; }
   closePop();
 }
@@ -1694,7 +1736,6 @@ document.addEventListener("click",e=>{
     if(a==="learn"){ endTour(); return ask("/learn"); }
     return endTour(); }
   if((el=g("[data-tour-sub]"))){ TOUR_STATE.sub=+el.dataset.tourSub; return drawTour(); }
-  if(g("#kbdHint")){ const inp=$("#input"); inp.value=""; inp.focus(); POP.start=0; return openPop("k",""); }
   if((el=g("[data-tour]"))) return startTour();
   if((el=g("[data-cfm-yes]"))) return resolveCfm(el.dataset.cfmYes,true);
   if((el=g("[data-cfm-no]"))) return resolveCfm(el.dataset.cfmNo,false);
@@ -1764,7 +1805,6 @@ $("#input").addEventListener("keydown",e=>{
   const h=(location.hash||"").slice(1); if(PERSONAS[h]) S.persona=h;
   startBriefing(S.persona);
   maybeWelcome(S.persona);
-  document.querySelectorAll(".modk").forEach(k=>k.textContent=MOD);
   setComposerState();
 })();
 </script>
