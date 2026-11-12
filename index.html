@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0e1014">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>AIVA — Unify Chat (v16)</title>
+<title>AIVA — Unify (v19)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -530,67 +530,505 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--surface-2);border:
 .demo-typed .k{opacity:0;animation:keypress 4.2s ease infinite}
 .demo-typed .k5{animation-delay:.3s}.demo-typed .k6{animation-delay:.6s}.demo-typed .k7{animation-delay:1s;margin-left:auto;color:var(--brand);border-color:var(--brand)}
 .demo-typed .k4{animation-delay:0s}
+
+/* ============================================================
+   v17 LAYOUT — platform bar · My Day · workflow space · AIVA Insights · chat dock
+   Structure from the Unify Concept Prototype; styling from the existing tokens.
+   ============================================================ */
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;position:relative;--railw:272px;--dosw:340px;--bsoft:color-mix(in srgb,var(--brand) 12%,var(--surface))}
+.plat{height:56px;flex:none;display:flex;align-items:center;gap:8px;padding:0 12px;background:var(--surface);border-bottom:1px solid var(--border);position:relative;z-index:40}
+.plat .sp{flex:1}
+.plat .dname{font-weight:600;margin-left:2px;white-space:nowrap}
+.plat .prod{color:var(--text-2);font-weight:500;padding-left:10px;border-left:1.5px solid var(--border)}
+.plat .cdk-dot{--dot:34px}
+.demo-pill{border:1.5px dashed var(--warning);background:color-mix(in srgb,var(--warning) 12%,transparent);color:var(--warning);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;white-space:nowrap}
+.dot-badge{position:absolute;top:1px;right:0;min-width:16px;height:16px;border-radius:8px;background:var(--danger);color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center;padding:0 4px}
+.dot-badge[hidden]{display:none}
+.whoBtn{display:flex;align-items:center;gap:8px;padding:4px 8px 4px 4px;border-radius:10px;border:0;background:transparent;text-align:left}
+.whoBtn:hover{background:var(--surface-2)}
+.whoBtn .n{font-size:13px;font-weight:600;line-height:1.2;white-space:nowrap}
+.whoBtn .r{font-size:11px;color:var(--text-3);white-space:nowrap}
+.lvl{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:0 6px;border-radius:999px;background:var(--bsoft);color:var(--brand);margin-left:5px}
+.ppop{position:absolute;top:60px;background:var(--surface);border:1px solid var(--border-strong);border-radius:14px;box-shadow:0 14px 34px rgba(0,0,0,.3);padding:12px;z-index:200;width:300px;display:none;max-height:calc(100% - 76px);overflow:auto}
+.ppop.show{display:block;animation:pop .16s ease}
+.mh3{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);margin:0 0 8px;font-weight:600;display:flex;align-items:center;gap:6px}
+.mh3 svg{flex:none}
+.ppop [data-persona]{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:6px 8px;border-radius:8px;text-align:left}
+.ppop [data-persona]:hover,.ppop [data-persona].on{background:var(--surface-2)}
+.ppop [data-persona].on{font-weight:600}
+.ppop [data-persona] .avatar{width:24px;height:24px;font-size:10px}
+.who-foot{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.who-foot .count{font-size:10.5px;background:var(--n-auto);color:#fff;border-radius:10px;padding:0 6px;line-height:16px}
+.modes{display:grid;gap:6px}
+.mode{display:flex;gap:10px;align-items:flex-start;text-align:left;border:1px solid var(--border);border-radius:10px;padding:9px 10px;background:var(--surface);width:100%}
+.mode:hover{border-color:var(--border-strong)}
+.mode.sel{border-color:var(--brand);background:var(--bsoft)}
+.mode .rd{width:16px;height:16px;border-radius:50%;border:2px solid var(--text-3);flex:none;margin-top:2px;display:grid;place-items:center}
+.mode.sel .rd{border-color:var(--brand)}
+.mode.sel .rd::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--brand)}
+.mode b{font-size:13px}.mode .d{font-size:12px;color:var(--text-2)}
+.drow{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:13px}
+.sw{width:26px;height:26px;border-radius:50%;border:2px solid var(--surface);outline:1.5px solid var(--border);cursor:pointer}
+.sw.sel{outline:2.5px solid var(--text)}
+.step{display:flex;gap:8px;align-items:flex-start;width:100%;text-align:left;border:0;background:transparent;padding:6px;border-radius:8px;font-size:12.5px}
+.step:hover{background:var(--surface-2)}
+.step .n{width:20px;height:20px;border-radius:50%;background:var(--surface-2);border:1px solid var(--border);display:grid;place-items:center;font-size:11px;font-weight:700;flex:none}
+select.rsel{font:inherit;padding:6px 8px;border:1px solid var(--border);border-radius:8px;flex:1;background:var(--surface);color:var(--text)}
+.cnote{display:none;position:absolute;z-index:30;background:color-mix(in srgb,var(--warning) 16%,var(--surface));border:1.5px dashed var(--warning);color:var(--warning);font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap;pointer-events:none}
+body.notes .cnote{display:block}
+
+/* ---------- stage & regions ---------- */
+.stage{flex:1;min-height:0;position:relative;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);gap:12px;padding:12px;background:var(--bg)}
+.region{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;min-width:0;min-height:0;position:relative;animation:regionIn .34s cubic-bezier(.2,.8,.2,1)}
+@keyframes regionIn{from{opacity:0;transform:translateY(8px)}}
+.stage.home{justify-items:center}
+.stage.home #myday{width:min(100%,1180px);margin-bottom:92px}
+.stage.home #workspace,.stage.home #dossier{display:none}
+.stage.work{grid-template-columns:var(--railw) minmax(0,1fr) var(--dosw)}
+.stage.home .md-rail,.stage.work .md-full{display:none}
+.md-full,.md-rail{position:absolute;inset:0;overflow:auto}
+.badge{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:7px;background:var(--surface-3);color:var(--text-2);font-size:11px;font-weight:700;flex:none}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-2);white-space:nowrap}
+.tag.acc{background:var(--bsoft);border-color:color-mix(in srgb,var(--brand) 45%,transparent);color:var(--brand)}
+.tag.hot{background:color-mix(in srgb,var(--danger) 13%,transparent);border-color:transparent;color:var(--danger)}
+.tag.warm{background:color-mix(in srgb,var(--warning) 15%,transparent);border-color:transparent;color:var(--warning)}
+.tag.learn{background:color-mix(in srgb,var(--success) 15%,transparent);border-color:transparent;color:var(--success)}
+.linkbtn{border:0;background:transparent;color:var(--brand);font-weight:600;padding:0;font-size:12.5px}
+.linkbtn:hover{text-decoration:underline}
+.sk{background:linear-gradient(90deg,var(--surface-2) 0%,var(--surface-3) 50%,var(--surface-2) 100%);background-size:200% 100%;animation:shimmer 1.1s linear infinite;border-radius:8px}
+.sk.still{animation:none}
+@keyframes shimmer{to{background-position:-200% 0}}
+
+/* ---------- My Day ---------- */
+.md-full{padding:22px 26px 26px}
+.md-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.md-head h1{font-size:24px;margin:0 0 2px;font-weight:700;letter-spacing:-.3px}
+.md-head .sub{color:var(--text-2)}
+.mdlegend{display:flex;gap:12px;font-size:12px;color:var(--text-3)}
+.mdlegend span{display:inline-flex;align-items:center;gap:4px}
+.md-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.md-col{display:grid;gap:16px;align-content:start;min-width:0}
+.mcard{border:1px solid var(--border);border-radius:12px;padding:14px;background:var(--surface);min-width:0}
+.mcard>.mh3 .tag{margin-left:auto;text-transform:none;letter-spacing:0}
+.qcards{display:grid;gap:10px}
+.qcard{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;text-align:left;border:1px solid var(--border);border-radius:12px;padding:12px 14px;background:var(--surface);width:100%;transition:border-color .15s,box-shadow .15s;cursor:pointer}
+.qcard:hover{border-color:var(--brand);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.qcard.next{border-color:color-mix(in srgb,var(--brand) 55%,transparent)}
+.qcard .rn{font-weight:700;font-size:15px}
+.qcard .rn small{font-weight:500;font-size:13px;color:var(--text-2)}
+.qcard .ql{font-size:13px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qcard .qwhy{font-size:12px;color:var(--brand);display:flex;align-items:center;gap:4px;margin-top:4px}
+.qcard .qr{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px;font-size:12px;color:var(--text-2)}
+.qcard .qr b{color:var(--text)}
+.qcard .badge{width:42px;height:42px;border-radius:10px}
+.flyer{position:fixed;z-index:80;margin:0;pointer-events:none;box-shadow:0 18px 40px rgba(0,0,0,.3);overflow:hidden}
+.list-row{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;border:0;background:transparent;width:100%;text-align:left}
+.list-row:hover{background:var(--surface-2)}
+.list-row .t{font-weight:600;font-size:13px}
+.list-row .s{font-size:12px;color:var(--text-2)}
+.opendot{width:7px;height:7px;border-radius:50%;background:var(--brand);flex:none}
+.sa{display:flex;gap:9px;align-items:flex-start;padding:7px 8px;border-radius:8px;font-size:13px}
+.sa:hover{background:var(--surface-2)}
+.sa.isdone{opacity:.55}
+.sa.isdone .ttx div:first-child{text-decoration:line-through}
+.tbox{width:18px;height:18px;border:1.5px solid var(--text-3);border-radius:5px;flex:none;margin-top:2px;background:var(--surface);display:grid;place-items:center;padding:0;color:#fff}
+.tbox.on{background:var(--brand);border-color:var(--brand)}
+.ttx{border:0;background:transparent;text-align:left;padding:0;flex:1;min-width:0}
+.ttx div:first-child{font-weight:600}
+.ttx:hover div:first-child{color:var(--brand)}
+.ttx .s{font-size:12px;color:var(--text-2)}
+.apptiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.apptile{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border:1px solid var(--border);border-radius:10px;background:var(--surface);font-size:12px;font-weight:500;text-align:center;min-width:0}
+.apptile:hover{border-color:var(--brand)}
+.mtime{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+.mbar{height:8px;border-radius:4px;background:var(--surface-3);overflow:hidden}
+.mbar i{display:block;height:100%;background:var(--brand);border-radius:4px}
+.openwork{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px 12px;border:1.5px dashed var(--border-strong);border-radius:12px;margin-bottom:16px}
+#recentList .rail-h{display:none}
+.md-full .rc{padding:8px}
+/* rail */
+.md-rail{padding:12px 10px 16px}
+.rail-head{display:flex;align-items:center;justify-content:space-between;padding:2px 4px 8px;border-bottom:1px solid var(--border);margin-bottom:10px}
+.rail-head b{font-size:15px}
+.rail-sec{margin-bottom:14px}
+.rail-sec .mh3{padding:0 6px;margin-bottom:4px}
+.rrow{display:flex;align-items:flex-start;gap:8px;padding:6px;border-radius:8px;border:0;background:transparent;width:100%;text-align:left;font-size:12.5px}
+.rrow:hover{background:var(--surface-2)}
+.rrow .t{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rrow .s{font-size:11.5px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rrow .tx{min-width:0;flex:1}
+.rrow .badge{width:22px;height:22px;font-size:9px;border-radius:5px}
+.rrow .tile{--tile-px:22px}
+
+/* ---------- workflow space ---------- */
+#tabbar{height:44px;display:flex;align-items:flex-end;gap:2px;padding:0 10px;border-bottom:1px solid var(--border);background:var(--surface-2);overflow-x:auto;scrollbar-width:none}
+.wtab{display:flex;align-items:center;gap:8px;height:36px;padding:0 8px 0 12px;border:1px solid transparent;border-bottom:0;border-radius:9px 9px 0 0;background:transparent;font-weight:600;font-size:13px;color:var(--text-2);position:relative;top:1px;white-space:nowrap;animation:rise .25s ease;flex:none}
+.wtab.active{background:var(--surface);border-color:var(--border);color:var(--text)}
+.wtab.active::after{content:"";position:absolute;left:10px;right:10px;top:-1px;height:3px;border-radius:2px;background:var(--brand)}
+.wtab>button{border:0;background:transparent;font-weight:inherit;padding:0;display:flex;align-items:center;gap:7px;color:inherit}
+.wtab .wx{display:grid;place-items:center;width:20px;height:20px;border-radius:5px;cursor:pointer}
+.wtab .wx:hover{background:var(--surface-3)}
+.wtab .tile{--tile-px:18px}
+#wscontent,.cvpane{position:absolute;top:44px;left:0;right:0;bottom:0}
+#wscontent{overflow:auto}
+.cvpane{display:none;flex-direction:column;background:var(--surface)}
+#workspace.cv .cvpane{display:flex}
+#workspace.cv #wscontent{display:none}
+.cvpane .cv-body{padding-bottom:150px}
+.pane{padding:20px 22px 150px;animation:fadeIn .25s ease}
+.ro-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.ro-title{font-size:22px;font-weight:700;letter-spacing:-.3px}
+.ro-title small{font-weight:500;font-size:16px;color:var(--text-2)}
+.ro-sub{color:var(--text-2);margin-top:2px}
+.ro-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn.on{background:var(--bsoft);border-color:var(--brand);color:var(--brand)}
+.chip.on{border-color:var(--brand);color:var(--brand)}
+select.status{font:inherit;font-size:13px;font-weight:600;padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--text)}
+.rsec-h{display:flex;align-items:center;justify-content:space-between;margin:22px 0 10px}
+.rsec-h h2{font-size:17px;margin:0;font-weight:600}
+.job{border:1px solid var(--border);border-radius:12px;margin-bottom:12px;background:var(--surface);overflow:hidden}
+.job.flash{animation:rowflash 2.2s ease-out}
+.job.isdone{opacity:.72}
+.job-h{display:flex;align-items:center;gap:12px;padding:12px 14px;flex-wrap:wrap}
+.jl{display:grid;place-items:center;width:30px;height:30px;border-radius:7px;border:1px solid var(--border);font-weight:700;background:var(--surface-2);flex:none}
+.jt{flex:1;font-weight:600;font-size:15px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:200px}
+.opc{font-size:11px;font-weight:600;color:var(--text-2);background:var(--surface-2);border-radius:999px;padding:2px 8px;font-family:var(--mono)}
+.job-ctl{display:flex;align-items:center;gap:8px}
+.tog{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;border:1px solid var(--border);border-radius:999px;padding:4px 10px 4px 6px;cursor:pointer;user-select:none}
+.tog input{appearance:none;-webkit-appearance:none;width:30px;height:18px;border-radius:9px;background:var(--surface-3);position:relative;margin:0;cursor:pointer;transition:background .15s}
+.tog input::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .15s}
+.tog input:checked{background:var(--brand)}
+.tog input:checked::after{left:14px}
+.concern{padding:0 14px 10px 56px;color:var(--text-2);font-style:italic}
+.threec{margin:0 14px 12px 56px;border:1px solid var(--border);border-radius:10px;padding:10px;display:grid;gap:8px;background:var(--surface-2);animation:fadeIn .2s}
+.threec label,.bjob .lab{font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em}
+.threec textarea,.bjob textarea{width:100%;font:inherit;font-size:13px;border:1px solid var(--border);border-radius:8px;padding:6px 8px;resize:vertical;min-height:34px;background:var(--surface);color:var(--text)}
+.threec textarea.ai,.bjob textarea.ai{border-color:var(--brand);background:var(--bsoft)}
+table.lines{width:100%;border-collapse:collapse;font-size:13px}
+table.lines th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);font-weight:600;padding:6px 14px;border-top:1px solid var(--border);background:var(--surface-2)}
+table.lines td{padding:8px 14px;border-top:1px solid var(--border)}
+table.lines td:first-child{font-family:var(--mono);font-size:12px;white-space:nowrap}
+tr.flash td{animation:rowflash 2.2s ease-out}
+@keyframes rowflash{0%,25%{background:color-mix(in srgb,var(--brand) 22%,transparent)}100%{background:transparent}}
+.job-foot{display:flex;gap:8px;padding:8px 14px 12px;border-top:1px solid var(--border);position:relative;align-items:center}
+.addmenu,.xmenu{position:absolute;background:var(--surface);border:1px solid var(--border-strong);border-radius:10px;padding:6px;z-index:5;width:300px;box-shadow:0 10px 24px rgba(0,0,0,.3);animation:pop .15s}
+.addmenu{left:14px;bottom:44px}
+.pal-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;border:0;background:transparent;width:100%;text-align:left}
+.pal-item:hover{background:var(--surface-2)}
+.aitag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;border:1px solid var(--brand);color:var(--brand);background:var(--surface);border-radius:999px;padding:1px 4px 1px 8px;white-space:nowrap}
+.aitag button{border:0;background:var(--bsoft);color:var(--brand);border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700}
+.wf-ph{display:grid;gap:12px}
+/* beginner */
+.learnbar{display:flex;gap:10px;align-items:flex-start;background:var(--bsoft);border:1px solid color-mix(in srgb,var(--brand) 40%,transparent);border-radius:12px;padding:11px 14px;margin-bottom:16px;font-size:13.5px}
+.learnbar .grow{flex:1}
+.stepper{display:flex;margin:4px 0 18px}
+.stp{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;text-align:center;position:relative;color:var(--text-3);padding:0 4px}
+.stp .c{width:28px;height:28px;border-radius:50%;border:2px solid var(--border-strong);background:var(--surface);display:grid;place-items:center;font-weight:700;z-index:1;font-size:12px}
+.stp::before{content:"";position:absolute;top:13px;left:-50%;right:50%;height:2px;background:var(--border-strong)}
+.stp:first-child::before{display:none}
+.stp.done .c{background:var(--brand);border-color:var(--brand);color:#fff}
+.stp.done::before,.stp.cur::before{background:var(--brand)}
+.stp.cur .c{border-color:var(--brand);color:var(--brand);box-shadow:0 0 0 4px var(--bsoft)}
+.stp.cur{color:var(--text);font-weight:600}
+.nextcard{border:2px solid var(--brand);border-radius:14px;padding:16px 18px;margin-bottom:20px;background:var(--surface);animation:fadeIn .3s}
+.nextcard .k{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--brand)}
+.nextcard h2{margin:4px 0 6px;font-size:19px}
+.nextcard p{margin:0 0 12px;color:var(--text-2)}
+.btn.big{padding:10px 16px;font-size:14px;font-weight:600;border-radius:10px}
+.tip{font-size:12.5px;color:var(--text-2);background:var(--surface-2);border-radius:8px;padding:8px 10px;margin-top:10px;display:flex;gap:8px;align-items:flex-start}
+details.whyd{margin-top:8px;font-size:12.5px}
+details.whyd summary{cursor:pointer;color:var(--brand);font-weight:600;list-style:none;display:inline-flex;gap:4px;align-items:center}
+details.whyd summary::-webkit-details-marker{display:none}
+details.whyd div{margin-top:6px;padding:8px 10px;background:var(--surface-2);border-radius:8px;color:var(--text-2)}
+.bjob{border:1px solid var(--border);border-radius:14px;margin-bottom:12px;padding:16px 18px;background:var(--surface)}
+.bjob.cur{border:2px solid color-mix(in srgb,var(--brand) 60%,transparent)}
+.bjob .bt{font-size:17px;margin:0;font-weight:600}
+.bjob .lab{margin-top:12px}
+.bjob .said{font-size:15px;margin:2px 0 0}
+.bjob textarea{font-size:14px;border-radius:10px;padding:8px 10px;min-height:56px;margin-top:4px}
+.bparts{margin-top:6px;border:1px solid var(--border);border-radius:10px}
+.bparts .pr{display:flex;gap:10px;padding:8px 10px;border-top:1px solid var(--border);font-size:13.5px;align-items:center}
+.bparts .pr:first-child{border-top:0}
+.bfoot{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap;position:relative}
+.bfoot .addmenu{left:0}
+.bcol{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1.5px dashed var(--border-strong);border-radius:12px;margin-bottom:12px;width:100%;background:var(--surface);text-align:left}
+.bcol:hover{border-color:var(--brand)}
+/* expert */
+.pane.dense{padding:10px 12px 140px}
+.xhead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;padding:2px 2px 10px}
+.xhead b{font-size:15px}
+.xhead .sep{width:1px;height:16px;background:var(--border-strong)}
+.xhead select{font:inherit;font-size:12px;padding:3px 6px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text)}
+.xbtn{font-size:12px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);display:inline-flex;gap:5px;align-items:center;font-weight:600}
+.xbtn.on{border-color:var(--brand);color:var(--brand);background:var(--bsoft)}
+table.x{width:100%;border-collapse:collapse;font-size:12.5px;border:1px solid var(--border)}
+table.x th{background:var(--surface-2);text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);padding:5px 8px;border-bottom:1px solid var(--border);font-weight:600;white-space:nowrap}
+table.x td{padding:3px 8px;border-bottom:1px solid var(--border);height:30px;vertical-align:middle;white-space:nowrap}
+tr.xg td{background:var(--surface-2);font-weight:700;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);height:22px}
+tr.xl{cursor:pointer}
+tr.xl.sel td{background:var(--bsoft)}
+tr.xl.sel td:first-child{box-shadow:inset 3px 0 0 var(--brand)}
+tr.xl.isdone td{color:var(--text-3)}
+tr.xp td{color:var(--text-2);font-size:12px;height:24px}
+input.xin{width:100%;min-width:180px;font:inherit;font-size:12.5px;border:1px solid transparent;border-radius:5px;padding:3px 6px;background:transparent;color:var(--text)}
+input.xin:hover,input.xin:focus{border-color:var(--border-strong);background:var(--surface);outline:0}
+input.xin.ai{border-color:var(--brand);background:var(--surface)}
+.xcb{width:15px;height:15px;accent-color:var(--brand);margin:0;cursor:pointer}
+.xact{border:0;background:transparent;padding:2px 4px;border-radius:4px;color:var(--text-2)}
+.xact:hover{background:var(--surface-3);color:var(--text)}
+.xkeys{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--text-3);margin-top:10px}
+
+/* ---------- AIVA Insights (dossier) ---------- */
+.dz{position:absolute;inset:0;overflow:auto;padding:14px 14px 30px}
+.dz-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px}
+.dz-head b{font-size:15px}
+.timer{background:#0b0c0f;color:#fff;border-radius:12px;margin-bottom:14px;overflow:hidden;border:1px solid var(--border-strong);animation:rise .5s ease}
+.timer .ttop{display:flex;align-items:flex-end;justify-content:space-between;padding:12px 14px 10px}
+.timer .tl{font-size:12px;font-weight:600;color:#cfcfcf;display:flex;align-items:center;gap:6px}
+.timer .tl i{width:8px;height:8px;border-radius:50%;background:#e53935;animation:blink 1.2s infinite}
+.timer .big{font-size:34px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.1;font-family:var(--mono)}
+.timer .stop{background:#fff;color:#1b1b1b;border:0;border-radius:8px;padding:7px 12px;font-weight:600;font-size:13px;display:flex;gap:6px;align-items:center}
+.timer .tsub{display:flex;justify-content:space-between;gap:8px;padding:8px 14px;background:#1c2028;font-size:12px;color:#ddd}
+.timer-mini{display:flex;align-items:center;gap:8px;width:100%;border:1px solid var(--border-strong);background:#0b0c0f;color:#fff;border-radius:10px;padding:8px 12px;margin-bottom:12px;font-size:12.5px;text-align:left}
+.timer-mini b{font-variant-numeric:tabular-nums;margin-left:auto;font-family:var(--mono)}
+.ins{border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--surface-2);display:grid;grid-template-columns:auto 1fr;gap:4px 10px}
+.ins .ic{grid-row:span 3;width:28px;height:28px;border-radius:7px;background:var(--surface);border:1px solid var(--border);display:grid;place-items:center;color:var(--text-2)}
+.ins .tt{font-weight:600;font-size:13px}
+.ins .bd{font-size:12.5px;color:var(--text-2)}
+.ins .ac{margin-top:4px}
+.ins.arrive{animation:arrive 2.4s cubic-bezier(.2,.8,.2,1)}
+@keyframes arrive{0%{opacity:0;transform:translateY(-10px);background:color-mix(in srgb,var(--brand) 24%,var(--surface));border-color:var(--brand)}18%{opacity:1;transform:none}60%{background:color-mix(in srgb,var(--brand) 14%,var(--surface));border-color:color-mix(in srgb,var(--brand) 50%,transparent)}100%{background:var(--surface-2);border-color:var(--border)}}
+.dsec{border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.dsec-h{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:0;background:var(--surface);text-align:left}
+.dsec-h:hover{background:var(--surface-2)}
+.dsec-h .tx{flex:1;min-width:0}
+.dsec-h .t{font-weight:600}
+.dsec-h .s{font-size:12px;color:var(--text-2)}
+.dsec-h .chev{transition:transform .2s}
+.dsec.open .chev{transform:rotate(180deg)}
+.dsec-b{display:grid;grid-template-rows:0fr;transition:grid-template-rows .26s cubic-bezier(.2,.8,.2,1)}
+.dsec.open .dsec-b{grid-template-rows:1fr}
+.dsec-b>div{overflow:hidden}
+.dsec-b .in{padding:2px 12px 12px;font-size:12.5px}
+.dkv{display:grid;grid-template-columns:96px 1fr;gap:5px 8px;margin:0}
+.dkv dt{color:var(--text-3)}
+.dkv dd{margin:0;font-weight:500}
+.hist{display:flex;gap:8px;padding:7px 0;border-top:1px solid var(--border)}
+.hist:first-child{border-top:0}
+.ro-only{font-size:11px;color:var(--text-3);display:flex;align-items:center;gap:4px;margin:2px 0 10px}
+
+/* ---------- chat dock ---------- */
+#chatdock{position:absolute;z-index:30;bottom:14px;left:50%;transform:translateX(-50%);width:min(760px,calc(100% - 48px));display:flex;flex-direction:column;gap:8px;transition:left .34s cubic-bezier(.2,.8,.2,1),width .34s cubic-bezier(.2,.8,.2,1)}
+.stage.work #chatdock{left:calc(24px + var(--railw) + (100% - var(--railw) - var(--dosw) - 48px) / 2);width:min(760px,calc(100% - var(--railw) - var(--dosw) - 96px))}
+#cpanel{background:var(--surface);border:1px solid var(--border-strong);border-radius:16px;box-shadow:0 14px 34px rgba(0,0,0,.35);display:flex;flex-direction:column;overflow:hidden;max-height:min(54vh,480px);animation:pop .2s ease}
+#cpanel.hide,#listen.hide,#chips.hide{display:none}
+#cpanel.brief:not(.full):not(.chats){max-height:min(40vh,250px)}
+#cpanel.full{max-height:none;height:calc(100vh - 56px - 130px);height:calc(100dvh - 56px - 130px)}
+.cp-h{display:flex;align-items:center;gap:4px;padding:6px 8px 6px 6px;border-bottom:1px solid var(--border);flex:none}
+.cp-h h1{font-size:13.5px;font-weight:600;margin:0 4px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cp-h .icon-btn{width:30px;height:30px}
+#threadList{display:none;max-height:210px;overflow:auto;padding:4px 8px 8px;border-bottom:1px solid var(--border);background:var(--surface-2);flex:none}
+#cpanel.chats #threadList{display:block}
+#cpanel .scroll{flex:1;min-height:0}
+#cpanel .col{max-width:none;padding:16px 18px 18px}
+#cpanel .turn:last-child{margin-bottom:6px}
+#cpanel .hero{padding:24px 0 16px}
+#listen{background:var(--surface);border:1px solid var(--border-strong);border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;box-shadow:0 14px 34px rgba(0,0,0,.3)}
+.wave{display:flex;gap:4px;align-items:center;height:30px}
+.wave i{width:4px;border-radius:2px;background:var(--brand);animation:wave .9s ease-in-out infinite}
+.wave i:nth-child(2){animation-delay:.1s}.wave i:nth-child(3){animation-delay:.2s}.wave i:nth-child(4){animation-delay:.3s}.wave i:nth-child(5){animation-delay:.4s}.wave i:nth-child(6){animation-delay:.5s}.wave i:nth-child(7){animation-delay:.6s}
+@keyframes wave{0%,100%{height:6px}50%{height:28px}}
+#chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+#chips .chip{background:var(--surface);box-shadow:var(--shadow);font-size:12.5px;padding:5px 11px}
+#chatdock .composer-wrap{padding:0;background:transparent}
+#chatdock .composer{max-width:none;border-radius:18px;padding:6px 6px 6px 8px;border-width:1.5px}
+#chatdock .composer .c-row{gap:4px;align-items:flex-end}
+#chatdock .composer textarea{flex:1;width:auto;min-width:0;padding:8px 4px;font-size:15px;align-self:center}
+#chatdock .composer .icon-btn{width:38px;height:38px}
+#chatdock .send{width:38px;height:38px;border-radius:11px}
+#micBtn.live{background:var(--danger);color:#fff}
+#histBtn.on{background:var(--bsoft);color:var(--brand)}
+#chatdock .fine{margin-top:6px;max-width:none}
+.stage.work #chatdock .fine{display:none}
+
+/* ---------- mega menu ---------- */
+.mscrim{position:absolute;inset:0;background:rgba(6,8,12,.6);z-index:50;opacity:0;pointer-events:none;transition:opacity .2s}
+.mscrim.show{opacity:1;pointer-events:auto}
+#mega{position:absolute;top:12px;left:40px;right:40px;max-height:calc(100% - 120px);background:var(--surface);border:1px solid var(--border-strong);border-radius:16px;z-index:55;opacity:0;transform:translateY(-14px);pointer-events:none;transition:opacity .2s,transform .24s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.4)}
+#mega.show{opacity:1;transform:none;pointer-events:auto}
+.mega-h{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);gap:10px}
+.mega-cols{display:grid;grid-template-columns:1.4fr 1fr .9fr;gap:32px;padding:22px 26px 26px;overflow:auto;align-content:start}
+.megagrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px}
+.mi{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:8px;border:0;background:transparent;width:100%;text-align:left;font-size:13px}
+.mi:hover{background:var(--surface-2)}
+.mi .s{font-size:11.5px;color:var(--text-2)}
+.megagrid .mi{flex-direction:column;gap:6px;text-align:center;font-size:11.5px;font-weight:500;padding:10px 4px}
+.megagrid .mi .tile{--tile-px:36px}
+
+/* ---------- responsive ---------- */
+@media (max-width:1250px){.app{--railw:244px;--dosw:300px}}
+@media (max-width:1100px){.app:not(.m) .stage.work{grid-template-columns:var(--railw) minmax(0,1fr)}.app:not(.m){--dosw:0px}.app:not(.m) #dossier{display:none}.app:not(.m) .legend{display:none}}
+.app.m{--railw:0px;--dosw:0px}
+.app.m .plat{height:auto;min-height:52px;padding:env(safe-area-inset-top) 6px 0;gap:4px}
+.app.canvas-open .plat .legend{display:flex}
+.app.m .plat .prod,.app.m .plat .legend,.app.m #demoBtn,.app.m #helpBtn,.app.m .whoBtn .tx{display:none}
+.app.m .plat .dname{font-size:14px}
+.app.m .stage{padding:8px;gap:8px}
+.app.m .stage.work{grid-template-columns:minmax(0,1fr)}
+.app.m .stage.work #myday{display:none}
+.app.m .stage.work #dossier{display:none}
+.app.m .stage.work.dos-open #dossier{display:block;position:absolute;inset:8px 8px 76px;z-index:35}
+.app.m .stage.home #myday{margin-bottom:76px}
+.app.m .md-full{padding:16px 14px 20px}
+.app.m .md-head h1{font-size:21px}
+.app.m .md-grid{grid-template-columns:minmax(0,1fr)}
+.app.m .mdlegend{display:none}
+.app.m .qcard{grid-template-columns:auto minmax(0,1fr);row-gap:8px}
+.app.m .qcard .qr{grid-column:2;flex-direction:row;align-items:center;justify-content:flex-start;flex-wrap:wrap}
+.app.m .qcard .ql{white-space:normal}
+.app.m #chatdock,.app.m .stage.work #chatdock{left:50%;width:calc(100% - 16px);bottom:calc(8px + env(safe-area-inset-bottom))}
+.app.m #cpanel{max-height:62vh}
+.app.m #cpanel.full{height:calc(100dvh - 150px)}
+.app.m #chatdock .fine{display:none}
+.app.m #chatdock .composer textarea{font-size:16px}
+.app.m .ppop{left:8px!important;right:8px!important;width:auto!important}
+.app.m #mega{left:8px;right:8px;top:8px;max-height:calc(100% - 100px)}
+.app.m .mega-cols{grid-template-columns:minmax(0,1fr);gap:18px;padding:16px}
+.app.m .pane{padding:14px 12px 130px}
+.app.m .concern,.app.m .threec{padding-left:14px;margin-left:14px}
+.app.m .concern{margin-left:0}
+.app.m .job-ctl{flex-wrap:wrap}
+.app.m table.lines th:nth-child(4),.app.m table.lines td:nth-child(4){display:none}
+.app.m .stepper .stp span:last-child{display:none}
+.app.m.preview .plat{padding-top:22px}
+.app.preview .ppop,.app.preview #mega{position:absolute}
+@media (prefers-reduced-motion:reduce){.region,.wtab,.sk,.ins.arrive,.wave i{animation:none}#chatdock{transition:none}}
+/* insights toggle where the dossier has no column of its own */
+.dos-btn,.dos-x{display:none}
+@media (max-width:1100px){.app:not(.m) .dos-btn{display:inline-flex}.app:not(.m) .stage.work.dos-open #dossier{display:block;position:absolute;top:12px;right:12px;bottom:12px;width:320px;z-index:35;box-shadow:0 14px 34px rgba(0,0,0,.35)}.app:not(.m) .stage.dos-open .dos-x{display:inline-flex}}
+.app.m .dos-btn,.app.m .stage.dos-open .dos-x{display:inline-flex}
+.dag{color:var(--text-3);font-weight:500;margin-left:2px}
+
 </style>
 </head>
 <body>
 <div class="app" id="app">
-  <!-- ============================ RAIL ============================ -->
-  <aside class="rail" aria-label="Threads">
-    <div class="rail-top">
-      <div class="brand"><button class="cdk-dot" id="cdkLogoBtn" title="My Dashboard" aria-label="CDK — go to today's briefing">CDK</button><span class="hide-min">Unify</span></div>
-      <button class="icon-btn hide-min" id="railMin" title="Collapse sidebar" aria-label="Collapse sidebar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg></button>
-    </div>
-    <button class="rail-new" id="newChat" title="New chat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg><span class="hide-min">New chat</span></button>
-    <nav class="rail-nav">
-      <button class="rail-link" id="navToday" title="Today's briefing"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span class="hide-min">Today</span></button>
-      <button class="rail-link" id="navApps" title="Products"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg><span class="hide-min">Products</span></button>
-      <button class="rail-link" id="navActivity" title="Activity log"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span class="hide-min">Activity</span><span class="count hide-min" id="logCount" hidden>0</span></button>
-    </nav>
-    <div class="rail-scroll hide-min" id="threadList"></div>
-    <div class="rail-foot">
-      <div class="menu" id="personaMenu" role="menu"></div>
-      <button class="persona-btn" id="personaBtn" aria-haspopup="menu"></button>
-      <div class="foot-row">
-        <button class="rail-link" id="themeBtn" title="Toggle theme"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><span class="hide-min">Theme</span></button>
-        <button class="rail-link" id="modeBtn" title="Preview the mobile layout" aria-pressed="false"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg><span class="hide-min" id="modeLabel">Mobile view</span></button>
-      </div>
-    </div>
-  </aside>
+  <!-- ============================ PLATFORM BAR ============================ -->
+  <header class="plat" id="plat">
+    <button class="icon-btn" id="megaBtn" aria-label="Open navigation menu" title="Navigation"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="3.4" height="3.4" rx=".7"/><rect x="10.3" y="4" width="3.4" height="3.4" rx=".7"/><rect x="16.6" y="4" width="3.4" height="3.4" rx=".7"/><rect x="4" y="10.3" width="3.4" height="3.4" rx=".7"/><rect x="10.3" y="10.3" width="3.4" height="3.4" rx=".7"/><rect x="16.6" y="10.3" width="3.4" height="3.4" rx=".7"/><rect x="4" y="16.6" width="3.4" height="3.4" rx=".7"/><rect x="10.3" y="16.6" width="3.4" height="3.4" rx=".7"/><rect x="16.6" y="16.6" width="3.4" height="3.4" rx=".7"/></svg></button>
+    <button class="cdk-dot" id="cdkLogoBtn" title="My Day" aria-label="CDK — go to My Day">CDK</button>
+    <span class="dname">Statler Toyota</span>
+    <span class="prod">Unify</span>
+    <span class="sp"></span>
+    <button class="demo-pill" id="demoBtn">Demo controls</button>
+    <button class="icon-btn" id="helpBtn" aria-label="Help" title="Help"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M9.2 9.2a2.9 2.9 0 0 1 5.6 1c0 2-2.8 2.6-2.8 2.6M12 17h.01"/></svg></button>
+    <button class="icon-btn" id="bellBtn" aria-label="Alerts" title="Alerts" style="position:relative"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="dot-badge" id="bellBadge" hidden>0</span></button>
+    <button class="whoBtn" id="personaBtn" aria-haspopup="menu"></button>
+    <span class="cnote" style="left:50%;top:16px;transform:translateX(-50%)">Platform menu · on every screen</span>
+  </header>
 
-  <div class="scrim" id="scrim"></div>
-  <!-- ============================ MAIN ============================ -->
-  <main class="main">
-    <header class="top">
-      <button class="icon-btn m-only" id="menuBtn" title="Threads" aria-label="Open threads"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h16M4 12h11M4 17h16"/></svg></button>
-      <h1 id="threadTitle">Today</h1>
-      <span class="sp"></span>
-      <div class="legend" id="legend"></div>
-      <span class="chip-store" title="Store context">Statler Toyota</span>
-      <button class="icon-btn m-only" id="mNewBtn" title="New chat" aria-label="New chat"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
-      <button class="icon-btn" id="canvasToggle" title="Toggle canvas" aria-label="Toggle canvas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M14 4v16"/></svg></button>
-    </header>
-    <div class="scroll" id="scroll"><div class="col" id="thread"></div></div>
-    <div class="composer-wrap">
-      <div class="composer">
-        <div class="pop" id="pop" role="listbox"></div>
-        <textarea id="input" rows="1" placeholder="Ask AIVA anything — / for commands, @ for records" aria-label="Message AIVA"></textarea>
-        <div class="c-row">
-          <button class="icon-btn" id="atBtn" title="Mention a record (@)" aria-label="Mention a record"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg></button>
-          <button class="icon-btn" id="slashBtn" title="Commands (/)" aria-label="Commands"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M14 7l-4 10"/></svg></button>
-          <span class="sp"></span>
-          <button class="icon-btn mic" id="micBtn" title="Voice (simulated)" aria-label="Voice input"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
-          <button class="send" id="sendBtn" aria-label="Send" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+  <div class="ppop" id="bellPop" style="right:70px"></div>
+  <div class="ppop" id="helpPop" style="right:110px">
+    <div class="mh3">Help</div>
+    <button class="list-row" data-prompt="/help"><span class="badge">?</span><span><div class="t">Show every command</div><div class="s">What AIVA can do for your role</div></span></button>
+    <button class="list-row" data-prompt="/learn"><span class="badge">▶</span><span><div class="t">Tutorials and walkthroughs</div><div class="s">Including the welcome tour</div></span></button>
+    <button class="list-row" data-prompt="/drive"><span class="badge">⌨</span><span><div class="t">Your CDK Drive commands</div><div class="s">Type a code in the chat bar</div></span></button>
+    <div class="lbl" style="padding:6px 8px 0">Shared-service placeholder: CDK University and Customer Care would also live here.</div>
+  </div>
+  <div class="ppop" id="personaMenu" role="menu" style="right:12px;width:340px">
+    <div class="mh3">Account</div>
+    <div id="whoAcct"></div>
+    <div class="mh3" style="margin-top:14px">Experience mode</div>
+    <div class="modes" id="modes"></div>
+    <div class="lbl" style="margin-top:8px">Every workflow supports all three modes. Switching changes the layout, not your data.</div>
+    <div class="who-foot">
+      <button class="btn sm" id="themeBtn" title="Toggle theme">Theme</button>
+      <button class="btn sm" id="modeBtn" title="Preview the mobile layout" aria-pressed="false"><span id="modeLabel">Mobile view</span></button>
+      <button class="btn sm" data-act="activity">Activity <span class="count" id="logCount" hidden>0</span></button>
+    </div>
+    <div class="mh3" style="margin-top:14px">Role — switching starts fresh</div>
+    <div id="roleList"></div>
+  </div>
+  <div class="ppop" id="demoPop" style="right:12px;width:340px">
+    <div class="mh3">Demo controls <span class="lbl" style="text-transform:none;letter-spacing:0;font-weight:500">(not part of the concept)</span></div>
+    <div class="drow"><span class="lbl" style="width:60px">Role</span><select class="rsel" id="demoRole" aria-label="Role"></select></div>
+    <div class="drow"><span class="lbl" style="width:60px">Accent</span>
+      <span class="sw sel" data-act="accent" data-c="#006CFA" style="background:#006CFA"></span>
+      <span class="sw" data-act="accent" data-c="#b3261e" style="background:#b3261e"></span>
+      <span class="sw" data-act="accent" data-c="#1d6b46" style="background:#1d6b46"></span>
+      <span class="sw" data-act="accent" data-c="#7c3aed" style="background:#7c3aed"></span>
+      <span class="sw" data-act="accent" data-c="#64748b" style="background:#64748b"></span>
+    </div>
+    <label class="drow" style="cursor:pointer"><input type="checkbox" id="notesToggle"> Show concept notes</label>
+    <div class="mh3" style="margin-top:12px">Technician walkthrough</div>
+    <button class="step" data-act="script" data-s="next"><span class="n">1</span><span>Ask chat <b>"What's my next RO?"</b>. The RO loads with a skeleton.</span></button>
+    <button class="step" data-act="script" data-s="home"><span class="n">2</span><span>Go back to My Day, then <b>click an RO card</b> to see it fly in.</span></button>
+    <button class="step" data-act="script" data-s="note"><span class="n">3</span><span><b>"Note front pads at 3 mm"</b>: a small change with an inline Undo.</span></button>
+    <button class="step" data-act="script" data-s="pads"><span class="n">4</span><span><b>"Add front brake pads to line A"</b>: the chat confirms first because it changes the price.</span></button>
+    <button class="step" data-act="script" data-s="tce"><span class="n">5</span><span>Type the Drive code <b>TCE</b> to clock on.</span></button>
+    <button class="step" data-act="script" data-s="done"><span class="n">6</span><span>Mark line A <b>Done</b> and watch the insights update.</span></button>
+    <button class="step" data-act="script" data-s="mode"><span class="n">7</span><span>Switch <b>Beginner / Knowledgeable / Expert</b> from your name in the top-right.</span></button>
+    <button class="step" data-act="script" data-s="mic"><span class="n">8</span><span><b>Hold the mic</b> button to talk.</span></button>
+    <div class="drow" style="justify-content:flex-end;margin-top:10px"><button class="btn sm" data-act="reset">Reset demo</button></div>
+  </div>
+
+  <!-- ============================ STAGE ============================ -->
+  <main class="stage home" id="stage">
+    <section class="region" id="myday" aria-label="My Day">
+      <div class="md-full" id="mdFull"></div>
+      <div class="md-rail" id="mdRail"></div>
+      <span class="cnote" id="mdNote" style="top:8px;right:12px">My Day · AI-arranged for today, balanced with your pins</span>
+    </section>
+
+    <section class="region" id="workspace" aria-label="Workflow space">
+      <div id="tabbar" role="tablist"></div>
+      <div id="wscontent"></div>
+      <div class="cvpane" id="canvas" aria-label="Canvas">
+        <div class="cv-head"><span id="cvTile"></span><h2 id="cvTitle">Canvas</h2><button class="btn ghost m-only" id="cvDone" style="font-weight:600;color:var(--brand)">Done</button><button class="icon-btn d-only" id="cvClose" title="Close this tab" aria-label="Close this tab"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+        <div class="cv-body" id="cvBody"></div>
+      </div>
+      <span class="cnote" style="top:52px;right:12px">Workflow space · tabs = pause &amp; resume</span>
+    </section>
+
+    <aside class="region" id="dossier" aria-label="AIVA Insights">
+      <div class="dz" id="dz"></div>
+      <span class="cnote" style="top:8px;right:12px">AIVA Insights · a living dossier for the work in front of you</span>
+    </aside>
+
+    <div id="chatdock">
+      <span class="cnote" style="top:-30px;left:0">AI chat · centered in your work area · plain English, Drive codes, voice</span>
+      <div id="cpanel" class="hide">
+        <div class="cp-h">
+          <button class="icon-btn" id="cpChats" title="All chats" aria-label="All chats"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h16M4 12h11M4 17h16"/></svg></button>
+          <h1 id="threadTitle">Today</h1>
+          <button class="btn sm ghost" id="newChat" title="New chat">+ New chat</button>
+          <button class="icon-btn" id="cpFull" title="Expand or shrink" aria-label="Expand or shrink"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
+          <button class="icon-btn" id="cpClose" title="Close chat" aria-label="Close chat"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
         </div>
+        <div id="threadList"></div>
+        <div class="scroll" id="scroll"><div class="col" id="thread"></div></div>
       </div>
-      <div class="fine"><span class="long">AIVA answers from Unify product data. </span><span class="dsk"><b>†</b> marks placeholder figures awaiting SME sign-off. Nothing is written without your confirmation.</span><span class="mob"><b>†</b> placeholder figure · nothing is written without your OK</span></div>
+      <div id="listen" class="hide"><div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><b>Listening…</b><div class="lbl">Release to send</div></div>
+      <div id="chips" class="hide"></div>
+      <div class="composer-wrap">
+        <div class="composer">
+          <div class="pop" id="pop" role="listbox"></div>
+          <div class="c-row">
+            <button class="icon-btn" id="histBtn" title="Chat history" aria-label="Chat history"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
+            <textarea id="input" rows="1" placeholder="Ask anything, / for commands, @ for records, or a Drive code" aria-label="Message AIVA"></textarea>
+            <button class="icon-btn d-only" id="slashBtn" title="Commands (/)" aria-label="Commands"><kbd>/</kbd></button>
+            <button class="icon-btn d-only" id="atBtn" title="Mention a record (@)" aria-label="Mention a record"><kbd>@</kbd></button>
+            <button class="icon-btn mic" id="micBtn" title="Hold to talk" aria-label="Hold to talk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+            <button class="send" id="sendBtn" aria-label="Send" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          </div>
+        </div>
+        <div class="fine"><b>†</b> placeholder figure. Small edits can be undone; anything that changes a price or a record asks first.</div>
+      </div>
     </div>
-  </main>
 
-  <!-- ============================ CANVAS ============================ -->
-  <section class="canvas" id="canvas" aria-label="Canvas">
-    <div class="cv-head"><button class="btn ghost sm" id="cvBack" hidden title="Back to Products">← Products</button><span id="cvTile"></span><h2 id="cvTitle">Canvas</h2><button class="btn ghost m-only" id="cvDone" style="font-weight:600;color:var(--brand)">Done</button><button class="icon-btn d-only" id="cvClose" title="Close canvas" aria-label="Close canvas"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="cv-body" id="cvBody"></div>
-  </section>
+    <div class="mscrim" id="megaScrim"></div>
+    <nav id="mega" aria-label="Navigation menu"></nav>
+  </main>
   <div class="toast" id="toast"></div>
 </div>
 <button class="btn exit-preview" id="exitPreview">Exit mobile view</button>
@@ -799,7 +1237,7 @@ const AUTOMATIONS = [
    STATE — one store; renderers read from it.
    ========================================================================== */
 const S = {
-  persona:"newHire", threads:{}, cur:null, streaming:null,
+  persona:"tech", threads:{}, cur:null, streaming:null,
   log:[], canvas:{open:false,kind:null,app:null,rec:null,doc:null,run:0,tab:null}, seq:1
 };
 const $ = s => document.querySelector(s);
@@ -1038,6 +1476,7 @@ function aivaMatchIntent(text){
 function srcLine(apps,extra){ return {t:"src",apps:[...new Set(apps)],text:extra||""}; }
 function openChip(app,rec){ return {label:`Open in ${APPS[app].name}`,open:app,rec:rec||null}; }
 function respond(text){
+  const rr = roRoute(text); if(rr) return rr;                              // RO workflow intents (v17)
   const dc = driveMatch(text); if(dc) return driveAnswer(dc.cmd,dc.arg);   // Drive codes are commands, like /
   const ac = acctMatch(text); if(ac) return acctAnswer(ac);                 // accounting codes: recognised, not wired
   const ref = /^\//.test(text) ? null : aivaCiFind(text);   // 1. context items first
@@ -1155,7 +1594,9 @@ const DRIVE_CMDS = [
   {code:"APPT",label:"Service appointments",note:"Today's board, in the chat.",run:()=>({cards:[PERSONAS.serviceManager.cards.find(c=>c.title==="Today's Appointments")],app:"se"})},
   {code:"PI",label:"Parts inquiry",note:"Open requests and special orders.",run:()=>({cards:[PERSONAS.partsClerk.cards.find(c=>c.title==="Open Parts Requests"),PERSONAS.partsClerk.cards.find(c=>c.title==="Special Orders Arrived")],app:"pa"})},
   {code:"CI",label:"Customer inquiry",note:"Pick a customer, or type @ and a name.",run:()=>({customers:true,app:"crm-red"})},
-  {code:"MPI",label:"Multi-point inspections",note:"Inspections waiting on approval.",run:()=>({prompt:"MPI Approval"})}
+  {code:"MPI",label:"Multi-point inspections",note:"Inspections waiting on approval.",run:()=>({prompt:"MPI Approval"})},
+  {code:"PLU",label:"Parts lookup",note:"Open requests and special orders, in the chat.",run:()=>({cards:[PERSONAS.partsClerk.cards.find(c=>c.title==="Open Parts Requests"),PERSONAS.partsClerk.cards.find(c=>c.title==="Special Orders Arrived")],app:"pa"})},
+  {code:"ROI",label:"RO inquiry",arg:true,note:"Add the RO number, like ROI 124210.",run:a=>a?{prompt:"What's happening with RO #"+a+"?"}:{cards:[PERSONAS.serviceManager.cards.find(c=>c.title==="Open ROs")],app:"se"}}
 ];
 
 /* CDK Drive accounting codes — "Dealership Accounting Re-Imagined / Accounting Connect".
@@ -1235,20 +1676,20 @@ RESPONDERS.wtcust=()=>({node:"monitor",trace:["Walkthrough"],lead:"To look up a 
 
 /* ---------------- first-load modal + 3-step tour ---------------- */
 const NAV_ITEMS = [
-  {sel:"#cdkLogoBtn",title:"The CDK dot — home",body:"Tap it from anywhere to come back to Today. It's the one button that always takes you home."},
-  {sel:"#newChat",title:"New chat",body:"Start fresh when you switch tasks. Each chat keeps its own context, so a customer question never leaks into an RO lookup."},
-  {sel:"#navToday",title:"Today",body:"Your briefing. Each morning AIVA builds it from Service, Parts and the rest — the few things that need you first."},
-  {sel:"#recentList",alt:"#threadList",title:"Recently opened",body:"The ROs, deals and documents you've been working on, one tap from picking up where you left off. It fills in as you work — on your first day it's empty."},
-  {sel:"#navApps",title:"Products",body:"All nine Unify products. They open beside the chat, so the conversation you were having stays put."},
-  {sel:"#navActivity",title:"Activity",body:"Everything AIVA has written for you, and who confirmed it. Nothing writes itself — every change here was a yes from a person."},
-  {sel:"#threadList",title:"Your conversations",body:"Chats grouped by day. Pin the ones you keep coming back to — a regular customer, a long-running repair."},
-  {sel:"#personaBtn",title:"Your role",body:"Your role and store. It decides what AIVA shows you, so a number always means what you expect it to."},
-  {sel:".foot-row",title:"Theme and Mobile view",body:"Switch light or dark, and preview the phone layout you'll use on the lot."}
+  {sel:"#megaBtn",title:"Navigation menu",body:"Every app, workflow and resource in one place. Whatever you open becomes a tab, so you can pause one job and pick it back up."},
+  {sel:"#cdkLogoBtn",title:"The CDK dot — My Day",body:"Tap it from anywhere to come back to My Day. It's the one button that always takes you home."},
+  {sel:"#mdQueue",title:"Your queue",body:"AIVA arranges it each morning from Service, Parts and the rest, and tells you why each item is where it is. The top one is what needs you first."},
+  {sel:"#mdSmart",title:"AI smart activity",body:"Small jobs AIVA can do for you. Each one asks before it changes anything — tick them off as they're done."},
+  {sel:"#recentList",alt:"#mdRecent",title:"Recently opened",body:"The ROs, deals and documents you've been working on, one tap from picking up where you left off. It fills in as you work — on your first day it's empty."},
+  {sel:"#mdPins",title:"Your apps and workflows",body:"The products and workflows you use most, pinned by you. They open as tabs in the middle of the screen."},
+  {sel:"#histBtn",title:"Chat history",body:"Opens the conversation above the chat bar. Your chats are grouped by day — pin the ones you keep coming back to."},
+  {sel:"#bellBtn",title:"Alerts",body:"The bell only tells you something is new. The same alerts sit in My Day, so you never have to hunt for them."},
+  {sel:"#personaBtn",title:"Your role and experience mode",body:"Your role decides what AIVA shows you. This is also where you choose Beginner, Knowledgeable or Expert, switch theme, preview the phone layout and open the activity log."}
 ];
 const TOUR = [
   {part:"Basics",n:1,sel:".composer",title:"Ask anything — or type /",body:"Start every task here in plain words. Type <kbd>/</kbd> to see every command AIVA knows — that's the fastest way to find something new.",demo:"type"},
   {part:"Basics",n:2,sel:".composer",title:"Your Drive commands still work",body:`Type a Drive code like <kbd>TCE</kbd> or <kbd>CHK</kbd> right in the message box and press <kbd>↵</kbd>. No special keys — it's a command like any other.`,demo:"keys"},
-  {part:"Basics",n:3,sel:"#scroll",title:"…and they open right here",body:"The function you called opens inside this conversation, and bigger tools slide in beside it. No new windows, no hunting through menus.",demo:"open"},
+  {part:"Basics",n:3,sel:"#myday",title:"…and they open right here",body:"The answer appears just above the chat bar, and bigger tools open as tabs in the middle of the screen. No new windows, no hunting through menus.",demo:"open"},
   {checkpoint:true},
   {part:"Explore",n:1,nav:true,place:"right",prep:"nav"},
   {part:"Explore",n:2,sel:"#cvBody .cv-sec",pick:0,place:"left",prep:"service",title:"Service · Needs attention",
@@ -1277,16 +1718,16 @@ function showWelcome(){
 }
 function closeWelcome(){ const el=$("#obLayer"); if(el){ el.classList.remove("show"); el.innerHTML=""; } }
 function tourVisible(el){ if(!el) return false; for(let n=el;n&&n.nodeType===1;n=n.parentElement){ if(getComputedStyle(n).display==="none") return false; } return true; }
-function tourTarget(st){ let t=document.querySelector(st.sel); if(!tourVisible(t)) t=st.alt?document.querySelector(st.alt):null; return tourVisible(t)?t:document.querySelector("#scroll"); }
+function tourTarget(st){ let t=document.querySelector(st.sel); if(!tourVisible(t)) t=st.alt?document.querySelector(st.alt):null; return tourVisible(t)?t:document.querySelector("#chatdock"); }
 function startTour(){
-  closeWelcome(); if(S.streaming) S.streaming.stop(); aivaCloseStage(); closeDrawer();
+  closeWelcome(); if(S.streaming) S.streaming.stop(); closePops(); closeMega(); closePanel(); aivaCloseStage();
   let el=$("#tour"); if(!el){ el=document.createElement("div"); el.id="tour"; el.className="tour"; el.innerHTML=`<div class="tour-hole" id="tourHole"></div><div class="tour-ptr" id="tourPtr"><svg width="34" height="34" viewBox="0 0 24 24"><path d="M5 3l14 7-6.2 1.8L10 18z" fill="#fff" stroke="#0a0a0c" stroke-width="1.4" stroke-linejoin="round"/></svg></div><div class="tour-card" id="tourCard" role="dialog" aria-live="polite"></div>`; $("#app").appendChild(el); }
   TOUR_STATE.on=true; TOUR_STATE.i=0; TOUR_STATE.sub=0; TOUR_STATE.prepped=null; el.classList.add("show"); renderTour();
 }
 function endTour(){ TOUR_STATE.on=false; clearInterval(TOUR_STATE.timer); TOUR_STATE.prepped=null; const el=$("#tour"); if(el) el.classList.remove("show");
   // Back to the conversation: close every sheet the tour opened, then focus the message box.
-  closeDrawer(); aivaCloseStage(); closePersonaMenu(); closePop();
-  setTimeout(()=>{ scrollDown(); const inp=$("#input"); if(inp&&!isMobile()) inp.focus(); },320); }
+  [...W.tabs].filter(t=>t.kind==="cv").forEach(t=>closeTab(t.id)); goHome(); closePop();
+  setTimeout(()=>{ const inp=$("#input"); if(inp&&!isMobile()) inp.focus(); },320); }
 function demoHTML(kind){
   if(kind==="queue") return `<div class="demo-queue"><div class="dq-row r1"><b>10:00 Arrival</b><span>Kapoor, K. · checked in</span></div><div class="dq-row r2"><b>MPI Approval</b><span>RO #98664 · Lacy, C.</span></div><div class="dq-ro"><span class="dc-tag auto">AUTOMATION</span><b>Draft RO for Kapoor, K.</b><span>From appointment notes · confirm to save</span></div></div>`;
   if(kind==="donut") return `<div class="demo-donut"><svg width="64" height="64" viewBox="0 0 68 68"><circle cx="34" cy="34" r="26" fill="none" stroke="var(--surface-3)" stroke-width="10"/><circle class="seg s1" cx="34" cy="34" r="26" fill="none" stroke="var(--warning)" stroke-width="10" stroke-dasharray="27.8 135.6" transform="rotate(-90 34 34)"/><circle class="seg s2" cx="34" cy="34" r="26" fill="none" stroke="var(--brand)" stroke-width="10" stroke-dasharray="83.3 80.1" stroke-dashoffset="-27.8" transform="rotate(-90 34 34)"/><circle class="seg s3" cx="34" cy="34" r="26" fill="none" stroke="var(--success)" stroke-width="10" stroke-dasharray="52.3 111.1" stroke-dashoffset="-111.1" transform="rotate(-90 34 34)"/></svg><div class="dd-legend"><span><i style="background:var(--warning)"></i>Waiting on parts</span><span><i style="background:var(--brand)"></i>In the bay</span><span class="hl"><i style="background:var(--success)"></i>Ready — call the customer</span></div></div>`;
@@ -1308,20 +1749,14 @@ function runDemo(kind){
   },70);
 }
 function tourPrep(st,cb){
-  const app=$("#app");
-  if(st.prep==="nav"){
-    aivaCloseStage();
-    if(isMobile()){ const was=app.classList.contains("drawer"); app.classList.add("drawer"); return setTimeout(cb,was?0:320); }
-    app.classList.remove("rail-min"); return setTimeout(cb,TOUR_STATE.prepped==="nav"?0:260);
-  }
+  closePops(); closeMega(); closePanel();
   if(st.prep==="service"){
-    closeDrawer();
     const already=S.canvas.open&&S.canvas.kind==="app"&&S.canvas.app==="se";
     if(!already) openCanvas({kind:"app",app:"se",tab:"Overview"});
     const t=document.querySelectorAll(st.sel)[st.pick||0]; if(t&&t.scrollIntoView) t.scrollIntoView({block:"start"});
-    return setTimeout(cb,already?120:380);
+    return setTimeout(cb,already?120:420);
   }
-  closeDrawer(); if(S.canvas.open) aivaCloseStage();
+  if(W.mode!=="home"){ goHome(); return setTimeout(cb,400); }   // Basics and the navigation tour both run on My Day
   cb();
 }
 function tourLabel(st){ return `${st.part} · ${st.n} of 3`; }
@@ -1348,7 +1783,7 @@ function renderTour(){
   const st=TOUR[TOUR_STATE.i];
   if(!st) return endTour();
   if(st.part&&TOUR_STATE.prepped!==TOUR_STATE.i){ const at=TOUR_STATE.i; return tourPrep(st,()=>{ if(TOUR_STATE.on&&TOUR_STATE.i===at){ TOUR_STATE.prepped=at; drawTour(); } }); }
-  if(!st.part){ TOUR_STATE.prepped=TOUR_STATE.i; closeDrawer(); }
+  if(!st.part){ TOUR_STATE.prepped=TOUR_STATE.i; }
   drawTour();
 }
 function drawTour(){
@@ -1398,7 +1833,7 @@ function briefingAnswer(pk,first){
   const apps=[...new Set(tasks.map(t=>t.app).concat(p.apps||[]))].filter(a=>APPS[a]);
   const lead = `${first?greetingWord()+". ":""}You have <b>${tasks.length} things</b> on your plate at Statler Toyota today${hi?` — <b>${hi} ${hi>1?"are":"is"} time-sensitive</b>`:""}. ${esc(p.banner.replace(/\\'/g,"'"))}`;
   return {node:"monitor",trace:apps.map(a=>APPS[a].name),lead,
-    blocks:[{t:"tasks",items:tasks},{t:"h",text:"Your numbers"},{t:"parts",cards:p.cards||[]},srcLine(apps,"as of "+hhmm(now()))],
+    blocks:[{t:"tasks",items:tasks}].concat(pk==="tech"?[{t:"h",text:"Your queue †"},{t:"tbl",head:["RO","Vehicle","Work","Promised"],rows:RO_QUEUE.map(k=>[`<b>${k}</b>`,esc(RO[k].vehicle),esc(RO[k].summary),esc(RO[k].promised)]),click:RO_QUEUE.map(k=>"RO "+k)}]:[]).concat([{t:"h",text:"Your numbers"},{t:"parts",cards:p.cards||[]},srcLine(apps,"as of "+hhmm(now()))]),
     chips:first?starters(pk).slice(1).concat([{label:"Show every command",prompt:"/help"}]):starters(pk).slice(1)};
 }
 
@@ -1499,8 +1934,9 @@ function newThread(pk,title,created){
 }
 function addAI(th,r){ const t={id:"m"+(S.seq++),role:"ai",r}; th.turns.push(t); return t; }
 function ask(text,opts){
-  text=(text||"").trim(); if(!text||S.streaming) return;
-  closePop();
+  text=(text||"").trim(); if(!text) return;
+  if(S.streaming) S.streaming.stop();      // a new ask finishes the answer in flight instead of being dropped
+  closePop(); openPanel();
   let th=S.threads[S.cur];
   if(!th || th.persona!==S.persona){ th=newThread(S.persona); S.cur=th.id; renderThread(); }
   if(!th.turns.length) $("#thread").innerHTML="";
@@ -1509,6 +1945,8 @@ function ask(text,opts){
   $("#thread").insertAdjacentHTML("beforeend",userTurnHTML(u));
   $("#threadTitle").textContent=th.title; renderRail(); scrollDown();
   const r=respond(text.replace(/^\/(\w+)\s*$/,(m,c)=>"/"+c));
+  $("#cpanel").classList.toggle("brief",!!r.brief);
+  if(r.brief||r.after){ const a=r.after; r.after=()=>{ if(a) a(); autoCollapse(); }; }   // answers that act on the workspace step aside
   const t=addAI(th,r); streamTurn(t);
 }
 function seedThreads(pk){
@@ -1524,8 +1962,7 @@ function seedThreads(pk){
 function startBriefing(pk){
   seedThreads(pk);
   const th=newThread(pk,"Today · "+now().toLocaleDateString([], {weekday:"short",month:"short",day:"numeric"}));
-  S.cur=th.id; renderThread();
-  const t=addAI(th,briefingAnswer(pk,true)); streamTurn(t);
+  S.cur=th.id; addAI(th,briefingAnswer(pk,true)); renderThread();   // My Day is the first screen; the briefing waits in the chat
 }
 /* Recently opened — the role's activity feed from the master prototype (v30 renderRecentlyOpened(p.activity)). */
 function recentHTML(){
@@ -1539,10 +1976,13 @@ function renderRail(){
   const day=d=>{ const t=new Date(); t.setHours(0,0,0,0); return d>=t?"Today":d>=new Date(t-864e5)?"Yesterday":"Earlier"; };
   const groups={Pinned:[],Today:[],Yesterday:[],Earlier:[]};
   list.forEach(t=>(t.pinned?groups.Pinned:groups[day(t.created)]).push(t));
-  $("#threadList").innerHTML=recentHTML()+Object.entries(groups).filter(g=>g[1].length).map(([g,ts])=>`<div class="rail-h">${g}</div>`+ts.map(t=>`<div class="th${t.id===S.cur?" on":""}" data-thread="${t.id}"><span class="t">${esc(t.title)}</span><button class="icon-btn${t.pinned?" pinned":""}" data-pin="${t.id}" title="${t.pinned?"Unpin":"Pin"}"><svg width="13" height="13" viewBox="0 0 24 24" fill="${t.pinned?"currentColor":"none"}" stroke="currentColor" stroke-width="2"><path d="M12 17v5M8 3h8l-1 6 3 4H6l3-4z"/></svg></button><button class="icon-btn" data-del="${t.id}" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div>`).join("")).join("");
-  const p=P(), ini=p.short.split(/[ /&]+/).filter(Boolean).map(w=>w[0]).join("").slice(0,2).toUpperCase();
-  $("#personaBtn").innerHTML=`<span class="avatar" style="background:${PERSONA_COLOR[S.persona]}">${ini}</span><span class="who hide-min"><b>${esc(p.label)}</b><small>Statler Toyota · switch role</small></span>`;
-  $("#personaMenu").innerHTML=`<div class="mh">Role — switching starts a new thread</div>`+PERSONA_ORDER.map(k=>{const q=PERSONAS[k]; const i=q.short.split(/[ /&]+/).filter(Boolean).map(w=>w[0]).join("").slice(0,2).toUpperCase(); return `<button data-persona="${k}" class="${k===S.persona?"on":""}"><span class="avatar" style="background:${PERSONA_COLOR[k]}">${i}</span>${esc(q.label)}</button>`;}).join("");
+  $("#threadList").innerHTML=Object.entries(groups).filter(g=>g[1].length).map(([g,ts])=>`<div class="rail-h">${g}</div>`+ts.map(t=>`<div class="th${t.id===S.cur?" on":""}" data-thread="${t.id}"><span class="t">${esc(t.title)}</span><button class="icon-btn${t.pinned?" pinned":""}" data-pin="${t.id}" title="${t.pinned?"Unpin":"Pin"}"><svg width="13" height="13" viewBox="0 0 24 24" fill="${t.pinned?"currentColor":"none"}" stroke="currentColor" stroke-width="2"><path d="M12 17v5M8 3h8l-1 6 3 4H6l3-4z"/></svg></button><button class="icon-btn" data-del="${t.id}" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div>`).join("")).join("");
+  const p=P(), tech=S.persona==="tech", inits=x=>x.split(/[ /&]+/).filter(Boolean).map(w=>w[0]).join("").slice(0,2).toUpperCase();
+  const name=tech?TECH_USER.name:p.label, lvl=LEVELS.find(x=>x[0]===W.level)[1];
+  $("#personaBtn").innerHTML=`<span class="avatar" style="background:${PERSONA_COLOR[S.persona]}">${inits(tech?name:p.short)}</span><span class="tx"><div class="n">${esc(name)}</div><div class="r">${esc(tech?p.short:"Statler Toyota")}<span class="lvl">${lvl}</span></div></span>`;
+  $("#whoAcct").innerHTML=`<div style="font-size:13px"><b>${esc(name)}</b><div class="lbl">${esc(p.label)} · Statler Toyota</div></div>`;
+  $("#roleList").innerHTML=PERSONA_ORDER.map(k=>{ const q=PERSONAS[k]; return `<button data-persona="${k}" class="${k===S.persona?"on":""}"><span class="avatar" style="background:${PERSONA_COLOR[k]}">${inits(q.short)}</span>${esc(q.label)}</button>`; }).join("");
+  const dr=$("#demoRole"); if(dr) dr.value=S.persona;
   const lc=$("#logCount"); lc.hidden=!S.log.length; lc.textContent=S.log.length;
 }
 
@@ -1558,7 +1998,7 @@ function logEntry(node,action,app){
 function resolveCfm(id,yes){
   const f=findCfm(id); if(!f||f.b.state!=="pending") return;
   const a=AUTOMATIONS[f.b.auto];
-  if(yes){ const dt=typeof a.done==="function"?a.done():a.done; f.b.state="done"; f.b.at=hhmm(now()); f.b.by=S.persona; f.b.doneText=dt; logEntry("auto",dt,f.t.r.blocks.find(b=>b.t==="src").apps[0]); if(a.onDone) a.onDone(); toast("Done — written to the activity log"); }
+  if(yes){ const dt=typeof a.done==="function"?a.done():a.done; f.b.state="done"; f.b.at=hhmm(now()); f.b.by=S.persona; f.b.doneText=dt; logEntry("auto",dt,f.t.r.blocks.find(b=>b.t==="src").apps[0]); if(a.onDone) a.onDone(); renderMyDay(); toast("Done — written to the activity log"); }
   else { f.b.state="cancel"; toast("Cancelled — nothing written"); }
   const el=document.querySelector(`[data-cfm="${id}"]`); if(el) el.outerHTML=cfmHTML(f.b,f.t.id);
 }
@@ -1566,9 +2006,17 @@ function resolveCfm(id,yes){
 /* ==========================================================================
    CANVAS — one state object; every Open card reads from it
    ========================================================================== */
-const WIDE_SHEETS=["launcher","activity"];
-function openCanvas(st){ const inside=S.canvas.open&&S.canvas.wide, fromKind=S.canvas.open?S.canvas.kind:null, prevBack=S.canvas.back; Object.assign(S.canvas,{open:true,kind:null,app:null,rec:null,doc:null,tab:null,set:null,wide:false,back:null},st); if(WIDE_SHEETS.includes(S.canvas.kind)||inside||st.wide) S.canvas.wide=true; if(st.back===undefined) S.canvas.back=(inside&&fromKind==="launcher"&&S.canvas.kind!=="launcher")?"launcher":(inside&&st.kind!=="launcher"&&prevBack)||null; $("#app").classList.add("canvas-open"); $("#app").classList.toggle("canvas-wide",!!S.canvas.wide); $("#cvBack").hidden=!S.canvas.back; renderCanvas(); syncOpenButtons(); }
-function aivaCloseStage(){ S.canvas.open=false; $("#app").classList.remove("canvas-open"); clearInterval(S.runTimer); S.runTimer=null; syncOpenButtons(); }
+/* Every canvas view is a workflow tab. S.canvas points at the active canvas tab's state. */
+const cvKey=st=>st.kind==="app"?"app:"+st.app:st.kind==="merge"?"dups":st.kind;
+function openCanvas(st){
+  closeMega(); closePops();
+  const id="cv:"+cvKey(st); let t=tabById(id);
+  if(!t){ t={id,kind:"cv",st:Object.assign(CV_CLOSED(),st,{open:true})}; W.tabs.push(t); }
+  else Object.assign(t.st,{rec:null,tab:null,set:null},st,{open:true});
+  if(t.st.kind!=="doc") t.st.doc=null;
+  W.active=id; setStage("work"); renderTabs(); renderCanvas(); renderDossier(); syncOpenButtons();
+}
+function aivaCloseStage(){ clearInterval(S.runTimer); S.runTimer=null; const t=activeTab(); if(W.mode==="work"&&t&&t.kind==="cv") closeTab(t.id); else syncOpenButtons(); }
 function syncOpenButtons(){
   const c=S.canvas;
   document.querySelectorAll("[data-open-app]").forEach(b=>{ const on=c.open&&c.kind==="app"&&c.app===b.dataset.openApp; b.classList.toggle("active",on&&b.classList.contains("chip")); if(b.classList.contains("chip")){ const sp=b.querySelector("span:last-child"); if(sp){ sp.dataset.label=sp.dataset.label||sp.textContent; sp.textContent=on?"Close "+APPS[b.dataset.openApp].name:sp.dataset.label; } } });
@@ -1620,7 +2068,9 @@ function openPop(mode,q){
     items=DRIVE_CMDS.filter(c=>c.code.startsWith(Q)).map(c=>({label:`<kbd>${c.code}</kbd> ${esc(c.label)}${c.grounded?"":'<span class="dag">†</span>'}`,sub:c.grounded?"Drive · ETC in Unify":"Drive code",val:c.code+(c.arg?" ":"")}))
       .concat(ACCT_CODES.filter(c=>c.code.startsWith(Q)).map(c=>({label:`<kbd>${c.code}</kbd> ${esc(c.areaName)}`,sub:"Accounting · not wired yet",val:c.code}))).slice(0,8); }
   else if(mode==="/") items=COMMANDS.filter(c=>c[0].startsWith("/"+q)).map(c=>({label:`<kbd>${c[0]}</kbd>`,sub:c[1],val:c[0]}));
-  else { INDEX=INDEX||buildIndex(); const ql=q.toLowerCase(); items=INDEX.filter(e=>!ql||e.hay.includes(ql)).slice(0,8).map(e=>({label:tileHTML(e.app,"sm")+" "+esc(e.label),sub:e.kind==="customer"?"Customer":e.kind==="doc"?"Document":APPS[e.app]?APPS[e.app].name:"",val:e.label})); }
+  else { INDEX=INDEX||buildIndex(); const ql=q.toLowerCase(); items=INDEX.filter(e=>!ql||e.hay.includes(ql)).slice(0,8).map(e=>({label:tileHTML(e.app,"sm")+" "+esc(e.label),sub:e.kind==="customer"?"Customer":e.kind==="doc"?"Document":APPS[e.app]?APPS[e.app].name:"",val:e.label}));
+    const ros=(ql||S.persona==="tech")?Object.keys(RO).filter(k=>(k+" "+RO[k].vehicle+" "+RO[k].customer).toLowerCase().includes(ql)).slice(0,4).map(k=>({label:tileHTML("se","sm")+" RO "+k+'<span class="dag">†</span>',sub:RO[k].vehicle,val:"RO "+k})):[];
+    items=ros.concat(items).slice(0,8); }
   POP={mode,items,sel:0,start:POP.start};
   const pop=$("#pop");
   if(!items.length){ closePop(); return; }
@@ -1669,7 +2119,10 @@ function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("show")
 function toggleTheme(){ const r=document.documentElement; r.dataset.theme=r.dataset.theme==="dark"?"light":"dark"; try{localStorage.setItem("aiva-theme",r.dataset.theme);}catch(e){} }
 function switchPersona(pk){
   if(S.streaming) S.streaming.stop();
-  S.persona=pk; $("#personaMenu").classList.remove("show"); closeDrawer(); aivaCloseStage(); startBriefing(pk); maybeWelcome(pk);
+  S.persona=pk; closePops(); closeMega(); closePanel();
+  setClock(null); W.tabs=[]; W.active=null; W.taskDone={}; W.lastEdit=null; W.level=levelFor(pk);   // switching role starts fresh
+  renderTabs(); renderModes(); setStage("home");
+  startBriefing(pk); maybeWelcome(pk);
   toast("Now working as "+PERSONAS[pk].label);
 }
 /* Persona fly-out: fixed to the button on desktop so the rail cannot clip it. */
@@ -1686,9 +2139,9 @@ function placePersonaMenu(){
   if(above>=260||above>=below){ mn.style.top="auto"; mn.style.bottom=(vh-above+6)+"px"; mn.style.maxHeight=(above-16)+"px"; }
   else { mn.style.bottom="auto"; mn.style.top=(r.bottom-o.top+6)+"px"; mn.style.maxHeight=(below-22)+"px"; }
 }
-function closePersonaMenu(){ $("#personaMenu").classList.remove("show"); }
+function closePersonaMenu(){ closePops(); }
 window.addEventListener("resize",closePersonaMenu);
-function closeDrawer(){ $("#app").classList.remove("drawer"); }
+function closeDrawer(){ /* retired in v17: there is no drawer; kept so older call sites stay valid */ }
 function isMobile(){ return $("#app").classList.contains("m"); }
 const MQ = window.matchMedia ? matchMedia("(max-width:760px)") : {matches:false,addEventListener(){}};
 /* A phone is a phone at any width: Android, iPhone, iPod, or a UA that says Mobile. */
@@ -1700,14 +2153,13 @@ function applyMode(){
   app.classList.toggle("m",m);
   app.classList.toggle("preview",!small&&!!S.preview);
   document.body.classList.toggle("preview-on",!small&&!!S.preview);
-  if(m) app.classList.remove("rail-min"); else closeDrawer();
   const b=$("#modeBtn"); b.hidden=small; b.setAttribute("aria-pressed",String(!!S.preview));
   $("#modeLabel").textContent=S.preview?"Desktop view":"Mobile view";
-  $("#input").placeholder=m?"Message AIVA":"Ask AIVA anything — / for commands, @ for records";
+  $("#input").placeholder=m?"Message AIVA":"Ask anything, / for commands, @ for records, or a Drive code";
 }
 function toggleMode(){ S.preview=!S.preview; try{localStorage.setItem("aiva-preview",S.preview?"1":"0");}catch(e){} closeDrawer(); applyMode(); scrollDown(); toast(S.preview?"Mobile view — same app, phone layout":"Desktop view"); }
 function newChatClick(){
-  closeDrawer();
+  openPanel();
   if(S.streaming) S.streaming.stop();
   const th=newThread(S.persona,"New chat"); S.cur=th.id; renderThread();
   const p=P();
@@ -1721,11 +2173,785 @@ function micClick(){
 }
 
 /* ==========================================================================
+   v17 — UNIFY CONCEPT LAYOUT
+   Platform bar · My Day · workflow space with tabs · AIVA Insights · chat dock.
+   Structure and RO workflow ported from "Unify Concept Prototype.html";
+   the AIVA engine above is unchanged and now answers inside the dock.
+   All RO records below are concept placeholders (†) — none is grounded.
+   ========================================================================== */
+const GI={
+ spark:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>',
+ pin:'<path d="M12 16v5M8.5 4h7l-1 5 3 3v2h-11v-2l3-3z"/>',
+ x:'<path d="M18 6 6 18M6 6l12 12"/>',
+ expand:'<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>',
+ chev:'<path d="m6 9 6 6 6-6"/>',
+ clock:'<circle cx="12" cy="12" r="9.5"/><path d="M12 7v5l3.5 2"/>',
+ box:'<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>',
+ alert:'<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+ book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V2H6.5A2.5 2.5 0 0 0 4 4.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+ car:'<path d="M3 16v-4l2.2-5.2A2 2 0 0 1 7 5.5h10a2 2 0 0 1 1.8 1.3L21 12v4"/><path d="M3 12h18M3 16h18"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>',
+ file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>',
+ wrench:'<path d="M14.7 6.3a4.5 4.5 0 0 0 5.8 5.8l-8.8 8.8a2.1 2.1 0 0 1-3-3l8.8-8.8"/><path d="M14.7 6.3 17 4"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ home:'<path d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z"/>',
+ lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+ hist:'<path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/>',
+ term:'<path d="m4 17 6-5-6-5M12 19h8"/>'
+};
+const gi=(n,s)=>`<svg width="${s||16}" height="${s||16}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none">${GI[n]||""}</svg>`;
+
+const TECH_USER={name:"Julian Casablancas",first:"Julian",short:"J. Casablancas",bay:"service bay 4"};
+const RO={
+ "13456B":{tag:"78786",status:"Being Repaired",vehicle:"2019 Toyota Highlander XLE",vin:"5TDJZRFH4KS612480",engine:"3.5L V6",color:"Magnetic Gray Metallic",miles:"34,000",
+   customer:"Christopher Don",custNo:"123456",since:"2019",visits:6,contact:"Prefers text updates",waiting:"Dropped off, not waiting",advisor:"Jim Halpert",promised:"Today 1:00 PM",
+   summary:"Brake inspection + oil change",why:"Next up · promised 1:00 PM · oil parts staged",warranty:"Powertrain to 60k mi · CPO",
+   jobs:[
+    {L:"A",group:"concern",title:"Brake System Inspection",code:"H99",concern:"Customer states grinding noise from the front when braking at low speed.",labor:[{op:"BRK01",desc:"Brake System Inspection",hrs:"0.50"}],parts:[]},
+    {L:"B",group:"asr",title:"Engine Oil and Filter Replacement",code:"C93",concern:"Due per maintenance schedule at 34k mi.",labor:[{op:"OF002",desc:"Engine Oil and Filter Replacement",hrs:"0.50"}],parts:[{pn:"04152-YZZA1",desc:"Oil filter",qty:"1",st:"Staged · C-12"},{pn:"00279-0WQTE-01",desc:"0W-20 synthetic",qty:"6 qt",st:"Staged · C-12"}]}
+   ],
+   history:[{ro:"12988",date:"Aug 14, 2025",mi:"29,100",what:"Oil & filter, tire rotation, MPI: front pads 4 mm"},{ro:"11542",date:"Feb 3, 2025",mi:"24,850",what:"Battery replaced"},{ro:"09877",date:"Jun 22, 2023",mi:"18,020",what:"Front brake pads & rotors"}],
+   insights:[
+    {ic:"spark",t:"Front pads were 4 mm last visit",b:"Measured on RO 12988 (Aug 2025, 29,100 mi). A low-speed grind fits pads at or near minimum."},
+    {ic:"alert",t:"Open recall 23S12",b:"Rear axle bolt inspection. Not on this RO. Warranty work, no cost to the customer.",a:{label:"Add to RO",act:"addrecall"}},
+    {ic:"box",t:"Line B parts are staged",b:"Oil filter and 6 qt 0W-20 pulled to bin C-12."}
+   ]},
+ "13449A":{tag:"78702",status:"Waiting on Parts",vehicle:"2020 Toyota Camry SE",vin:"4T1G11AK5LU903314",engine:"2.5L I4",color:"White",miles:"41,210",customer:"Pam Beesly",custNo:"118204",since:"2020",visits:3,contact:"Prefers calls",waiting:"Loaner issued",advisor:"Jim Halpert",promised:"Tomorrow 10:00 AM",
+   summary:"A/C not cooling",why:"Compressor ETA tomorrow 8 AM",warranty:"Basic to 36k (expired)",
+   jobs:[{L:"A",group:"concern",title:"A/C Performance Diagnosis",code:"D12",concern:"A/C blows warm air after 10 minutes.",labor:[{op:"AC100",desc:"A/C System Diagnosis",hrs:"1.00"}],parts:[{pn:"88310-06450",desc:"A/C compressor",qty:"1",st:"On order · ETA 8 AM"}]}],
+   history:[{ro:"12701",date:"Jul 2, 2025",mi:"36,400",what:"Oil & filter"}],
+   insights:[{ic:"box",t:"Compressor on order",b:"ETA tomorrow 8:00 AM. Nothing to do on this RO today."}]},
+ "13461C":{tag:"78811",status:"Not Started",vehicle:"2019 Toyota Tacoma SR5",vin:"3TMCZ5AN2KM20114",engine:"3.5L V6",color:"Silver",miles:"58,900",customer:"Kevin Malone",custNo:"120377",since:"2019",visits:5,contact:"Prefers text updates",waiting:"Waiting in lounge",advisor:"Jim Halpert",promised:"Today 3:30 PM",
+   summary:"60k service",why:"Customer waiting · start by 1:30 PM",warranty:"Powertrain to 60k mi",
+   jobs:[{L:"A",group:"concern",title:"60,000 Mile Maintenance",code:"M60",concern:"Scheduled 60k maintenance.",labor:[{op:"M60K",desc:"60k Maintenance Package",hrs:"2.40"}],parts:[]}],
+   history:[{ro:"12450",date:"Mar 9, 2025",mi:"51,200",what:"Oil & filter, rotation"}],
+   insights:[{ic:"user",t:"Customer is waiting in the lounge",b:"Promised 3:30 PM. Keep the start time."}]},
+ "13452A":{tag:"78744",status:"Paused · Parts Arrived",vehicle:"2021 Toyota Tundra Limited",vin:"5TFHY5F17MX987231",engine:"5.7L V8",color:"Midnight Black Metallic",miles:"27,640",customer:"Stanley Hudson",custNo:"110983",since:"2021",visits:4,contact:"Prefers email",waiting:"Dropped off",advisor:"Jim Halpert",promised:"Today 5:00 PM",
+   summary:"Front strut replacement",why:"Parts arrived 9:40 AM",warranty:"Bumper-to-bumper to 36k",
+   jobs:[{L:"A",group:"concern",title:"Front Suspension Noise",code:"S41",concern:"Clunk over bumps from the front.",labor:[{op:"SUS22",desc:"Replace front struts (pair)",hrs:"2.10"}],parts:[{pn:"48510-0C230",desc:"Front strut assembly",qty:"2",st:"Arrived · counter"}]}],
+   history:[{ro:"12011",date:"Apr 11, 2025",mi:"21,900",what:"Oil & filter"}],
+   insights:[{ic:"box",t:"Struts at the parts counter",b:"Arrived 9:40 AM. Pick-up ticket 4471."}]},
+ "12988":{tag:"77120",status:"Closed",vehicle:"2019 Toyota Highlander XLE",vin:"5TDJZRFH4KS612480",engine:"3.5L V6",color:"Magnetic Gray Metallic",miles:"29,100",customer:"Christopher Don",custNo:"123456",since:"2019",visits:6,contact:"Prefers text updates",waiting:"—",advisor:"Jim Halpert",promised:"Aug 14, 2025",
+   summary:"Past visit",why:"",warranty:"Powertrain to 60k mi · CPO",
+   jobs:[{L:"A",group:"concern",title:"Oil Change & Multi-Point Inspection",code:"C93",concern:"Maintenance visit.",labor:[{op:"OF002",desc:"Engine Oil and Filter Replacement",hrs:"0.50"},{op:"MPI01",desc:"Multi-Point Inspection",hrs:"0.30"}],parts:[{pn:"04152-YZZA1",desc:"Oil filter",qty:"1",st:"Installed"}]}],
+   history:[],insights:[{ic:"file",t:"Historical RO (read-only)",b:"MPI noted front pads at 4 mm, recommended at next visit."}]}
+};
+const RO_QUEUE=["13456B","13461C","13449A"];
+const TECH_TASKS=[
+ {id:"t1",t:"Finish brake inspection",s:"RO 13456B · promised 1:00 PM",ro:"13456B"},
+ {id:"t2",t:"Install struts, parts arrived",s:"RO 13452A · resume",ro:"13452A"},
+ {id:"t3",t:"Complete MPI",s:"RO 13448 · 70% done",wf:"Multi-Point Inspection"}];
+const TECH_ALERTS=[
+ {b:"!",t:"Parts arrived · RO 13452A",s:"Front struts at the counter · 9:40 AM",ro:"13452A",hot:true},
+ {b:"i",t:"Shop meeting moved",s:"Now 2:00 PM, service lane"}];
+const TECH_PINS=[["TC","Time Clock"],["PL","Parts Lookup"],["MPI","Multi-Point Inspection"],["SM","Service Manuals"],["TW","Technician Workflow"],["WC","Warranty Claims"]];
+const WF_ALL=[["TW","Technician Workflow"],["MPI","Multi-Point Inspection"],["TC","Time Clock"],["PL","Parts Lookup"],["SM","Service Manuals"],["WC","Warranty Claims"]];
+const LEVELS=[["beginner","Beginner","Guided. Explains each step of the workflow, with less on screen."],["knowledgeable","Knowledgeable","No instructions. A condensed workflow with fewer steps."],["expert","Expert","Dense and streamlined, with keyboard shortcuts."]];
+const CV_CLOSED=()=>({open:false,kind:null,app:null,rec:null,doc:null,run:0,tab:null,set:null});
+const W={mode:"home",tabs:[],active:null,level:"beginner",clock:null,tick:null,taskDone:{},hoverPanel:false,collapseT:null,micT:0,listening:false,lastEdit:null};
+
+const tabById=id=>W.tabs.find(t=>t.id===id);
+const activeTab=()=>tabById(W.active);
+const isOpenRO=k=>W.tabs.some(t=>t.id==="ro:"+k);
+const activeRO=()=>{ const t=activeTab(); return W.mode==="work"&&t&&t.kind==="ro"?t:null; };
+const wfBadge=n=>n.split(/[\s-]+/).map(w=>w[0]).join("").slice(0,3).toUpperCase();
+const levelFor=pk=>pk==="newHire"?"beginner":"knowledgeable";
+
+/* ---------------- stage ---------------- */
+function syncCanvasState(){
+  const t=activeTab(), on=W.mode==="work"&&!!t&&t.kind==="cv";
+  if(!on||S.canvas!==t.st){ if(S.runTimer){ clearInterval(S.runTimer); S.runTimer=null; } }
+  S.canvas=on?t.st:CV_CLOSED();
+  $("#app").classList.toggle("canvas-open",on);
+  $("#workspace").classList.toggle("cv",on);
+}
+function setStage(m){
+  W.mode=m; const st=$("#stage");
+  st.classList.toggle("home",m==="home"); st.classList.toggle("work",m==="work");
+  if(m==="home") st.classList.remove("dos-open");
+  $("#mdNote").textContent=m==="work"?"My Day rail · condensed, still actionable":"My Day · AI-arranged for today, balanced with your pins";
+  syncCanvasState(); renderMyDay(); renderChips(); syncOpenButtons();
+}
+function goHome(){ closeMega(); closePops(); setStage("home"); }
+
+/* ---------------- My Day ---------------- */
+function dayModel(pk){
+  const p=PERSONAS[pk];
+  if(pk==="tech"){
+    return {greet:", "+TECH_USER.first,sub:`${p.short} · Statler Toyota ${TECH_USER.bay}`,queueTitle:"My queue today",
+      queue:RO_QUEUE.map((k,i)=>({ro:k,next:i===0,title:"RO "+k,meta:RO[k].vehicle,line:RO[k].summary+" · "+RO[k].status,why:RO[k].why,tag:i===0?"Next up":"Queue",tagCls:i===0?"acc":"",rk:"Promised",rv:RO[k].promised})),
+      smart:TECH_TASKS.map(t=>({id:t.id,t:t.t,s:t.s,ro:t.ro,wf:t.wf})),
+      alerts:TECH_ALERTS, time:true, pins:TECH_PINS.map(x=>x[1])};
+  }
+  const tasks=briefingTasks(pk), why={high:"Time-sensitive · flagged for you first",med:"Due today",low:"For your awareness",learn:"Start here · about a minute"}, tag={high:["Now","hot"],med:["Today","warm"],low:["FYI",""],learn:["Learn","learn"]};
+  const queue=tasks.map((t,i)=>({next:i===0,app:t.app,title:t.title,meta:"",line:t.sub,why:why[t.pri],tag:tag[t.pri][0],tagCls:tag[t.pri][1],prompt:t.ask||("What's happening with "+t.title+"?"),tour:!!(t.cta&&t.cta.tour)}));
+  let smart=tasks.filter(t=>t.auto).map((t,i)=>({id:pk+":a"+i,t:t.auto.label,s:t.title+" · asks before acting",prompt:t.auto.label+" — "+t.title,auto:true}));
+  if(pk==="newHire") smart=tasks.map((t,i)=>({id:pk+":l"+i,t:t.title,s:t.sub,prompt:t.cta&&!t.cta.tour?t.cta.prompt:null,tour:!!(t.cta&&t.cta.tour)}));
+  else if(!smart.length) smart=tasks.slice(0,3).map((t,i)=>({id:pk+":r"+i,t:"Review "+t.title,s:t.sub,prompt:"What's happening with "+t.title+"?"}));
+  const alerts=tasks.filter(t=>t.pri==="high").slice(0,3).map(t=>({b:"!",t:t.title,s:t.sub,prompt:"What's happening with "+t.title+"?",hot:true}));
+  return {greet:"",sub:`${p.label} · Statler Toyota`,queueTitle:pk==="newHire"?"Start here":"My queue today",queue,smart,alerts,time:false,cards:p.cards||[],pins:p.wf||[]};
+}
+function qcardHTML(q){
+  const badge=q.ro?`<span class="badge">${gi("car",20)}</span>`:tileHTML(q.app,"lg");
+  const attr=q.ro?`data-act="rocard" data-ro="${q.ro}"`:q.tour?`data-tour="1"`:`data-prompt="${esc(q.prompt)}"`;
+  return `<button class="qcard ${q.next?"next":""}" ${attr}>${badge}<span style="min-width:0"><div class="rn">${esc(q.title)}${q.meta?` <small>· ${esc(q.meta)}</small>`:""}</div><div class="ql">${esc(q.line)}</div><div class="qwhy">${gi("spark",13)} ${esc(q.why)}</div></span><span class="qr"><span class="tag ${q.tagCls}">${esc(q.tag)}</span>${q.rk?`<span>${esc(q.rk)} <b>${esc(q.rv)}</b></span>`:""}</span></button>`;
+}
+function smartRowHTML(t,rail){
+  const done=!!W.taskDone[t.id];
+  const attr=t.ro?`data-act="openro" data-ro="${t.ro}"`:t.wf?`data-act="openwf" data-name="${esc(t.wf)}"`:t.tour?`data-tour="1"`:t.prompt?`data-prompt="${esc(t.prompt)}"`:"";
+  return `<div class="sa ${done?"isdone":""}"><button class="tbox ${done?"on":""}" data-act="taskdone" data-id="${esc(t.id)}" aria-label="Mark ${esc(t.t)} done">${done?gi("check",12):""}</button><button class="ttx" ${attr}><div>${t.auto?'<span style="color:var(--n-auto)">●</span> ':""}${esc(t.t)}</div><div class="s">${esc(t.s)}</div></button></div>`;
+}
+function alertRowHTML(a,rail){
+  const attr=a.ro?`data-act="openro" data-ro="${a.ro}"`:a.prompt?`data-prompt="${esc(a.prompt)}"`:"";
+  return `<button class="${rail?"rrow":"list-row"}" ${attr}><span class="badge" ${a.hot?'style="background:color-mix(in srgb,var(--danger) 16%,transparent);color:var(--danger)"':""}>${esc(a.b)}</span><span class="tx" style="min-width:0"><div class="t">${esc(a.t)}</div><div class="s">${esc(a.s)}</div></span></button>`;
+}
+function pinsHTML(m,rail){
+  const apps=(P().apps||[]).map(k=>rail?`<button class="rrow" data-act="megaapp" data-app="${k}">${tileHTML(k,"sm")}<span class="tx"><div class="s" style="color:var(--text)">${esc(APPS[k].name)}</div></span></button>`:`<button class="apptile" data-act="megaapp" data-app="${k}">${tileHTML(k)}${esc(APPS[k].name)}</button>`).join("");
+  const wfs=m.pins.map(n=>rail?`<button class="rrow" data-act="openwf" data-name="${esc(n)}"><span class="badge">${wfBadge(n)}</span><span class="tx"><div class="s" style="color:var(--text)">${esc(n)}</div></span></button>`:`<button class="apptile" data-act="openwf" data-name="${esc(n)}"><span class="badge">${wfBadge(n)}</span>${esc(n)}</button>`).join("");
+  return apps+wfs;
+}
+function timeHTML(rail){
+  const line=W.clock?`Clocked on RO ${W.clock.ro} · line ${W.clock.L}`:"Not clocked on a job";
+  return `<div class="mtime"><span>Flagged${rail?"":" hours"}</span><b>3.2 / 8.0${rail?" h":""}<span class="dag">†</span></b></div><div class="mbar"><i style="width:40%"></i></div><div class="lbl" style="margin-top:8px" id="clockline">${esc(line)}</div>`;
+}
+function numbersHTML(m){
+  return m.cards.map(c=>`<button class="list-row" data-prompt="${esc("Show my "+c.title)}">${tileHTML(cardApp(c),"sm")}<span style="flex:1;min-width:0"><div class="t">${esc(c.title)}</div><div class="s">${c.amount!=null?AMT(c)+" "+esc(c.label||""):esc(((c.list||c.meta||[])[0]||{}).k||"Open the view")}</div></span></button>`).join("");
+}
+function renderMyDay(){
+  const pk=S.persona, m=dayModel(pk), full=$("#mdFull"), rail=$("#mdRail");
+  const open=m.smart.filter(t=>!W.taskDone[t.id]).length;
+  const recent=recentHTML()||`<div class="lbl" style="padding:4px 8px">Nothing opened yet. This fills in as you work.</div>`;
+  const alerts=m.alerts.length?m.alerts:[{b:"✓",t:"No alerts right now",s:"The bell lights up when something new needs you"}];
+  const bb=$("#bellBadge"); bb.hidden=!m.alerts.length; bb.textContent=m.alerts.length;
+  $("#bellPop").innerHTML=`<div class="mh3">Alerts</div>${alerts.map(a=>alertRowHTML(a,false)).join("")}<div class="lbl" style="padding:6px 8px 0">The bell only signals that something is new. The same alerts appear in My Day.</div>`;
+  if(W.mode==="home"){
+    rail.innerHTML="";
+    const paused=W.tabs.length?`<div class="openwork"><b style="font-size:13px">Paused work</b><span class="lbl">Pick up where you left off:</span>${W.tabs.map(t=>`<button class="chip" data-act="tab" data-id="${esc(t.id)}">${tabIcon(t)} ${esc(tabLabel(t))}</button>`).join("")}</div>`:"";
+    full.innerHTML=`<div class="md-head"><div><h1>${greetingWord()}${esc(m.greet)}</h1><div class="sub">${esc(now().toLocaleDateString([], {weekday:"long",month:"short",day:"numeric"}))} · ${esc(m.sub)}</div></div>
+       <div class="mdlegend"><span>${gi("spark",13)} AI-prioritized for today</span><span>${gi("pin",13)} Pinned by you</span></div></div>
+     ${paused}
+     <div class="md-grid">
+       <div class="md-col">
+         <div class="mcard" id="mdQueue"><div class="mh3">${gi("spark",13)} ${esc(m.queueTitle)}</div><div class="qcards">${m.queue.map(qcardHTML).join("")}</div></div>
+         <div class="mcard" id="mdRecent"><div class="mh3">${gi("hist",13)} Recently opened</div>${recent}</div>
+       </div>
+       <div class="md-col">
+         <div class="mcard" id="mdSmart"><div class="mh3">${gi("spark",13)} AI smart activity <span class="tag">${open} open</span></div>${m.smart.map(t=>smartRowHTML(t)).join("")||'<div class="lbl">Nothing waiting on you.</div>'}</div>
+         <div class="mcard" id="mdAlerts"><div class="mh3">${gi("alert",13)} Alerts</div>${alerts.map(a=>alertRowHTML(a,false)).join("")}</div>
+         ${m.time?`<div class="mcard" id="mdTime"><div class="mh3">${gi("clock",13)} My time today</div>${timeHTML(false)}</div>`:m.cards.length?`<div class="mcard" id="mdNumbers"><div class="mh3">${gi("spark",13)} Your numbers</div>${numbersHTML(m)}</div>`:`<div class="mcard" id="mdNumbers"><div class="mh3">${gi("term",13)} Know CDK Drive?</div><div style="font-size:13px">Your codes still work. Type <kbd>TCE</kbd> or <kbd>RO 124210</kbd> in the chat bar.</div><div style="margin-top:10px"><button class="btn sm" data-prompt="/drive">Show my Drive commands</button></div></div>`}
+         <div class="mcard" id="mdPins"><div class="mh3">${gi("pin",13)} My apps &amp; workflows</div><div class="apptiles">${pinsHTML(m,false)}</div></div>
+       </div>
+     </div>`;
+  } else {
+    full.innerHTML="";
+    rail.innerHTML=`<div class="rail-head"><b>My Day</b><button class="icon-btn" data-act="gohome" aria-label="Expand My Day" title="Expand My Day">${gi("expand",17)}</button></div>
+     <div class="rail-sec" id="mdAlerts"><div class="mh3">${gi("alert",13)} Alerts</div>${alerts.slice(0,2).map(a=>alertRowHTML(a,true)).join("")}</div>
+     <div class="rail-sec" id="mdQueue"><div class="mh3">${gi("spark",13)} ${esc(m.queueTitle)}</div>${m.queue.map(q=>`<button class="rrow" ${q.ro?`data-act="openro" data-ro="${q.ro}"`:q.tour?'data-tour="1"':`data-prompt="${esc(q.prompt)}"`}>${q.ro?`<span class="badge">${gi("car",13)}</span>`:tileHTML(q.app,"sm")}<span class="tx"><div class="t">${esc(q.title)}${q.next&&q.ro?' <span class="tag acc" style="font-size:10px;padding:0 5px">Next</span>':""}</div><div class="s">${esc(q.ro?RO[q.ro].vehicle.replace(/^\d{4} /,"")+" · "+q.rv:q.line)}</div></span>${q.ro&&isOpenRO(q.ro)?'<span class="opendot" title="Open in a tab"></span>':""}</button>`).join("")}</div>
+     <div class="rail-sec" id="mdSmart"><div class="mh3">${gi("spark",13)} My tasks</div>${m.smart.map(t=>smartRowHTML(t,true)).join("")}</div>
+     <div class="rail-sec" id="mdRecent"><div class="mh3">${gi("hist",13)} Recently opened</div>${recent}</div>
+     <div class="rail-sec" id="mdPins"><div class="mh3">${gi("pin",13)} Apps &amp; workflows</div>${pinsHTML(m,true)}</div>
+     ${m.time?`<div class="rail-sec" style="padding:0 6px"><div class="mh3" style="padding:0">${gi("clock",13)} My time</div>${timeHTML(true)}</div>`:""}`;
+  }
+}
+
+/* ---------------- tabs & workflow space ---------------- */
+function tabLabel(t){
+  if(t.kind==="ro") return "RO "+t.key;
+  if(t.kind==="wf") return t.key;
+  const c=t.st;
+  if(c.kind==="app") return APPS[c.app].name;
+  if(c.kind==="doc"){ const d=DOCS.find(x=>x.id===c.doc); return d?d.name:"Document"; }
+  if(c.kind==="merge"){ const s=DUP.MERGE_SETS[c.set]; return "Merge · "+(s?s.title:"customers"); }
+  return {runner:"Cross-product runner",activity:"Activity log",launcher:"Products",dups:"Duplicate customers"}[c.kind]||"Canvas";
+}
+function tabIcon(t){
+  if(t.kind==="ro") return gi("file",14);
+  if(t.kind==="cv"){ if(t.st.kind==="app") return tileHTML(t.st.app,"sm"); if(t.st.kind==="doc") return tileHTML("dm","sm"); if(t.st.kind==="dups"||t.st.kind==="merge") return tileHTML("crm-red","sm"); }
+  return gi("box",14);
+}
+function renderTabs(){
+  $("#tabbar").innerHTML=`<button class="icon-btn m-only" data-act="gohome" aria-label="Back to My Day" title="My Day">${gi("home",18)}</button>`+W.tabs.map(t=>`<div class="wtab ${t.id===W.active?"active":""}" role="tab" aria-selected="${t.id===W.active}" data-tab="${esc(t.id)}"><button data-act="tab" data-id="${esc(t.id)}">${tabIcon(t)}${esc(tabLabel(t))}</button><span class="wx" role="button" tabindex="0" aria-label="Close ${esc(tabLabel(t))}" data-act="closetab" data-id="${esc(t.id)}">${gi("x",13)}</span></div>`).join("")+`<span style="flex:1"></span><button class="btn sm dos-btn" data-act="dossier" style="align-self:center;margin-bottom:4px">${gi("spark",13)} Insights</button>`;
+}
+function newROState(k){ return {jobs:JSON.parse(JSON.stringify(RO[k].jobs)).map(j=>Object.assign(j,{diag:false,done:false,c3:false,cause:"",corr:"",menu:false})),insights:RO[k].insights.map(x=>Object.assign({},x,x.a?{a:Object.assign({},x.a)}:{})),open:{cust:false,veh:false,hist:false}}; }
+function openRO(k,opt){
+  opt=opt||{}; if(!RO[k]) return; closePops(); closeMega();
+  const id="ro:"+k; let t=tabById(id);
+  if(!t){ t={id,kind:"ro",key:k,st:newROState(k),loaded:false}; W.tabs.push(t); }
+  const wasHome=W.mode==="home";
+  W.active=id; setStage("work"); renderTabs();
+  if(opt.via==="card"&&opt.el&&wasHome&&!t.loaded) return flyCard(opt.el,t);
+  if(!t.loaded){ showSkeleton(); renderDossier(true); setTimeout(()=>{ t.loaded=true; if(W.active===id){ renderPane(); renderDossier(); } },wasHome?900:650); }
+  else { renderPane(); renderDossier(); }
+}
+function openWf(name){
+  if(name==="Time Clock") return ask("TCE");
+  if(name==="Technician Workflow"&&S.persona==="tech") return openRO(RO_QUEUE.find(q=>!isOpenRO(q))||RO_QUEUE[0]);
+  closePops(); closeMega();
+  const id="wf:"+name; let t=tabById(id);
+  if(!t){ t={id,kind:"wf",key:name,loaded:false}; W.tabs.push(t); }
+  const wasHome=W.mode==="home";
+  W.active=id; setStage("work"); renderTabs();
+  if(!t.loaded){ showSkeleton(); renderDossier(true); setTimeout(()=>{ t.loaded=true; if(W.active===id){ renderPane(); renderDossier(); } },wasHome?850:600); }
+  else { renderPane(); renderDossier(); }
+}
+function activateTab(id){
+  const t=tabById(id); if(!t) return;
+  if(t.kind==="ro") return openRO(t.key);
+  if(t.kind==="wf") return openWf(t.key);
+  closePops(); closeMega();
+  W.active=id; setStage("work"); renderTabs(); renderCanvas(); renderDossier(); syncOpenButtons();
+}
+function closeTab(id){
+  const i=W.tabs.findIndex(t=>t.id===id); if(i<0) return;
+  W.tabs.splice(i,1);
+  if(W.active===id){
+    const n=W.tabs[i]||W.tabs[i-1];
+    if(n) activateTab(n.id); else { W.active=null; setStage("home"); }
+  }
+  renderTabs(); renderMyDay(); syncOpenButtons();
+}
+function showSkeleton(){
+  $("#wscontent").innerHTML=`<div class="pane" style="animation:none">
+   <div style="display:flex;justify-content:space-between;margin-bottom:22px;gap:12px"><div><div class="sk" style="width:260px;max-width:60vw;height:26px;margin-bottom:8px"></div><div class="sk" style="width:380px;max-width:70vw;height:14px"></div></div><div class="sk" style="width:220px;height:34px"></div></div>
+   <div class="sk" style="width:220px;height:18px;margin-bottom:12px"></div>
+   <div class="sk" style="height:170px;margin-bottom:22px;border-radius:12px"></div>
+   <div class="sk" style="width:280px;height:18px;margin-bottom:12px"></div>
+   <div class="sk" style="height:170px;border-radius:12px"></div></div>`;
+}
+const aitag=what=>`<span class="aitag">${gi("spark",12)} Added by AI <button data-act="undo" data-what="${what}">Undo</button></span>`;
+const partMenu=(j,plain)=>`<button class="pal-item" data-act="addpart" data-j="${j.L}" data-p="pads"><span class="badge" style="width:24px;height:24px">${gi("box",13)}</span><span>${plain?"":"<b>BRF-1478</b> "}Front brake pad set</span></button><button class="pal-item" data-act="addpart" data-j="${j.L}" data-p="rotor"><span class="badge" style="width:24px;height:24px">${gi("box",13)}</span><span>${plain?"":"<b>BRR-2290</b> "}Front brake rotor</span></button>`;
+function clockBtnLabel(t){ return W.clock&&W.clock.ro===t.key?"Clocked on · line "+W.clock.L:"Clock on"; }
+function renderPane(){
+  const t=activeTab(); if(!t) return;
+  if(t.kind==="cv") return renderCanvas();
+  const ws=$("#wscontent");
+  if(t.kind==="wf"){
+    ws.innerHTML=`<div class="pane"><div class="ro-head"><div><div class="ro-title">${esc(t.key)}</div><div class="ro-sub">Placeholder workflow. Shown to demonstrate tabs and navigation, not designed yet.</div></div></div>
+     <div class="wf-ph"><div class="sk still" style="height:46px"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="sk still" style="height:180px"></div><div class="sk still" style="height:180px"></div></div><div class="sk still" style="height:220px"></div></div></div>`;
+    return;
+  }
+  const d=RO[t.key], st=t.st, closed=d.status==="Closed";
+  if(!closed){ if(W.level==="beginner") return renderBeginner(t); if(W.level==="expert") return renderExpert(t); }
+  const job=j=>`<div class="job ${j.done?"isdone":""} ${j.flash?"flash":""}" id="job-${j.L}">
+     <div class="job-h"><span class="jl">${j.L}</span><div class="jt">${esc(j.title)} <span class="opc">${esc(j.code)}</span>${j.ai?aitag("job:"+j.L):""}${j.done?'<span class="tag acc">'+gi("check",12)+" Done</span>":""}</div>
+       ${closed?"":`<div class="job-ctl"><button class="chip ${j.c3?"on":""}" data-act="c3" data-j="${j.L}">${gi("file",13)} 3C's</button>
+       <label class="tog"><input type="checkbox" data-act="diag" data-j="${j.L}" ${j.diag?"checked":""}>Diag</label>
+       <label class="tog"><input type="checkbox" data-act="done" data-j="${j.L}" ${j.done?"checked":""}>Done</label></div>`}</div>
+     <div class="concern">“${esc(j.concern)}”</div>
+     ${j.c3?`<div class="threec"><div><label>Complaint</label><textarea readonly>${esc(j.concern)}</textarea></div>
+        <div><label>Cause</label><textarea class="${j.causeAI?"ai":""}" data-field="cause" data-j="${j.L}" placeholder="What did you find?">${esc(j.cause)}</textarea>${j.causeAI?'<div style="margin-top:4px">'+aitag("note:"+j.L)+"</div>":""}</div>
+        <div><label>Correction</label><textarea data-field="corr" data-j="${j.L}" placeholder="What did you do?">${esc(j.corr)}</textarea></div></div>`:""}
+     <table class="lines"><thead><tr><th style="width:110px">Labor op</th><th>Description</th><th style="width:70px">Hrs</th><th style="width:150px">Tech</th></tr></thead><tbody>
+       ${j.labor.map(l=>`<tr><td>${esc(l.op)}</td><td>${esc(l.desc)}</td><td>${esc(l.hrs)}</td><td>${TECH_USER.short}</td></tr>`).join("")}</tbody>
+       ${j.parts.length?`<thead><tr><th>Part #</th><th>Part</th><th>Qty</th><th>Status</th></tr></thead><tbody>${j.parts.map((p,i)=>`<tr class="${p.flash?"flash":""}"><td>${esc(p.pn)}</td><td>${esc(p.desc)} ${p.ai?aitag("part:"+j.L+":"+i):""}</td><td>${esc(p.qty)}</td><td class="lbl">${esc(p.st)}</td></tr>`).join("")}</tbody>`:""}
+     </table>
+     ${closed?"":`<div class="job-foot"><button class="btn" data-act="addmenu" data-j="${j.L}">${gi("plus",13)} Add part</button><span class="lbl">or ask the chat</span>
+       ${j.menu?`<div class="addmenu"><div class="lbl" style="padding:4px 8px">Common for this vehicle</div>${partMenu(j)}</div>`:""}</div>`}
+   </div>`;
+  const conc=st.jobs.filter(j=>j.group==="concern"), asr=st.jobs.filter(j=>j.group!=="concern");
+  ws.innerHTML=`<div class="pane">
+    <div class="ro-head"><div><div class="ro-title">RO ${t.key} <small>· Tag ${d.tag}</small><span class="dag" title="Concept placeholder record">†</span></div>
+      <div class="ro-sub">${esc(d.vehicle)} · Promised ${esc(d.promised)} · Advisor ${esc(d.advisor)}</div></div>
+      <div class="ro-actions">${closed?'<span class="tag">'+gi("lock",12)+" Closed · read-only</span>":`<select class="status" aria-label="RO status"><option>${esc(st.review?"Ready for Review":d.status)}</option><option>Waiting on Parts</option><option>Waiting on Approval</option><option>Ready for Review</option></select>
+        <button class="btn ${W.clock&&W.clock.ro===t.key?"on":""}" data-act="clock">${gi("clock",13)} ${clockBtnLabel(t)}</button>`}</div></div>
+    <div class="rsec-h"><h2>Customer Initial Concerns (${conc.length})</h2></div>
+    ${conc.map(job).join("")}
+    ${asr.length||!closed?`<div class="rsec-h"><h2>Additional Service Recommendations (${asr.length})</h2>${closed?"":`<button class="btn" data-act="asr">${gi("plus",13)} ASR</button>`}</div>${asr.map(job).join("")}`:""}
+  </div>`;
+  clearFlash(st);
+}
+function clearFlash(st){ st.jobs.forEach(j=>{ j.flash=false; j.parts.forEach(p=>p.flash=false); }); }
+function setClock(c){
+  W.clock=c;
+  if(c&&!W.tick) W.tick=setInterval(()=>{ if(!W.clock) return; const ms=Date.now()-W.clock.t; const b=document.getElementById("tmrBig"); if(b) b.textContent=fmtClock(ms); const h=document.getElementById("tmrHrs"); if(h) h.textContent=h.textContent.replace(/^[\d.]+/,(ms/3600000).toFixed(2)); },1000);
+  if(!c&&W.tick){ clearInterval(W.tick); W.tick=null; }
+}
+function startClock(t,L){ setClock({ro:t.key,L,t:Date.now()}); renderPane(); renderMyDay(); renderDossier(); }
+function refreshWork(){ const t=activeTab(); if(W.mode==="work"&&t&&t.kind!=="cv"&&t.loaded) renderPane(); renderMyDay(); renderDossier(); }
+
+/* ---------- experience modes ---------- */
+function renderModes(){
+  $("#modes").innerHTML=LEVELS.map(([k,n,d])=>`<button class="mode ${W.level===k?"sel":""}" data-act="level" data-l="${k}"><span class="rd"></span><span><b>${n}</b><div class="d">${d}</div></span></button>`).join("");
+}
+function bSteps(t){
+  const st=t.st, k=t.key, steps=[];
+  const clocked=(W.clock&&W.clock.ro===k)||st.jobs.some(j=>j.done);
+  steps.push({id:"clock",label:"Clock on",done:!!clocked});
+  st.jobs.forEach(j=>{
+    steps.push({id:"cause:"+j.L,L:j.L,label:"Line "+j.L+": record findings",done:!!j.cause.trim()||j.done});
+    steps.push({id:"done:"+j.L,L:j.L,label:"Line "+j.L+": finish",done:j.done});
+  });
+  steps.push({id:"review",label:"Send for review",done:!!st.review});
+  return steps;
+}
+function renderBeginner(t){
+  const d=RO[t.key], st=t.st, steps=bSteps(t), cur=steps.find(x=>!x.done)||steps[steps.length-1];
+  const curL=cur.L||(st.jobs.find(j=>!j.done)||st.jobs[0]).L;
+  const open=st.bOpen||curL;
+  let next="";
+  if(cur.id==="clock") next=`<div class="k">Step 1 of ${steps.length}</div><h2>Clock on before you start</h2>
+     <p>Clocking on records your time against line ${curL}. That time is what you get paid for on this RO.</p>
+     <button class="btn primary big" data-act="bclock" data-j="${curL}">${gi("clock",14)} Clock on to line ${curL}</button>
+     <div class="tip">${gi("term",14)}<span><b>Coming from CDK Drive?</b> This is the same as <kbd>TCE</kbd>. You can still type TCE in the chat bar.</span></div>`;
+  else if(cur.id.startsWith("cause")){ const j=st.jobs.find(x=>x.L===cur.L);
+    next=`<div class="k">Step ${steps.indexOf(cur)+1} of ${steps.length}</div><h2>Inspect line ${j.L} and write what you found</h2>
+     <p>You know how to do the inspection. Here you record the <b>cause</b>, meaning what you found, in the box below. The advisor uses it to explain the repair to the customer.</p>
+     <button class="btn primary big" data-act="bfocus" data-j="${j.L}">${gi("file",14)} Go to the findings box</button>
+     <details class="whyd"><summary>${gi("book",13)} What are the 3C's?</summary><div><b>Complaint</b>: what the customer said (already filled in).<br><b>Cause</b>: what you found.<br><b>Correction</b>: what you did to fix it.<br>Warranty claims are rejected when the 3C's are missing, so fill them in on every line.</div></details>`; }
+  else if(cur.id.startsWith("done")){ const j=st.jobs.find(x=>x.L===cur.L);
+    next=`<div class="k">Step ${steps.indexOf(cur)+1} of ${steps.length}</div><h2>Finish line ${j.L}</h2>
+     <p>Add any parts you used, write the <b>correction</b> (what you did), then mark the line finished. If you need a part you don't have, add it, and the parts counter is told.</p>
+     <button class="btn primary big" data-act="bdone" data-j="${j.L}">${gi("check",14)} Mark line ${j.L} finished</button>
+     <div class="tip">${gi("spark",14)}<span>Found more wrong with the vehicle? Use <b>Recommend more work</b> at the bottom. Don't fix it yet. The advisor needs the customer's OK first.</span></div>`; }
+  else next=st.review?`<div class="k">All done</div><h2>Sent to ${esc(d.advisor)} for review</h2><p>Nice work. ${esc(d.advisor)} reviews the RO and contacts the customer. Your next RO is in My Day on the left.</p>`
+     :`<div class="k">Last step</div><h2>Send the RO back to your advisor</h2><p>Every line is finished. Setting the status to <b>Ready for Review</b> tells ${esc(d.advisor)} the vehicle is done.</p>
+     <button class="btn primary big" data-act="breview">${gi("check",14)} Send for review</button>`;
+  const job=j=>{
+    if(j.L!==open) return `<button class="bcol" data-act="bopen" data-j="${j.L}"><span class="jl">${j.L}</span><span style="flex:1"><b>${esc(j.title)}</b><div class="lbl" style="font-size:12.5px">${j.done?"Finished":j.L===curL?"Working now":"Up next, after line "+curL}</div></span>${j.done?'<span class="tag acc">'+gi("check",12)+" Finished</span>":'<span class="lbl">Show</span>'}${j.ai?aitag("job:"+j.L):""}</button>`;
+    return `<div class="bjob ${j.L===curL&&!j.done?"cur":""} ${j.flash?"flash":""}" id="job-${j.L}">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span class="jl">${j.L}</span><h3 class="bt">${esc(j.title)}</h3>${j.ai?aitag("job:"+j.L):""}${j.done?'<span class="tag acc">'+gi("check",12)+" Finished</span>":""}</div>
+      <div class="lab">What the customer said</div><div class="said">“${esc(j.concern)}”</div>
+      <div class="lab">The job</div><div style="font-size:14px">${j.labor.map(l=>`${esc(l.desc)} · <b>${esc(l.hrs)} h</b> paid time`).join("<br>")}</div>
+      <details class="whyd"><summary>${gi("book",13)} Why ${esc(j.labor[0].hrs)} hours?</summary><div>This is the flat-rate time for job code <b>${esc(j.labor[0].op)}</b>. You're paid the flagged time, however long the job actually takes. Clock time is still tracked for efficiency.</div></details>
+      <div class="lab">What did you find? (Cause)</div>
+      <textarea class="${j.causeAI?"ai":""}" data-field="cause" data-j="${j.L}" placeholder="For example: front pads at 3 mm, below minimum">${esc(j.cause)}</textarea>${j.causeAI?'<div style="margin-top:4px">'+aitag("note:"+j.L)+"</div>":""}
+      <div class="lab">What did you do? (Correction)</div>
+      <textarea data-field="corr" data-j="${j.L}" placeholder="For example: replaced front pads, road tested, noise gone">${esc(j.corr)}</textarea>
+      <div class="lab">Parts for this job</div>
+      <div class="bparts">${j.parts.length?j.parts.map((p,i)=>`<div class="pr ${p.flash?"flash":""}"><span class="badge" style="width:26px;height:26px">${gi("box",13)}</span><span style="flex:1">${esc(p.desc)} <span class="lbl">× ${esc(p.qty)}</span> ${p.ai?aitag("part:"+j.L+":"+i):""}</span><span class="lbl">${esc(p.st)}</span></div>`).join(""):'<div class="pr lbl">No parts yet. Add any you use.</div>'}</div>
+      <div class="bfoot"><button class="btn" data-act="addmenu" data-j="${j.L}">${gi("plus",13)} Add a part</button>
+        ${j.done?"":`<button class="btn primary" data-act="bdone" data-j="${j.L}">${gi("check",13)} Mark line ${j.L} finished</button>`}
+        <span class="lbl">Tip: you can also ask the chat, e.g. "add front brake pads"</span>
+        ${j.menu?`<div class="addmenu"><div class="lbl" style="padding:4px 8px">Parts that fit this vehicle</div>${partMenu(j,true)}</div>`:""}</div>
+    </div>`;
+  };
+  const conc=st.jobs.filter(j=>j.group==="concern"), asr=st.jobs.filter(j=>j.group!=="concern");
+  $("#wscontent").innerHTML=`<div class="pane">
+    <div class="learnbar">${gi("spark",18)}<div class="grow"><b>Beginner mode.</b> You know the work. This guides you through where it goes in the system, one step at a time.</div><button class="linkbtn" data-act="who">Change mode</button></div>
+    <div style="margin-bottom:14px"><div class="ro-title">${esc(d.vehicle)}<span class="dag" title="Concept placeholder record">†</span></div><div class="ro-sub">Repair order ${t.key} · Due back to the customer ${esc(d.promised)}</div></div>
+    <div class="stepper">${steps.map((x,i)=>`<div class="stp ${x.done?"done":""} ${x===cur&&!x.done?"cur":""}"><span class="c">${x.done?gi("check",13):i+1}</span><span>${esc(x.label)}</span></div>`).join("")}</div>
+    <div class="nextcard">${next}</div>
+    <div class="rsec-h"><h2>What the customer came in for</h2></div>
+    ${conc.map(job).join("")}
+    <div class="rsec-h"><h2>Recommend more work</h2></div>
+    <div class="tip" style="margin:0 0 12px">${gi("alert",14)}<span>If you find something else (worn tires, a leak), recommend it here. The advisor asks the customer before any work starts.</span></div>
+    ${asr.map(job).join("")}
+    <button class="btn" data-act="asr">${gi("plus",13)} Recommend more work</button>
+  </div>`;
+  clearFlash(st);
+}
+function renderExpert(t){
+  const d=RO[t.key], st=t.st; st.sel=st.sel||st.jobs[0].L;
+  const on=W.clock&&W.clock.ro===t.key;
+  const row=j=>`<tr class="xl ${st.sel===j.L?"sel":""} ${j.done?"isdone":""} ${j.flash?"flash":""}" data-act="xsel" data-j="${j.L}" id="job-${j.L}">
+     <td><b>${j.L}</b></td><td>${esc(j.labor[0].op)}</td><td>${esc(j.title)} ${j.ai?aitag("job:"+j.L):""}</td><td>${j.labor.reduce((a,l)=>a+(parseFloat(l.hrs)||0),0).toFixed(2)}</td>
+     <td><input type="checkbox" class="xcb" data-act="diag" data-j="${j.L}" ${j.diag?"checked":""} aria-label="Diag line ${j.L}"></td>
+     <td><input type="checkbox" class="xcb" data-act="done" data-j="${j.L}" ${j.done?"checked":""} aria-label="Done line ${j.L}"></td>
+     <td style="width:40%"><input class="xin ${j.causeAI?"ai":""}" data-field="cause" data-j="${j.L}" value="${esc(j.cause)}" placeholder="Cause…" aria-label="Cause line ${j.L}"></td>
+     <td>${j.parts.length}</td>
+     <td style="position:relative"><button class="xact" data-act="addmenu" data-j="${j.L}" title="Add part (P)" aria-label="Add part">${gi("plus",13)}</button>${j.causeAI?aitag("note:"+j.L):""}
+       ${j.menu?`<div class="xmenu" style="right:0;top:28px">${partMenu(j)}</div>`:""}</td></tr>
+     ${j.parts.map((p,i)=>`<tr class="xp ${p.flash?"flash":""}"><td></td><td>${esc(p.pn)}</td><td>↳ ${esc(p.desc)} ${p.ai?aitag("part:"+j.L+":"+i):""}</td><td>${esc(p.qty)}</td><td colspan="3" class="lbl">${esc(p.st)}</td><td></td><td></td></tr>`).join("")}`;
+  const conc=st.jobs.filter(j=>j.group==="concern"), asr=st.jobs.filter(j=>j.group!=="concern");
+  const doneN=st.jobs.filter(j=>j.done).length, hrs=st.jobs.reduce((a,j)=>a+j.labor.reduce((b,l)=>b+(parseFloat(l.hrs)||0),0),0);
+  $("#wscontent").innerHTML=`<div class="pane dense">
+   <div class="xhead"><b>RO ${t.key}</b><span class="lbl">Tag ${d.tag}<span class="dag">†</span></span><span class="sep"></span><span>${esc(d.vehicle)}</span><span class="sep"></span><span>Due ${esc(d.promised)}</span><span class="sep"></span>
+     <select aria-label="RO status"><option>${esc(st.review?"Ready for Review":d.status)}</option><option>Waiting on Parts</option><option>Ready for Review</option></select>
+     <button class="xbtn ${on?"on":""}" data-act="clock">${gi("clock",13)} ${on?"On · "+W.clock.L:"Clock (C)"}</button>
+     <span style="margin-left:auto" class="lbl">${doneN}/${st.jobs.length} lines · ${hrs.toFixed(2)} h flagged</span></div>
+   <div style="overflow-x:auto"><table class="x"><thead><tr><th style="width:34px">Ln</th><th>Op</th><th>Description</th><th>Hrs</th><th>Diag</th><th>Done</th><th>Cause</th><th>Pts</th><th></th></tr></thead>
+   <tbody><tr class="xg"><td colspan="9">Customer concerns</td></tr>${conc.map(row).join("")}
+   <tr class="xg"><td colspan="9">Recommendations <button class="xact" data-act="asr" style="float:right;font-size:11px;text-transform:none;letter-spacing:0">+ ASR (R)</button></td></tr>${asr.map(row).join("")}</tbody></table></div>
+   <div class="xkeys"><span><kbd>↑</kbd><kbd>↓</kbd> line</span><span><kbd>C</kbd> clock</span><span><kbd>D</kbd> diag</span><span><kbd>X</kbd> done</span><span><kbd>P</kbd> add part</span><span><kbd>E</kbd> edit cause</span><span><kbd>R</kbd> ASR</span><span><kbd>/</kbd> chat</span></div>
+  </div>`;
+  clearFlash(st);
+}
+/* ---------- fly-in from a My Day card ---------- */
+function flyCard(src,t){
+  const done=()=>{ t.loaded=true; if(W.active===t.id){ renderPane(); renderDossier(); } };
+  $("#wscontent").innerHTML=""; renderDossier(true);
+  const fl=src.clone, r=src.rect;
+  if(!fl||!fl.animate||!r||!r.width){ return setTimeout(done,60); }
+  fl.classList.add("flyer"); fl.removeAttribute("data-act");
+  Object.assign(fl.style,{left:r.left+"px",top:r.top+"px",width:r.width+"px",height:r.height+"px"});
+  document.body.appendChild(fl);
+  const w=$("#workspace").getBoundingClientRect();
+  const tgt={left:w.left+2,top:w.top+48,width:Math.max(120,w.width-4),height:Math.min(260,Math.max(120,w.height-60))};
+  fl.animate([
+    {left:r.left+"px",top:r.top+"px",width:r.width+"px",height:r.height+"px",opacity:1,borderRadius:"12px"},
+    {left:tgt.left+"px",top:tgt.top+"px",width:tgt.width+"px",height:tgt.height+"px",opacity:1,borderRadius:"10px",offset:.8},
+    {left:tgt.left+"px",top:tgt.top+"px",width:tgt.width+"px",height:tgt.height+"px",opacity:0,borderRadius:"10px"}
+  ],{duration:480,easing:"cubic-bezier(.2,.8,.2,1)"}).onfinish=()=>fl.remove();
+  setTimeout(()=>{ if(fl.parentNode) fl.remove(); },700);
+  setTimeout(done,390);
+}
+
+/* ---------------- AIVA Insights (dossier) ---------------- */
+const fmtClock=ms=>{ const x=Math.floor(ms/1000); return [Math.floor(x/3600),Math.floor(x/60)%60,x%60].map(n=>String(n).padStart(2,"0")).join(":"); };
+function timerHTML(t){
+  if(!W.clock) return "";
+  const ms=Date.now()-W.clock.t;
+  if(t.kind==="ro"&&t.key===W.clock.ro){
+    const j=t.st.jobs.find(x=>x.L===W.clock.L), diag=j&&j.diag;
+    return `<div class="timer"><div class="ttop"><div><div class="tl"><i></i>${diag?"Diagnostic time":"Labor time"} · Line ${W.clock.L}</div><div class="big" id="tmrBig">${fmtClock(ms)}</div></div>
+      <button class="stop" data-act="clockstop">${gi("x",13)} Clock off</button></div>
+      <div class="tsub"><span>${j?esc(j.labor[0].op)+" · "+esc(j.title):""}</span><span id="tmrHrs">${(ms/3600000).toFixed(2)} h of ${j?esc(j.labor[0].hrs):"—"} est.</span></div></div>`;
+  }
+  return `<button class="timer-mini" data-act="openro" data-ro="${W.clock.ro}">${gi("clock",14)} Clocked on RO ${W.clock.ro} · line ${W.clock.L}<b id="tmrBig">${fmtClock(ms)}</b></button>`;
+}
+const insHTML=(icn,t,b,extra)=>`<div class="ins"><span class="ic">${gi(icn,14)}</span><div class="tt">${t}</div><div class="bd">${b}</div>${extra?`<div class="ac">${extra}</div>`:""}</div>`;
+function renderDossier(skeleton){
+  const t=activeTab(), dz=$("#dz");
+  const head=tag=>`<div class="dz-head"><b>AIVA Insights</b><span style="display:flex;gap:6px;align-items:center">${tag?`<span class="tag">${esc(tag)}</span>`:""}<button class="icon-btn dos-x" data-act="dossier" aria-label="Close insights">${gi("x",15)}</button></span></div>`;
+  if(!t||W.mode!=="work"){ dz.innerHTML=""; return; }
+  if(t.kind!=="cv"&&(skeleton||!t.loaded)){
+    dz.innerHTML=head()+[90,70,120,60].map(h=>`<div class="sk" style="height:${h}px;margin-bottom:10px;border-radius:10px"></div>`).join(""); return;
+  }
+  const follow=`<div class="ro-only">${gi("spark",12)} Context follows the active tab</div>`;
+  if(t.kind==="wf"){
+    const roT=W.tabs.find(x=>x.kind==="ro");
+    dz.innerHTML=head()+timerHTML(t)+follow+insHTML("file","Related to your open work",roT?`RO ${roT.key} · ${esc(RO[roT.key].vehicle)} is open in another tab.`:"No related RO open.")+insHTML("book","Placeholder",`Context for ${esc(t.key)} would appear here.`);
+    return;
+  }
+  if(t.kind==="cv"){
+    const c=t.st; let h=head(tabLabel(t))+timerHTML(t)+follow;
+    if(c.kind==="app"){
+      const items=allItems().filter(i=>i.icon===c.app&&i.persona!=="newHire"), hi=items.filter(i=>priOf(i)==="high"), cards=allCards().filter(x=>cardApp(x)===c.app);
+      h+=insHTML("alert",`${items.length} item${items.length===1?"":"s"} need attention`,hi.length?`${hi.length} time-sensitive — first: <b>${esc(hi[0].text)}</b> (${esc(hi[0].sub)}).`:"Nothing time-sensitive right now.",hi.length?`<button class="btn sm" data-prompt="${esc("What's happening with "+hi[0].text+"?")}">Ask AIVA</button>`:"");
+      h+=insHTML("spark",`${cards.length} view${cards.length===1?"":"s"} in ${esc(APPS[c.app].name)}`,"Figures marked † are placeholders awaiting sign-off.");
+      if(c.rec) h+=insHTML("file","Record in focus",esc(c.rec),`<button class="btn sm" data-prompt="${esc("What's happening with "+c.rec+"?")}">Ask AIVA about this</button>`);
+    } else if(c.kind==="doc"){
+      const d=DOCS.find(x=>x.id===c.doc);
+      if(d) h+=insHTML("file",esc(d.name),`${esc(d.packet)} · ${esc(d.status)} · ${d.signed?"signed "+esc(d.signed):"signature required"}.`)+insHTML("box","Packet",`${DOCS.filter(x=>x.packet===d.packet).length} documents in this packet.`);
+    } else if(c.kind==="runner"){
+      const s=RUN_STEPS[c.run||0];
+      h+=insHTML("spark",`Step ${(c.run||0)+1} of ${RUN_STEPS.length} · ${esc(s.lane)}`,`${esc(s.node)} · ${esc(s.uc)}`);
+    } else if(c.kind==="dups"||c.kind==="merge"){
+      const o=dupOpenRows();
+      h+=insHTML("user",`${o.length} duplicate sets open`,`${o.reduce((a,r)=>a+r.n,0)} records to review. Match strength is evidence, not a decision — a merge always asks first.`);
+    } else if(c.kind==="activity"){
+      h+=insHTML("lock",`${S.log.length} change${S.log.length===1?"":"s"} written this session`,"Only a confirmed AUTOMATION step, or a small edit you can undo, writes here.");
+    } else h+=insHTML("box","Products","Pick a product to open it in its own tab.");
+    dz.innerHTML=h; return;
+  }
+  const d=RO[t.key], st=t.st;
+  const sec=(key,icn,title,sub,body)=>`<div class="dsec ${st.open[key]?"open":""}"><button class="dsec-h" data-act="dsec" data-k="${key}" aria-expanded="${!!st.open[key]}"><span class="badge">${gi(icn,14)}</span><span class="tx"><div class="t">${title}</div><div class="s">${sub}</div></span><span class="chev">${gi("chev",16)}</span></button><div class="dsec-b"><div><div class="in">${body}</div></div></div></div>`;
+  dz.innerHTML=head("RO "+t.key)+timerHTML(t)+`
+   <div class="mh3">${gi("spark",13)} Live insights</div>
+   <div id="insList">${st.insights.map((x,i)=>`<div class="ins ${x.fresh?"arrive":""}"><span class="ic">${gi(x.ic,14)}</span><div class="tt">${esc(x.t)}</div><div class="bd">${esc(x.b)}</div>${x.a?`<div class="ac">${x.a.done?'<span class="tag acc">'+gi("check",12)+" "+esc(x.a.done)+"</span>":`<button class="btn sm" data-act="${x.a.act}" data-i="${i}">${esc(x.a.label)}</button>`}</div>`:""}</div>`).join("")}</div>
+   <div class="mh3" style="margin-top:16px">${gi("file",13)} Context</div>
+   ${S.persona==="tech"?`<div class="ro-only">${gi("lock",12)} Read-only for technicians. The advisor owns this information.</div>`:""}
+   ${sec("cust","user",esc(d.customer),"Customer #"+d.custNo+" · "+esc(d.waiting),`<dl class="dkv"><dt>Since</dt><dd>${d.since} · ${d.visits} visits</dd><dt>Contact</dt><dd>${esc(d.contact)}</dd><dt>Advisor</dt><dd>${esc(d.advisor)}</dd><dt>Promised</dt><dd>${esc(d.promised)}</dd></dl>`)}
+   ${sec("veh","car",esc(d.vehicle),d.miles+" mi · Tag "+d.tag,`<dl class="dkv"><dt>VIN</dt><dd style="font-size:11.5px">${d.vin}</dd><dt>Engine</dt><dd>${esc(d.engine)}</dd><dt>Color</dt><dd>${esc(d.color)}</dd><dt>Odometer in</dt><dd>${d.miles} mi</dd><dt>Coverage</dt><dd>${esc(d.warranty)}</dd></dl>`)}
+   ${d.history.length?sec("hist","hist","Vehicle history",d.history.length+" prior visits at this store",d.history.map(h=>`<div class="hist"><div style="flex:1">${RO[h.ro]?`<button class="linkbtn" data-act="openro" data-ro="${h.ro}">RO ${h.ro}</button>`:`<b>RO ${h.ro}</b>`} <span class="lbl">· ${h.date} · ${h.mi} mi</span><div>${esc(h.what)}</div></div></div>`).join("")+`<div class="lbl" style="margin-top:6px">Clicking a related RO opens it in a new tab.</div>`):""}
+   <div class="lbl" style="margin-top:10px"><b>†</b> Concept placeholder record.</div>`;
+  st.insights.forEach(x=>x.fresh=false);
+}
+function pushInsight(tabId,ins){
+  const t=tabById(tabId); if(!t||t.kind!=="ro") return;
+  t.st.insights.unshift(Object.assign({},ins,{fresh:true}));
+  if(W.active===tabId&&W.mode==="work"){ renderDossier(); const dz=$("#dz"); if(dz.scrollTo) dz.scrollTo({top:0,behavior:"smooth"}); }
+}
+
+/* ---------------- RO edits ---------------- */
+function markDone(t,L,val){
+  const j=t.st.jobs.find(x=>x.L===L); if(!j) return; j.done=val;
+  if(j.done&&W.clock&&W.clock.ro===t.key&&W.clock.L===j.L){ setClock(null); renderMyDay(); renderDossier(); }
+  if(W.active===t.id) renderPane();
+  if(j.done){ const nx=t.st.jobs.find(x=>!x.done);
+    pushInsight(t.id,nx&&nx.L==="B"&&t.key==="13456B"?{ic:"check",t:"Line A complete. Next up: line B",b:"Oil capacity 5.7 qt with filter · drain plug 20 ft-lb · reset the oil life monitor."}
+      :{ic:"check",t:"Line "+j.L+" complete",b:nx?"Next: line "+nx.L+", "+nx.title+".":"All lines are done. Set the RO status to Ready for Review."}); }
+}
+function scrollToJob(L){ setTimeout(()=>{ const el=document.getElementById("job-"+L); if(el&&el.scrollIntoView) el.scrollIntoView({behavior:"smooth",block:"center"}); },60); }
+function addPart(tab,L,kind,ai){
+  const j=tab.st.jobs.find(x=>x.L===L)||tab.st.jobs[0];
+  const p=kind==="pads"?{pn:"BRF-1478",desc:"Front brake pad set",qty:"1",st:"In stock · A-07"}:{pn:"BRR-2290",desc:"Front brake rotor",qty:"2",st:"In stock · A-09"};
+  j.parts.push(Object.assign({},p,{ai:!!ai,flash:true})); j.menu=false;
+  if(W.active===tab.id&&W.mode==="work"){ renderPane(); scrollToJob(j.L); }
+  pushInsight(tab.id,kind==="pads"
+    ?{ic:"box",t:"Pads in stock: 3 at bin A-07",b:"Rotor BRR-2290: 2 in stock if measurement calls for it. Torque caliper bolts to 26 ft-lb.",a:{label:"Add rotors",act:"askrotor"}}
+    :{ic:"box",t:"Rotors reserved: 2 at bin A-09",b:"Parts counter notified. Machining isn't needed; replacing the pair."});
+}
+function ensureROTab(k){ let t=tabById("ro:"+k); if(!t){ t={id:"ro:"+k,kind:"ro",key:k,st:newROState(k),loaded:true}; W.tabs.push(t); renderTabs(); renderMyDay(); } return t; }
+function addRecall(){
+  const t=ensureROTab("13456B"); if(t.st.jobs.some(j=>j.recall)) return null;
+  const L=String.fromCharCode(65+t.st.jobs.length);
+  t.st.jobs.push({L,group:"asr",recall:true,ai:true,flash:true,title:"Recall 23S12: Rear Axle Bolt Inspection",code:"RC1",concern:"Open recall found on this VIN. Warranty, no cost to the customer.",labor:[{op:"23S12A",desc:"Inspect / replace rear axle bolt",hrs:"0.40"}],parts:[],diag:false,done:false,c3:false,cause:"",corr:"",menu:false});
+  const ins=t.st.insights.find(x=>x.a&&x.a.act==="addrecall"); if(ins) ins.a.done="Added as line "+L;
+  logEntry("auto","Recall 23S12 added to RO 13456B as line "+L+" (warranty, no price change; Undo available)","se");
+  if(W.active===t.id&&W.mode==="work"){ renderPane(); renderDossier(); scrollToJob(L); }
+  return L;
+}
+function undoEdit(what){
+  const t=activeRO()||tabById("ro:13456B"); if(!t) return false;
+  const [kind,L,i]=what.split(":");
+  if(kind==="part"){ const j=t.st.jobs.find(x=>x.L===L); if(j) j.parts.splice(+i,1); }
+  if(kind==="note"){ const j=t.st.jobs.find(x=>x.L===L); if(j){ j.cause=j.prevCause||""; j.causeAI=false; } }
+  if(kind==="job"){ const idx=t.st.jobs.findIndex(x=>x.L===L); if(idx>=0){ const j=t.st.jobs[idx]; t.st.jobs.splice(idx,1); if(j.recall){ const ins=t.st.insights.find(x=>x.a&&x.a.act==="addrecall"); if(ins) delete ins.a.done; } } }
+  logEntry("auto","Undid an AI edit on RO "+t.key+" ("+kind+", line "+L+")","se");
+  W.lastEdit=null; refreshWork(); return true;
+}
+
+/* AUTOMATION offers for the RO workflow. Price changes always confirm first. */
+const AUTO_PADS={re:/^\u0000$/,label:"Add front brake pad set BRF-1478 to line A",what:["Add BRF-1478 × 1 to RO 13456B, line A","This changes what the customer pays: +$89.95† parts, plus 0.8 h† labor","Send the approval request to advisor Jim Halpert"],done:"Front pad set BRF-1478 added to RO 13456B line A; approval request sent to Jim Halpert.",onDone:()=>addPart(ensureROTab("13456B"),"A","pads",true)};
+const AUTO_ROTOR={re:/^\u0000$/,label:"Add front brake rotors BRR-2290 (×2) to line A",what:["Add BRR-2290 × 2 to RO 13456B, line A","This changes what the customer pays: +$148.40† parts","Send the approval request to advisor Jim Halpert"],done:"Front rotors BRR-2290 (×2) added to RO 13456B line A; approval request sent to Jim Halpert.",onDone:()=>addPart(ensureROTab("13456B"),"A","rotor",true)};
+AUTOMATIONS.push(AUTO_PADS,AUTO_ROTOR);
+
+/* ---------------- chat intents for the RO workflow ----------------
+   Runs first in respond(). Returns null to hand over to the AIVA engine.
+   Two tiers of write: a small reversible edit applies at once with Undo;
+   anything that changes a price or a record goes through a confirmation. */
+function roRoute(text){
+  const t=(text||"").toLowerCase().trim(), code=(text||"").trim().toUpperCase();
+  const cur=activeRO(), tech=S.persona==="tech", live=cur&&RO[cur.key].status!=="Closed";
+  const src=(x)=>srcLine(["se"],x||"† concept placeholder record");
+  const brief=o=>Object.assign({node:"monitor",trace:["Service · repair orders"],blocks:[src()],chips:[],brief:true},o);
+  if(/^(go )?home$|^(go to |open )?my day$/.test(t)) return brief({trace:["Navigation"],lead:"Back to <b>My Day</b>.",blocks:[],after:goHome});
+  if(/^undo\b/.test(t)&&W.lastEdit) { const w=W.lastEdit; return brief({node:"auto",lead:"Undone. The RO is back to how it was.",after:()=>undoEdit(w)}); }
+  if((code==="TCE"||/clock (me )?(on|off|in|out)/.test(t))&&(live||(tech&&/clock/.test(t)))){
+    if(!live) return brief({lead:"Open an RO first, and I'll clock you on its active line.",chips:[{label:"What's my next RO?",prompt:"What's my next RO?"}]});
+    const on=W.clock&&W.clock.ro===cur.key, L=(cur.st.jobs.find(j=>!j.done)||cur.st.jobs[0]).L, at=hhmm(now()), pre=code==="TCE"?"<b>TCE</b> — Tech Clock Entry. ":"";
+    return brief({node:"auto",trace:["Drive command TCE","Service · time clock"],
+      lead:on?`${pre}Clocked <b>off</b> RO ${cur.key} at ${esc(at)}.`:`${pre}Clocked <b>on</b> RO ${cur.key}, line ${L} at ${esc(at)}.`,
+      blocks:[src("Tech Clock Entry · small edit, undo with TCE")],chips:[{label:on?"Clock back on":"Clock off",prompt:"TCE"}],
+      after:()=>{ if(on){ setClock(null); logEntry("auto","Clocked off RO "+cur.key+" at "+at,"se"); } else { setClock({ro:cur.key,L,t:Date.now()}); logEntry("auto","Clocked on RO "+cur.key+", line "+L+" at "+at,"se"); } refreshWork(); }});
+  }
+  if(tech&&/next (ro|repair)|what'?s next|my next/.test(t)){
+    const k=RO_QUEUE.find(q=>!isOpenRO(q))||RO_QUEUE[0], d=RO[k];
+    return brief({lead:`Your next RO is <b>${k}</b>, a ${esc(d.vehicle)}: ${esc(d.summary.toLowerCase())}, promised ${esc(d.promised)}. Opening it now.`,after:()=>openRO(k,{via:"chat"})});
+  }
+  if(tech&&/parts? (arrive|in\b|here)|did my parts/.test(t)) return brief({trace:["Parts · special orders"],lead:"Yes. The <b>front struts for RO 13452A</b> arrived at 9:40 AM and are at the parts counter (ticket 4471).",blocks:[srcLine(["pa","se"],"† concept placeholder record")],chips:[{label:"Resume RO 13452A",prompt:"RO 13452A"}]});
+  const m=/^@?\s*(?:ro\s*)?#?(\d{4,5}[a-z]?)$/i.exec(t);
+  if(m&&RO[m[1].toUpperCase()]){ const k=m[1].toUpperCase(); return brief({lead:`Opening <b>RO ${k}</b> — ${esc(RO[k].vehicle)}, ${esc(RO[k].summary.toLowerCase())}.`,after:()=>openRO(k)}); }
+  if((cur||tech)&&/^how (do|can) i|^what('?s| is| are) (a |the )?(3c|labor op|flag)/.test(t)){
+    const help=o=>brief(Object.assign({trace:["Help · technician workflow"],blocks:[]},o));
+    if(/part/.test(t)) return help({lead:"Open the line you're working on and choose <b>Add a part</b>, or just tell me, e.g. \"add front brake pads to line A\". Anything that changes the price gets the advisor's approval first."});
+    if(/clock|time/.test(t)) return help({lead:"Choose <b>Clock on</b> at the top of the RO, or type <kbd>TCE</kbd> here. Your time shows in AIVA Insights on the right."});
+    if(/3c|cause|correction/.test(t)) return help({lead:"<b>Complaint</b> is what the customer said, <b>Cause</b> is what you found, and <b>Correction</b> is what you did. Each line needs all three."});
+    return help({lead:"In Beginner mode, the steps at the top of each RO show what to do next. You can also ask me about parts, clocking on or the 3C's."});
+  }
+  if((cur||tech)&&/\bhistory\b/.test(t)){
+    if(!cur) return brief({lead:"Open an RO first and I'll bring up its vehicle history in AIVA Insights.",blocks:[]});
+    return brief({lead:RO[cur.key].history.length?"Vehicle history is open in <b>AIVA Insights</b> on the right.":"There are no prior visits on file for this vehicle.",after:()=>{ cur.st.open.hist=true; $("#stage").classList.add("dos-open"); renderDossier(); setTimeout(()=>{ const h=document.querySelector('[data-k="hist"]'); if(h&&h.scrollIntoView) h.scrollIntoView({behavior:"smooth",block:"start"}); },100); }});
+  }
+  if((cur||tech)&&/\bnote\b|measured|\bmm\b/.test(t)){
+    if(!live) return brief({lead:"Notes go on an open RO. Try it on <b>RO 13456B</b>.",blocks:[],chips:[{label:"Open RO 13456B",prompt:"RO 13456B"}]});
+    const j=cur.st.jobs.find(x=>!x.done)||cur.st.jobs[0], pads=cur.key==="13456B"&&/pad/.test(t);
+    const body=pads?"Front pads measured 3 mm. Below the 4 mm minimum; source of the grinding noise.":text.trim().replace(/^(please\s+)?(add (a )?)?note:?\s*(that\s+)?/i,"").replace(/^./,c=>c.toUpperCase());
+    return brief({node:"auto",lead:`Added to the <b>cause</b> on line ${j.L} of RO ${cur.key}. It's a small edit, so it's already in — <b>Undo</b> is on the field.`,
+      blocks:[src("RO "+cur.key+" · line "+j.L+" · 3C's")],chips:[{label:"Undo",prompt:"Undo"}].concat(pads?[{label:"Add front brake pads to line A",prompt:"Add front brake pads to line A",auto:true}]:[]),
+      after:()=>{ j.c3=true; j.prevCause=j.cause; j.cause=body; j.causeAI=true; W.lastEdit="note:"+j.L;
+        logEntry("auto","Note added to RO "+cur.key+" line "+j.L+" cause (dictated; Undo available)","se");
+        if(W.active===cur.id) renderPane();
+        setTimeout(()=>{ const el=document.querySelector('[data-field="cause"][data-j="'+j.L+'"]'); if(el&&el.scrollIntoView) el.scrollIntoView({behavior:"smooth",block:"center"}); },60);
+        if(pads) pushInsight(cur.id,{ic:"spark",t:"Pads below minimum: recommend replacement",b:"3 mm vs 4 mm minimum. Front pads BRF-1478 fit this vehicle. Ask me to add them to line A."}); }});
+  }
+  const wantsPads=/pad/.test(t)&&/add|replace|put/.test(t), wantsRotor=/rotor/.test(t)&&/add|replace|put/.test(t);
+  if((cur||tech)&&(wantsPads||wantsRotor)){
+    if(!cur||cur.key!=="13456B") return brief({lead:"Open <b>RO 13456B</b> first and I'll add them to line A.",blocks:[],chips:[{label:"Open RO 13456B",prompt:"RO 13456B"}]});
+    const a=wantsRotor&&!wantsPads?AUTO_ROTOR:AUTO_PADS;
+    return {node:"auto",trace:["Service · RO 13456B","Parts · stock on hand"],lead:wantsRotor&&!wantsPads?"I can add <b>front brake rotors BRR-2290</b> (×2) to line A. It changes the price, so it needs your OK first.":"I can add <b>front brake pad set BRF-1478</b> to line A. It changes the price, so it needs your OK first.",
+      blocks:[{t:"cfm",id:"c"+(S.seq++),auto:AUTOMATIONS.indexOf(a),state:"pending"},srcLine(["se","pa"],"† placeholder price and stock")],chips:[]};
+  }
+  if((cur||tech)&&/\brecall\b/.test(t)){
+    if(cur&&cur.key==="13456B"){ const has=cur.st.jobs.some(j=>j.recall);
+      return brief({node:has?"monitor":"auto",lead:has?"Recall <b>23S12</b> is already on this RO.":"Added recall <b>23S12</b> to this RO as a new line. It's warranty work, so the price doesn't change — <b>Undo</b> is on the line.",blocks:[src("† placeholder recall")],after:()=>{ if(!has){ const L=addRecall(); if(L) W.lastEdit="job:"+L; } }}); }
+    return brief({lead:"No open recalls on this vehicle.",blocks:[src("† placeholder recall check")]});
+  }
+  return null;
+}
+
+/* ---------------- chat dock ---------------- */
+function openPanel(){ const p=$("#cpanel"); clearTimeout(W.collapseT); if(p.classList.contains("hide")){ p.classList.remove("hide"); $("#histBtn").classList.add("on"); renderChips(); setTimeout(scrollDown,0); } }
+function closePanel(){ clearTimeout(W.collapseT); const p=$("#cpanel"); p.classList.add("hide"); p.classList.remove("full","chats"); $("#histBtn").classList.remove("on"); renderChips(); }
+function panelOpen(){ return !$("#cpanel").classList.contains("hide"); }
+function pendingCfm(){ const th=S.threads[S.cur]; return !!th&&th.turns.some(t=>t.r&&t.r.blocks.some(b=>b.t==="cfm"&&b.state==="pending")); }
+function autoCollapse(){
+  clearTimeout(W.collapseT);
+  W.collapseT=setTimeout(()=>{ const p=$("#cpanel"); if(W.hoverPanel||S.streaming||pendingCfm()||p.classList.contains("full")||p.classList.contains("chats")||$("#input").value) return; closePanel(); },6500);
+}
+function chipsFor(){
+  const t=activeRO(), pk=S.persona;
+  if(t&&t.key==="13456B"&&W.level==="beginner") return ["How do I add a part?","What are the 3C's?","Note front pads at 3 mm","TCE"];
+  if(t&&t.key==="13456B") return ["Note front pads at 3 mm","Add front brake pads to line A","TCE","Show vehicle history"];
+  if(t) return ["TCE","Show vehicle history","What's my next RO?"].slice(0,pk==="tech"?3:2);
+  if(pk==="tech") return ["What's my next RO?","Did my parts arrive?","/","@13461C"];
+  return starters(pk).slice(0,3).map(s=>s.prompt).concat(["/"]);
+}
+function renderChips(){
+  const inp=$("#input"), c=$("#chips"); if(!inp||!c) return;
+  const show=document.activeElement===inp&&!inp.value&&!panelOpen()&&!(typeof TOUR_STATE!=="undefined"&&TOUR_STATE.on);
+  c.classList.toggle("hide",!show);
+  if(show) c.innerHTML=chipsFor().map(x=>`<button type="button" class="chip" data-act="chip" data-t="${esc(x)}">${x==="/"?"/ commands":esc(x)}</button>`).join("");
+}
+function typeAndSend(text){
+  const inp=$("#input"); inp.focus(); let i=0;
+  const iv=setInterval(()=>{ inp.value=text.slice(0,++i); if(i>=text.length){ clearInterval(iv); setTimeout(()=>{ inp.value=""; setComposerState(); ask(text); },250); } },24);
+}
+/* voice: hold to talk; a plain click (keyboard, assistive tech) listens briefly instead */
+function voicePhrase(){
+  const t=activeRO();
+  if(t&&t.key==="13456B"){ const j=t.st.jobs[0]; return j.causeAI?(j.parts.length?"Show vehicle history":"Add front brake pads to line A"):"Note front pads at 3 mm"; }
+  if(S.persona==="tech") return "What's my next RO?";
+  const s=starters(S.persona); return (s[1]||s[0]).prompt;
+}
+function startListen(){ if(W.listening) return; W.listening=true; $("#micBtn").classList.add("live","listening"); $("#listen").classList.remove("hide"); $("#chips").classList.add("hide"); }
+function stopListen(){
+  if(!W.listening) return; W.listening=false; $("#micBtn").classList.remove("live","listening"); $("#listen").classList.add("hide");
+  typeAndSend(voicePhrase());
+}
+
+/* ---------------- mega menu & popovers ---------------- */
+function renderMega(){
+  const res=[["Tutorials and walkthroughs","prompt","/learn"],["Welcome tour","tour",""],["Your CDK Drive commands","prompt","/drive"],["CDK University","wf","CDK University"],["Customer Care","wf","Customer Care"]];
+  const more=[["Cross-product runner","runner"],["Duplicate customers","dups"],["Activity log","activity"],["All products","launcher"]];
+  $("#mega").innerHTML=`<div class="mega-h"><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><b style="font-size:16px">Navigate</b>
+     <button class="chip" data-act="gohome">${gi("home",13)} My Day</button><span class="lbl">Everything opens in a new tab</span></div>
+     <button class="icon-btn" data-act="closemega" aria-label="Close menu">${gi("x",18)}</button></div>
+   <div class="mega-cols">
+    <div class="mcol"><div class="mh3">Apps</div><div class="megagrid">${Object.keys(APPS).map(k=>`<button class="mi" data-act="megaapp" data-app="${k}">${tileHTML(k,"lg")}${esc(APPS[k].name)}</button>`).join("")}</div></div>
+    <div class="mcol"><div class="mh3">Workflows</div><div class="megagrid">${WF_ALL.map(([b,n])=>`<button class="mi" data-act="openwf" data-name="${esc(n)}"><span class="badge">${b}</span>${esc(n)}</button>`).join("")}</div>
+      <div class="mh3" style="margin-top:16px">AIVA views</div>${more.map(([n,k])=>`<button class="mi" data-act="megacv" data-kind="${k}"><span class="badge">${gi(k==="activity"?"lock":k==="dups"?"user":k==="runner"?"spark":"box",14)}</span>${esc(n)}</button>`).join("")}</div>
+    <div class="mcol"><div class="mh3">Resources</div>
+      ${res.map(([n,k,v])=>`<button class="mi" ${k==="prompt"?`data-prompt="${esc(v)}"`:k==="tour"?'data-tour="1"':`data-act="openwf" data-name="${esc(v)}"`}><span class="badge">${gi("book",14)}</span>${esc(n)}</button>`).join("")}</div>
+   </div>`;
+}
+function megaOpen(){ return $("#mega").classList.contains("show"); }
+function openMega(){ closePops(); renderMega(); $("#megaScrim").classList.add("show"); $("#mega").classList.add("show"); closePanel(); }
+function closeMega(){ $("#megaScrim").classList.remove("show"); $("#mega").classList.remove("show"); }
+function closePops(){ document.querySelectorAll(".ppop.show").forEach(p=>p.classList.remove("show")); }
+function togglePop(id){ const p=$("#"+id), on=!p.classList.contains("show"); closePops(); if(on) p.classList.add("show"); }
+function resetDemo(){
+  if(S.streaming) S.streaming.stop();
+  setClock(null); W.taskDone={}; W.lastEdit=null; S.log=[]; S.threads={}; S.dup=null; INDEX=null;
+  document.documentElement.style.removeProperty("--brand"); document.querySelectorAll("#demoPop .sw").forEach((s,i)=>s.classList.toggle("sel",i===0));
+  document.body.classList.remove("notes"); $("#notesToggle").checked=false;
+  switchPersona(S.persona); toast("Demo reset");
+}
+
+/* ---------------- actions (data-act) ---------------- */
+const ACT={
+  gohome:goHome, closemega:closeMega, who:()=>togglePop("personaMenu"),
+  activity:()=>openCanvas({kind:"activity"}),
+  megaapp:el=>{ const a=el.dataset.app; closeMega(); closePops(); if(AIVA_UNSUPPORTED_APPS.includes(a)) return ask("Open "+APPS[a].name); openCanvas({kind:"app",app:a}); },
+  megacv:el=>{ const k=el.dataset.kind; if(k==="runner") return openCanvas({kind:"runner",run:0}); openCanvas({kind:k}); },
+  openwf:el=>openWf(el.dataset.name),
+  level:el=>{ W.level=el.dataset.l; renderModes(); renderRail(); const t=activeTab(); if(W.mode==="work"&&t&&t.kind==="ro"&&t.loaded){ renderPane(); renderDossier(); } renderChips(); },
+  bclock:el=>startClock(activeTab(),el.dataset.j),
+  bfocus:el=>{ const t=activeTab(); t.st.bOpen=el.dataset.j; renderPane(); setTimeout(()=>{ const a=document.querySelector('textarea[data-field="cause"][data-j="'+el.dataset.j+'"]'); if(a){ if(a.scrollIntoView) a.scrollIntoView({behavior:"smooth",block:"center"}); a.focus(); } },60); },
+  bdone:el=>{ const t=activeTab(); markDone(t,el.dataset.j,true); const nx=t.st.jobs.find(x=>!x.done); t.st.bOpen=nx?nx.L:null; if(nx&&!W.clock) setClock({ro:t.key,L:nx.L,t:Date.now()}); refreshWork(); const w=$("#wscontent"); if(w.scrollTo) w.scrollTo({top:0,behavior:"smooth"}); },
+  bopen:el=>{ const t=activeTab(); t.st.bOpen=el.dataset.j; renderPane(); },
+  breview:()=>{ const t=activeTab(); t.st.review=true; if(W.clock&&W.clock.ro===t.key) setClock(null); refreshWork(); pushInsight(t.id,{ic:"check",t:"Sent to "+RO[t.key].advisor,b:"Status is Ready for Review. Your next RO is in My Day."}); },
+  xsel:el=>{ const t=activeTab(); if(t.st.sel===el.dataset.j) return; t.st.sel=el.dataset.j; document.querySelectorAll("tr.xl").forEach(r=>r.classList.toggle("sel",r.dataset.j===t.st.sel)); },
+  taskdone:el=>{ W.taskDone[el.dataset.id]=!W.taskDone[el.dataset.id]; renderMyDay(); },
+  rocard:el=>openRO(el.dataset.ro,{via:"card",el:{rect:el.getBoundingClientRect(),clone:el.cloneNode(true)}}),
+  openro:el=>openRO(el.dataset.ro),
+  tab:el=>activateTab(el.dataset.id),
+  closetab:el=>closeTab(el.dataset.id),
+  dossier:()=>$("#stage").classList.toggle("dos-open"),
+  chip:el=>{ const x=el.dataset.t, inp=$("#input"); if(x==="/"||x.startsWith("@")){ inp.value=x; inp.focus(); onInput(); renderChips(); } else ask(x); },
+  dsec:el=>{ const t=activeTab(), k=el.dataset.k; t.st.open[k]=!t.st.open[k]; el.parentElement.classList.toggle("open",t.st.open[k]); el.setAttribute("aria-expanded",t.st.open[k]); },
+  clock:()=>{ const t=activeRO(); if(!t) return; const at=hhmm(now());
+    if(W.clock&&W.clock.ro===t.key){ setClock(null); logEntry("auto","Clocked off RO "+t.key+" at "+at,"se"); }
+    else { const L=(t.st.jobs.find(j=>!j.done)||t.st.jobs[0]).L; setClock({ro:t.key,L,t:Date.now()}); logEntry("auto","Clocked on RO "+t.key+", line "+L+" at "+at,"se"); }
+    refreshWork(); },
+  clockstop:()=>{ const r=W.clock&&W.clock.ro; setClock(null); if(r) logEntry("auto","Clocked off RO "+r+" at "+hhmm(now()),"se"); refreshWork(); },
+  c3:el=>{ const t=activeTab(), j=t.st.jobs.find(x=>x.L===el.dataset.j); j.c3=!j.c3; renderPane();
+    if(j.c3&&t.key==="13456B"&&j.L==="A"&&!t.st.tsb){ t.st.tsb=true; pushInsight(t.id,{ic:"book",t:"Bulletin may apply: TSB 21-2240",b:"Front brake grind at low speed, 2017–19 Highlander. Revised pad compound. (Placeholder bulletin.)"}); } },
+  diag:el=>{ const t=activeTab(), j=t.st.jobs.find(x=>x.L===el.dataset.j); j.diag=el.checked; if(j.diag&&!W.clock){ setClock({ro:t.key,L:j.L,t:Date.now()}); renderPane(); renderMyDay(); } if(W.clock&&W.clock.ro===t.key) renderDossier();
+    if(j.diag&&t.key==="13456B"&&j.L==="A"&&!t.st.diagIns){ t.st.diagIns=true; pushInsight(t.id,{ic:"wrench",t:"Diagnostic time is running",b:"Line A diagnostic time is tracked against the 0.50 h op. Recommended measurement: pad thickness and rotor runout."}); } },
+  done:el=>markDone(activeTab(),el.dataset.j,el.checked),
+  addmenu:el=>{ const t=activeTab(), j=t.st.jobs.find(x=>x.L===el.dataset.j); t.st.jobs.forEach(x=>{ if(x!==j) x.menu=false; }); j.menu=!j.menu; renderPane(); },
+  addpart:el=>addPart(activeTab(),el.dataset.j,el.dataset.p,false),
+  asr:()=>{ const t=activeTab(), L=String.fromCharCode(65+t.st.jobs.length);
+    t.st.jobs.push({L,group:"asr",title:"New recommendation",code:"—",concern:"Describe what you found and recommend.",labor:[{op:"—",desc:"Select a labor op",hrs:"—"}],parts:[],flash:true,diag:false,done:false,c3:true,cause:"",corr:"",menu:false});
+    t.st.bOpen=L; renderPane(); scrollToJob(L); },
+  addrecall:()=>{ const L=addRecall(); if(L){ W.lastEdit="job:"+L; toast("Recall 23S12 added as line "+L+" — Undo is on the line"); } },
+  askrotor:()=>ask("Add front rotors to line A"),
+  undo:el=>{ if(undoEdit(el.dataset.what)) toast("Undone"); },
+  accent:el=>{ document.documentElement.style.setProperty("--brand",el.dataset.c); document.querySelectorAll("#demoPop .sw").forEach(s=>s.classList.toggle("sel",s===el)); },
+  reset:resetDemo,
+  script:el=>{ closePops(); const s=el.dataset.s;
+    const asTech=fn=>{ if(S.persona!=="tech"){ switchPersona("tech"); setTimeout(fn,450); } else fn(); };
+    const onRO=fn=>asTech(()=>{ if(W.active!=="ro:13456B"||W.mode!=="work"){ openRO("13456B"); setTimeout(fn,1150); } else fn(); });
+    if(s==="next") return asTech(()=>{ if(W.mode==="work") goHome(); setTimeout(()=>typeAndSend("What's my next RO?"),80); });
+    if(s==="home") return asTech(goHome);
+    if(s==="note") return onRO(()=>typeAndSend("Note front pads at 3 mm"));
+    if(s==="pads") return onRO(()=>typeAndSend("Add front brake pads to line A"));
+    if(s==="tce") return onRO(()=>{ const inp=$("#input"); inp.focus(); inp.value="TCE"; onInput(); renderChips(); });
+    if(s==="done") return onRO(()=>{ scrollToJob("A"); setTimeout(()=>{ const t=tabById("ro:13456B"); if(t){ markDone(t,"A",true); refreshWork(); } },500); });
+    if(s==="mode") return onRO(()=>setTimeout(()=>togglePop("personaMenu"),200));
+    if(s==="mic"){ const mb=$("#micBtn"); if(mb.animate) mb.animate([{transform:"scale(1)"},{transform:"scale(1.3)"},{transform:"scale(1)"}],{duration:500,iterations:3}); else toast("Hold the mic button to talk"); }
+  }
+};
+/* Called first by the delegated click listener. Returns true when it handled the click. */
+function v17Click(e,g){
+  let el;
+  const popBtn=g("#bellBtn")?"bellPop":g("#helpBtn")?"helpPop":g("#demoBtn")?"demoPop":g("#personaBtn")?"personaMenu":null;
+  if(popBtn){ closeMega(); togglePop(popBtn); return true; }
+  if(!g(".ppop")) closePops();
+  if(g("#megaBtn")){ megaOpen()?closeMega():openMega(); return true; }
+  if(g("#megaScrim")){ closeMega(); return true; }
+  if(g("#cdkLogoBtn")){ goHome(); return true; }
+  if(g("#histBtn")){ panelOpen()?closePanel():openPanel(); return true; }
+  if(g("#cpClose")){ closePanel(); return true; }
+  if(g("#cpFull")){ $("#cpanel").classList.toggle("full"); scrollDown(); return true; }
+  if(g("#cpChats")){ $("#cpanel").classList.toggle("chats"); return true; }
+  if(g("#micBtn")){ if(Date.now()-W.micT<900) return true; startListen(); setTimeout(stopListen,1100); return true; }
+  if(g("[data-thread]")&&!g("[data-pin]")&&!g("[data-del]")) $("#cpanel").classList.remove("chats");
+  el=g("[data-act]");
+  if(el&&el.dataset.act==="xsel"){ if(e.target.closest("input.xin")){ ACT.xsel(el); return true; } const inner=e.target.closest("[data-act]:not(tr)"); if(inner) el=inner; else if(e.target.closest("input,button,select")) return true; }
+  if(el&&ACT[el.dataset.act]){
+    if(el.tagName!=="INPUT") e.preventDefault();
+    if(el.closest("#mega")&&el.dataset.act!=="closemega") closeMega();
+    ACT[el.dataset.act](el); return true;
+  }
+  if((g("[data-prompt]")||g("[data-tour]")||g("[data-persona]"))&&(g(".ppop")||g("#mega"))){ closePops(); closeMega(); }
+  return false;
+}
+function initV17(){
+  W.level=levelFor(S.persona);
+  const sel=$("#demoRole"); sel.innerHTML=PERSONA_ORDER.map(k=>`<option value="${k}">${esc(PERSONAS[k].label)}</option>`).join("");
+  sel.addEventListener("change",()=>{ closePops(); switchPersona(sel.value); });
+  $("#notesToggle").addEventListener("change",e=>document.body.classList.toggle("notes",e.target.checked));
+  const inp=$("#input"), cp=$("#cpanel"), mic=$("#micBtn");
+  inp.addEventListener("focus",renderChips); inp.addEventListener("blur",()=>setTimeout(renderChips,140)); inp.addEventListener("input",renderChips);
+  document.addEventListener("mousedown",e=>{ if(e.target.closest&&e.target.closest("#chips")) e.preventDefault(); });
+  cp.addEventListener("mouseenter",()=>{ W.hoverPanel=true; }); cp.addEventListener("mouseleave",()=>{ W.hoverPanel=false; });
+  mic.addEventListener("pointerdown",e=>{ e.preventDefault(); W.micT=Date.now(); startListen(); });
+  const up=()=>{ if(W.listening){ W.micT=Date.now(); stopListen(); } };
+  mic.addEventListener("pointerup",up); mic.addEventListener("pointerleave",up); mic.addEventListener("pointercancel",up);
+  document.addEventListener("input",e=>{ const f=e.target.dataset&&e.target.dataset.field; if(!f) return; const t=activeRO(); if(!t) return; const j=t.st.jobs.find(x=>x.L===e.target.dataset.j); if(!j) return; j[f]=e.target.value; if(f==="cause") j.causeAI=false; });
+  document.addEventListener("change",e=>{ if(e.target.dataset&&e.target.dataset.field==="cause"&&W.level==="beginner"&&activeRO()) renderPane(); });
+  document.addEventListener("keydown",e=>{
+    const ae=document.activeElement, typing=ae&&((ae.tagName==="INPUT"&&ae.type!=="checkbox")||ae.tagName==="TEXTAREA"||ae.tagName==="SELECT");
+    const t=activeRO();
+    if(W.level==="expert"&&t&&t.loaded&&!typing&&!e.metaKey&&!e.ctrlKey&&!e.altKey&&RO[t.key].status!=="Closed"&&!megaOpen()&&!(typeof TOUR_STATE!=="undefined"&&TOUR_STATE.on)){
+      const Ls=t.st.jobs.map(j=>j.L), i=Ls.indexOf(t.st.sel), k=(e.key||"").toLowerCase(), sel=t.st.jobs.find(j=>j.L===t.st.sel)||t.st.jobs[0];
+      if(e.key==="ArrowDown"||e.key==="ArrowUp"){ e.preventDefault(); t.st.sel=Ls[Math.max(0,Math.min(Ls.length-1,i+(e.key==="ArrowDown"?1:-1)))]; return renderPane(); }
+      if(k==="c"){ e.preventDefault(); if(W.clock&&W.clock.ro===t.key){ setClock(null); refreshWork(); } else startClock(t,sel.L); return; }
+      if(k==="d"){ e.preventDefault(); sel.diag=!sel.diag; if(sel.diag&&!W.clock) setClock({ro:t.key,L:sel.L,t:Date.now()}); return refreshWork(); }
+      if(k==="x"){ e.preventDefault(); return markDone(t,sel.L,!sel.done); }
+      if(k==="p"){ e.preventDefault(); t.st.jobs.forEach(x=>{ if(x!==sel) x.menu=false; }); sel.menu=!sel.menu; return renderPane(); }
+      if(k==="e"){ e.preventDefault(); const c=document.querySelector('input.xin[data-j="'+sel.L+'"]'); if(c) c.focus(); return; }
+      if(k==="r"){ e.preventDefault(); return ACT.asr(); }
+    }
+    if((e.key==="Escape"||e.key==="Enter")&&ae&&ae.classList&&ae.classList.contains("xin")) return ae.blur();
+    if(e.key==="Escape"){ if(megaOpen()) return closeMega(); if(document.querySelector(".ppop.show")) return closePops(); if(panelOpen()&&!(typeof TOUR_STATE!=="undefined"&&TOUR_STATE.on)&&!$("#pop").classList.contains("show")) return closePanel(); }
+    if(e.key==="Enter"&&e.target.dataset&&e.target.dataset.act==="closetab") return ACT.closetab(e.target);
+    if(e.key==="/"&&!typing&&!e.metaKey&&!e.ctrlKey){ e.preventDefault(); const inp=$("#input"); inp.focus(); inp.value="/"; onInput(); renderChips(); }
+  });
+  renderModes(); renderTabs(); setStage("home");
+}
+
+/* ==========================================================================
    EVENTS — one delegated listener
    ========================================================================== */
 document.addEventListener("click",e=>{
   const g=s=>e.target.closest(s);
   let el;
+  if(v17Click(e,g)) return;       // platform bar, popovers, mega menu, tabs, RO workflow, chat dock
   if((el=g("[data-pop]"))) return choosePop(+el.dataset.pop);
   if((el=g("[data-ob]"))){ const a=el.dataset.ob; if(a==="tour") return startTour(); closeWelcome(); return $("#input").focus(); }
   if((el=g("[data-tour-act]"))){ const a=el.dataset.tourAct;
@@ -1741,7 +2967,7 @@ document.addEventListener("click",e=>{
   if((el=g("[data-cfm-no]"))) return resolveCfm(el.dataset.cfmNo,false);
   if((el=g("[data-open-doc]"))){ const id=el.dataset.openDoc; if(S.canvas.open&&S.canvas.kind==="doc"&&S.canvas.doc===id) return aivaCloseStage(); return openCanvas({kind:"doc",doc:id}); }
   if((el=g("[data-open-app]"))){ const a=el.dataset.openApp; if(AIVA_UNSUPPORTED_APPS.includes(a)) return ask("Open "+APPS[a].name); if(S.canvas.open&&S.canvas.kind==="app"&&S.canvas.app===a&&el.classList.contains("chip")) return aivaCloseStage(); return openCanvas({kind:"app",app:a,rec:el.dataset.rec||null}); }
-  if((el=g("[data-prompt]"))){ if(isMobile()&&el.closest("#canvas")) aivaCloseStage(); return ask(el.dataset.prompt); }
+  if((el=g("[data-prompt]"))) return ask(el.dataset.prompt);
   if((el=g("[data-run]"))){ S.canvas.run=+el.dataset.run; return renderCanvas(); }
   if(g("#runAuto")){ if(S.runTimer){ clearInterval(S.runTimer); S.runTimer=null; } else S.runTimer=setInterval(()=>{ if(S.canvas.run>=RUN_STEPS.length-1){ clearInterval(S.runTimer); S.runTimer=null; } else S.canvas.run++; renderCanvas(); },2600); return renderCanvas(); }
   if((el=g("[data-cvtab]"))){ S.canvas.tab=el.dataset.cvtab; return renderCanvas(); }
@@ -1757,27 +2983,15 @@ document.addEventListener("click",e=>{
   if((el=g("[data-copy]"))){ const t=Object.values(S.threads).flatMap(x=>x.turns).find(x=>x.id===el.dataset.copy); const txt=htmlToText(t.r.lead); try{ navigator.clipboard.writeText(txt).then(()=>toast("Copied"),()=>toast("Copy isn't available here")); }catch(_){ toast("Copy isn't available here"); } return; }
   if((el=g("[data-fb]"))){ const box=el.closest(".feedback"); box.querySelectorAll("[data-fb]").forEach(b=>b.classList.toggle("on",b===el)); let tags=box.nextElementSibling; if(!tags||!tags.classList.contains("fb-tags")){ box.insertAdjacentHTML("afterend",`<div class="fb-tags">${FB_TAGS.map(t=>`<button data-fbtag>${t}</button>`).join("")}</div>`); } return; }
   if((el=g("[data-fbtag]"))){ el.classList.toggle("on"); return toast("Thanks — feedback noted"); }
-  if(g("#personaBtn")){ const mn=$("#personaMenu"); mn.classList.toggle("show"); if(mn.classList.contains("show")) placePersonaMenu(); return; }
-  if(!g("#personaMenu")) $("#personaMenu").classList.remove("show");
   if(!g(".composer")) closePop();
   if(g("#newChat")) return newChatClick();
-  if(g("#cdkLogoBtn")&&$("#app").classList.contains("rail-min")&&!isMobile()) return $("#app").classList.remove("rail-min");
-  if(g("#navToday")||g("#cdkLogoBtn")){ closeDrawer(); return ask("/today"); }
-  if(g("#navApps")){ closeDrawer(); return openCanvas({kind:"launcher"}); }
-  if(g("#navActivity")){ closeDrawer(); return openCanvas({kind:"activity"}); }
-  if(g("#menuBtn")) return $("#app").classList.add("drawer");
-  if(g("#scrim")) return closeDrawer();
-  if(g("#mNewBtn")) return newChatClick();
   if(g("#modeBtn")||g("#exitPreview")) return toggleMode();
   if(g("#cvDone")) return aivaCloseStage();
   if(g("#themeBtn")) return toggleTheme();
-  if(g("#railMin")||(g(".app.rail-min .rail-top"))) return $("#app").classList.toggle("rail-min");
   if(g("#cvClose")) return aivaCloseStage();
-  if(g("#cvBack")) return openCanvas({kind:"launcher"});
-  if(g("#canvasToggle")) return S.canvas.open?aivaCloseStage():openCanvas(S.canvas.kind?{kind:S.canvas.kind,app:S.canvas.app,doc:S.canvas.doc,run:S.canvas.run,set:S.canvas.set,tab:S.canvas.tab,rec:S.canvas.rec,wide:S.canvas.wide,back:S.canvas.back}:{kind:"app",app:P().apps[0]});
+
   if(g("#atBtn")){ const i=$("#input"); i.value+=(i.value&&!/\s$/.test(i.value)?" ":"")+"@"; i.focus(); i.selectionStart=i.value.length; return onInput(); }
   if(g("#slashBtn")){ const i=$("#input"); i.value="/"; i.focus(); return onInput(); }
-  if(g("#micBtn")) return micClick();
   if(g("#sendBtn")) return send();
 });
 $("#input").addEventListener("input",onInput);
@@ -1801,8 +3015,8 @@ $("#input").addEventListener("keydown",e=>{
   try{ S.preview=localStorage.getItem("aiva-preview")==="1"; }catch(e){}
   applyMode(); if(MQ.addEventListener) MQ.addEventListener("change",applyMode);
   $("#threadList").addEventListener("scroll",closePersonaMenu);
-  $("#legend").innerHTML=Object.keys(AIVA_NODES).map(nodeTag).join("");
   const h=(location.hash||"").slice(1); if(PERSONAS[h]) S.persona=h;
+  initV17();
   startBriefing(S.persona);
   maybeWelcome(S.persona);
   setComposerState();
