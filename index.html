@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0e1014">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>AIVA — Unify (v19)</title>
+<title>AIVA — Unify (v20)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -909,6 +909,110 @@ input.xin.ai{border-color:var(--brand);background:var(--surface)}
 .app.m .dos-btn,.app.m .stage.dos-open .dos-x{display:inline-flex}
 .dag{color:var(--text-3);font-weight:500;margin-left:2px}
 
+
+/* ============================================================
+   v20 — runner bar, role-change screen, balloons, case screens
+   ============================================================ */
+.runbar{flex:none;background:var(--surface);border-bottom:1px solid var(--border);padding:8px 14px 8px;display:flex;flex-direction:column;gap:6px;position:relative;z-index:38;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.runbar[hidden]{display:none}
+.run-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.run-title{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.run-title b{font-size:13.5px}
+.run-title small{color:var(--text-3);font-size:12px}
+.run-title .mark{color:var(--brand)}
+.run-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.run-chip{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;border:1px solid var(--border-strong);color:var(--text-2);white-space:nowrap}
+.run-chip.lane.ai{color:var(--brand);border-color:color-mix(in srgb,var(--brand) 50%,transparent)}
+.run-chip.lane.employee{color:var(--n-rules);border-color:color-mix(in srgb,var(--n-rules) 50%,transparent)}
+.run-chip.lane.customer{color:var(--success);border-color:color-mix(in srgb,var(--success) 50%,transparent)}
+.run-n{font-size:12px;color:var(--text-3)}
+.run-ctl{display:flex;align-items:center;gap:6px;margin-left:auto}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:9px;overflow:hidden}
+.seg button{border:0;background:transparent;color:var(--text-2);font-size:12.5px;font-weight:600;padding:5px 10px}
+.seg button[aria-pressed="true"]{background:var(--bsoft);color:var(--brand)}
+.run-txt{margin:0;font-size:14px;line-height:1.45;color:var(--text)}
+.run-ribbon{display:flex;gap:3px;overflow-x:auto;scrollbar-width:none;padding-bottom:1px}
+.run-ribbon .step-dot{flex:none;width:24px;height:20px;border-radius:5px;border:1px solid var(--border);background:var(--surface-2);color:var(--text-3);font-size:10px;font-weight:700;padding:0;font-family:var(--mono)}
+.run-ribbon .step-dot.ai{border-bottom:2px solid var(--brand)}
+.run-ribbon .step-dot.employee{border-bottom:2px solid var(--n-rules)}
+.run-ribbon .step-dot.customer{border-bottom:2px solid var(--success)}
+.run-ribbon .step-dot.done{background:color-mix(in srgb,var(--brand) 18%,var(--surface));color:var(--text)}
+.run-ribbon .step-dot.cur{background:var(--brand);border-color:var(--brand);color:#fff}
+.run-press{box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 55%,transparent)!important;transform:scale(.97)}
+.app.m .run-title small,.app.m .run-n{display:none}
+.app.m .run-txt{font-size:13px}
+.app.m .run-ctl{margin-left:0;width:100%}
+.app.m .run-ctl #runNext{margin-left:auto}
+
+/* role change */
+.persona-swap{position:fixed;inset:0;z-index:9500;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--bg) 96%,transparent) 0%,color-mix(in srgb,var(--bg) 82%,transparent) 45%,transparent 78%)}
+.persona-swap.show{animation:swapIn 2.2s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes swapIn{0%{opacity:0}12%{opacity:1}72%{opacity:1}100%{opacity:0}}
+.persona-swap .ps-card{text-align:center;transform:scale(.9)}
+.persona-swap.show .ps-card{animation:swapCard 2.2s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes swapCard{0%{transform:scale(.86) translateY(14px)}16%{transform:scale(1) translateY(0)}76%{transform:scale(1) translateY(0)}100%{transform:scale(1.04) translateY(-8px)}}
+.persona-swap .ps-ring{width:148px;height:148px;border-radius:50%;margin:0 auto 22px;display:flex;align-items:center;justify-content:center;font-size:46px;font-weight:700;color:#fff;letter-spacing:-1px;box-shadow:0 12px 44px rgba(0,0,0,.35)}
+.persona-swap .ps-now{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px}
+.persona-swap .ps-name{font-size:42px;font-weight:700;letter-spacing:-1.2px;line-height:1.1}
+.persona-swap .ps-note{font-size:15px;color:var(--text-2);margin-top:12px}
+.persona-swap .ps-from{display:inline-flex;gap:6px;margin-top:20px;padding:7px 16px;border-radius:999px;background:var(--surface);border:1px solid var(--border);font-size:13px;color:var(--text-2)}
+.persona-swap .ps-from b{color:var(--text)}
+@media (prefers-reduced-motion:reduce){.persona-swap.show,.persona-swap.show .ps-card{animation-duration:.01s}.persona-swap.show{opacity:1}}
+
+/* balloons */
+.balloon{position:fixed;z-index:9000;display:flex;gap:8px;align-items:flex-start;background:var(--brand);color:#fff;font-size:12.5px;font-weight:500;line-height:1.4;padding:9px 12px;border-radius:10px;box-shadow:0 10px 28px rgba(0,0,0,.35);pointer-events:none;animation:pop .2s ease}
+.balloon .mark{flex:none;margin-top:1px}
+.balloon::after{content:"";position:absolute;left:50%;width:10px;height:10px;background:var(--brand);transform:translateX(-50%) rotate(45deg)}
+.balloon.down::after{top:-5px}.balloon.up::after{bottom:-5px}
+.bln-hl{outline:2px solid var(--brand);outline-offset:2px;border-radius:4px}
+#bellBtn.ring svg{animation:ring .9s ease 2;transform-origin:50% 10%}
+@keyframes ring{0%,100%{transform:rotate(0)}20%{transform:rotate(16deg)}40%{transform:rotate(-14deg)}60%{transform:rotate(9deg)}80%{transform:rotate(-5deg)}}
+
+/* confirmation rows, hand-off, customer phone */
+.cfm-kv{display:grid;grid-template-columns:120px 1fr;gap:4px 12px;margin:4px 0 10px;font-size:13px}
+.cfm-kv dt{color:var(--text-3)}.cfm-kv dd{margin:0;font-weight:500}
+.handoff{border:1px solid var(--border);border-left:4px solid var(--brand);border-radius:10px;padding:12px 14px;background:var(--surface-2)}
+.handoff .hf-from{font-weight:700;font-size:13px}
+.handoff .hf-why{font-size:13px;color:var(--text-2);margin:4px 0 8px}
+.handoff .cfm-kv{margin-bottom:0}
+.turn.cust{display:flex;justify-content:center;margin:6px 0 14px}
+.dev{width:min(320px,100%);border:1px solid var(--border-strong);border-radius:22px;padding:12px 14px 14px;background:var(--surface-2);box-shadow:var(--shadow)}
+.dv-cap{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--success);margin-bottom:8px}
+.dv-cap .lbl{margin-left:auto}
+.dv-bubble{background:color-mix(in srgb,var(--success) 18%,var(--surface));border-radius:16px 16px 16px 4px;padding:9px 12px;font-size:13.5px;line-height:1.45}
+.dv-choice{display:flex;gap:8px;margin-top:10px}
+.dv-note{font-size:11.5px;color:var(--text-3);margin-top:6px}
+.dv-done{margin-top:10px;font-size:12.5px;font-weight:600;padding:6px 10px;border-radius:8px;text-align:center}
+.dv-done.decline{background:color-mix(in srgb,var(--danger) 14%,transparent);color:var(--danger)}
+.dv-done.approve{background:color-mix(in srgb,var(--success) 14%,transparent);color:var(--success)}
+.doc-pv{margin-top:2px;max-width:420px;animation:pop .3s ease}
+.doc-pv .paper{padding:16px 18px;transform:none}
+.doc-pv .sig.empty{outline:2px solid var(--danger);outline-offset:3px}
+
+/* case screens */
+tr.case-hl td{background:color-mix(in srgb,var(--brand) 10%,transparent);animation:rowflash 2.2s ease-out}
+.slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.slot{border:1px solid var(--border);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;background:var(--surface)}
+.slot span{font-size:18px;font-weight:700}
+.slot small{color:var(--text-3)}
+.slot.rec{border-color:color-mix(in srgb,var(--brand) 60%,transparent)}
+.slot.booked{border-color:var(--success);background:color-mix(in srgb,var(--success) 10%,var(--surface))}
+.slot.booked small{color:var(--success);font-weight:600}
+.photos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ph{aspect-ratio:4/3;border-radius:8px;background:linear-gradient(135deg,var(--surface-3),var(--surface-2));border:1px solid var(--border);display:flex;align-items:flex-end;padding:6px 8px;font-size:11.5px;color:var(--text-2)}
+.ph.bad{border-color:color-mix(in srgb,var(--danger) 55%,transparent)}
+.app.m .slots,.app.m .photos{grid-template-columns:minmax(0,1fr)}
+/* during a run, the conversation takes the My Day column so the product screen stays visible */
+.app.run-on:not(.m) .stage.work{grid-template-columns:clamp(320px,28vw,420px) minmax(0,1fr) var(--dosw)}
+.app.run-on:not(.m) .stage.work #myday{display:none}
+.app.run-on:not(.m) .stage.work #workspace{grid-column:2}
+.app.run-on:not(.m) .stage.work #dossier{grid-column:3}
+.app.run-on:not(.m) .stage.work #chatdock{left:12px;top:12px;bottom:12px;transform:none;width:clamp(320px,28vw,420px);justify-content:flex-end}
+.app.run-on:not(.m) .stage.work #cpanel{flex:1;max-height:none;height:auto}
+.app.run-on:not(.m) .stage.work #cpanel.hide{display:flex}
+@media (max-width:1100px){.app.run-on:not(.m) .stage.work{grid-template-columns:clamp(300px,34vw,380px) minmax(0,1fr)}}
+
 </style>
 </head>
 <body>
@@ -926,6 +1030,21 @@ input.xin.ai{border-color:var(--brand);background:var(--surface)}
     <button class="whoBtn" id="personaBtn" aria-haspopup="menu"></button>
     <span class="cnote" style="left:50%;top:16px;transform:translateX(-50%)">Platform menu · on every screen</span>
   </header>
+  <div class="runbar" id="runBar" hidden aria-label="Cross-product runner">
+    <div class="run-top">
+      <span class="run-title"><span id="runMark"></span><b>Cross-product flow</b><small>Bonita Murray · RO #124211 → Deal D129523</small></span>
+      <div class="run-meta" id="runMeta"></div>
+      <div class="run-ctl">
+        <div class="seg"><button id="runGuided" aria-pressed="true">Guided</button><button id="runAutoBtn" aria-pressed="false">Auto</button></div>
+        <button class="btn sm" id="runBack">Back</button>
+        <button class="btn sm primary" id="runNext">Start</button>
+        <button class="btn sm" id="runReset">Reset</button>
+        <button class="icon-btn" id="runClose" aria-label="Close the runner" title="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+    </div>
+    <p class="run-txt" id="runTxt"></p>
+    <div class="run-ribbon" id="runRibbon"></div>
+  </div>
 
   <div class="ppop" id="bellPop" style="right:70px"></div>
   <div class="ppop" id="helpPop" style="right:110px">
@@ -1030,6 +1149,7 @@ input.xin.ai{border-color:var(--brand);background:var(--surface)}
     <nav id="mega" aria-label="Navigation menu"></nav>
   </main>
   <div class="toast" id="toast"></div>
+  <div class="persona-swap" id="personaSwap" aria-hidden="true"></div>
 </div>
 <button class="btn exit-preview" id="exitPreview">Exit mobile view</button>
 
@@ -1477,6 +1597,7 @@ function srcLine(apps,extra){ return {t:"src",apps:[...new Set(apps)],text:extra
 function openChip(app,rec){ return {label:`Open in ${APPS[app].name}`,open:app,rec:rec||null}; }
 function respond(text){
   const rr = roRoute(text); if(rr) return rr;                              // RO workflow intents (v17)
+  const cr = caseRoute(text); if(cr) return cr;                            // Bonita Murray case (v20)
   const dc = driveMatch(text); if(dc) return driveAnswer(dc.cmd,dc.arg);   // Drive codes are commands, like /
   const ac = acctMatch(text); if(ac) return acctAnswer(ac);                 // accounting codes: recognised, not wired
   const ref = /^\//.test(text) ? null : aivaCiFind(text);   // 1. context items first
@@ -1560,7 +1681,7 @@ const RESPONDERS = {
     return {node:"monitor",trace:["Intelligence Suite · Store Performance"],lead:cardSummary(c),blocks:[{t:"parts",cards:[c]},{t:"lim",html:"Prior-period figures for a month-over-month reading aren't loaded in this prototype†, so I'm showing the current-month spread only."},srcLine(["is"],"Statler Auto Group")],chips:[openChip("is")]};
   },
   runner(){
-    return {node:"monitor",trace:["Service → Modern Retail → F&I → Accounting"],lead:`Playing the cross-product flow on the canvas: <b>Bonita Murray · RO #124211 → Deal D129523</b> — ${RUN_STEPS.length} steps across three lanes.`,blocks:[{t:"msg",html:"Watch the tags. Every AUTOMATION step stops for a person, and every one of them lands in the activity log."},srcLine(["se","pa","crm-red","fi","dr","dm"])],chips:[{label:"Open the activity log",prompt:"/activity"}],after:()=>openCanvas({kind:"runner",run:0})};
+    return {node:"monitor",trace:["Service → Modern Retail → F&I → Accounting"],lead:`The cross-product flow is ready in the bar at the top: <b>Bonita Murray · RO #124211 → Deal D129523</b> — ${RUN_STEPS.length} steps, four roles. Press <b>Start</b>, or switch to <b>Auto</b>.`,blocks:[{t:"msg",html:"Watch the tags. Every AUTOMATION step stops for a person, and every one of them lands in the activity log."},srcLine(["se","pa","crm-red","fi","dr","dm"])],chips:[{label:"Open the activity log",prompt:"/activity"}],after:()=>runOpen()};
   },
   activity(){
     const rows=S.log.map(e=>[esc(hhmm(e.ts)),nodeTag("auto"),esc(e.action),esc(PERSONAS[e.persona].short)]);
@@ -1854,6 +1975,7 @@ function blockHTML(b,turnId){
     case "clar": return `<div class="clar">${b.options.map(o=>`<button data-prompt="${esc(o.prompt)}"><span>→</span><span><b>${esc(o.label)}</b><small>${esc(o.sub)}</small></span></button>`).join("")}</div>`;
     case "doc": { const d=DOCS.find(x=>x.id===b.doc); return `<div class="doc"><div class="di">PDF</div><div class="dm"><b>${esc(d.name)}</b><small>${esc(d.packet)} · ${esc(d.status)} · ${esc(d.modified)}</small></div><button class="chip open" data-open-doc="${d.id}">Open</button></div>`; }
     case "cfm": return cfmHTML(b,turnId);
+    case "hand": return handHTML(b);
   }
   return "";
 }
@@ -1861,6 +1983,7 @@ function cfmHTML(b,turnId){
   const a=AUTOMATIONS[b.auto];
   if(b.state==="done") return `<div class="cfm done" data-cfm="${b.id}"><div class="ch">${nodeTag("auto")}<b class="result">Done</b></div><p>${esc(b.doneText||a.done)}</p><div class="src">Logged at ${esc(b.at)} · confirmed by ${esc(PERSONAS[b.by].short)}</div></div>`;
   if(b.state==="cancel") return `<div class="cfm cancel" data-cfm="${b.id}"><div class="ch">${nodeTag("auto")}<b class="result">Cancelled</b></div><p>No changes made. Nothing was written to the log.</p></div>`;
+  if(a.rows) return `<div class="cfm" data-cfm="${b.id}" data-turn="${turnId}"><div class="ch">${nodeTag("auto")}<h4>${esc(a.label)}</h4></div><dl class="cfm-kv">${a.rows().map(r=>`<dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd>`).join("")}</dl><p>${esc(a.note)}</p><div class="row"><button class="btn auto" data-cfm-yes="${b.id}">${esc(a.yes||"Confirm")}</button><button class="btn" data-cfm-no="${b.id}">${esc(a.no||"Cancel")}</button><span class="lbl" style="margin-left:auto">Writes one audit entry</span></div></div>`;
   return `<div class="cfm" data-cfm="${b.id}" data-turn="${turnId}"><div class="ch">${nodeTag("auto")}<h4>${esc(a.label)}</h4></div><p>This changes data in Unify. Here's exactly what will happen:</p><ul>${(typeof a.what==="function"?a.what():a.what).map(w=>`<li>${esc(w)}</li>`).join("")}</ul><div class="row"><button class="btn auto" data-cfm-yes="${b.id}">Confirm</button><button class="btn" data-cfm-no="${b.id}">Cancel</button><span class="lbl" style="margin-left:auto">Writes one audit entry</span></div></div>`;
 }
 function chipsHTML(chips){
@@ -1885,7 +2008,7 @@ function aiTurnHTML(t,full){
 }
 function renderThread(){
   const th=S.threads[S.cur], el=$("#thread");
-  el.innerHTML=th.turns.map(t=>t.role==="user"?userTurnHTML(t):aiTurnHTML(t,true)).join("");
+  el.innerHTML=th.turns.map(t=>t.role==="user"?userTurnHTML(t):t.role==="cust"?custTurnHTML(t):aiTurnHTML(t,true)).join("");
   $("#threadTitle").textContent=th.title;
   syncOpenButtons(); renderRail();
 }
@@ -2007,7 +2130,7 @@ function resolveCfm(id,yes){
    CANVAS — one state object; every Open card reads from it
    ========================================================================== */
 /* Every canvas view is a workflow tab. S.canvas points at the active canvas tab's state. */
-const cvKey=st=>st.kind==="app"?"app:"+st.app:st.kind==="merge"?"dups":st.kind;
+const cvKey=st=>st.kind==="app"?"app:"+st.app:st.kind==="case"?"case:"+CASE_VIEWS[st.view][0]:st.kind==="merge"?"dups":st.kind;
 function openCanvas(st){
   closeMega(); closePops();
   const id="cv:"+cvKey(st); let t=tabById(id);
@@ -2041,6 +2164,7 @@ function renderCanvas(){
     const d=DOCS.find(x=>x.id===c.doc), packet=DOCS.filter(x=>x.packet===d.packet);
     $("#cvTile").innerHTML=tileHTML("dm"); $("#cvTitle").innerHTML=`${esc(d.name)}<small>${esc(d.packet)}</small>`;
     body.innerHTML=`<div class="paper"><h4>${esc(d.title)}</h4><table>${d.rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join("")}</table><div class="sig ${d.signed?"":"empty"}"><span>${d.signed?"Signed "+esc(d.signed):"SIGNATURE REQUIRED"}</span><span>Buyer</span></div></div><div class="cv-sec" style="margin-top:18px"><div class="sec-h">Rest of the packet (${packet.length})<span class="line"></span></div><div style="display:flex;flex-direction:column;gap:8px">${packet.map(x=>blockHTML({t:"doc",doc:x.id})).join("")}</div></div>`;
+  } else if(c.kind==="case"){ caseCanvas(body,c.view);
   } else if(c.kind==="runner"){
     const i=c.run, st=RUN_STEPS[i], nodeKey={"MONITORING":"monitor","RULES ENGINE":"rules","AUTOMATION":"auto"}[st.node];
     $("#cvTile").innerHTML=markSVG(22); $("#cvTitle").innerHTML=`Cross-product runner<small>Bonita Murray · RO #124211 → Deal D129523</small>`;
@@ -2323,8 +2447,8 @@ function renderMyDay(){
   const open=m.smart.filter(t=>!W.taskDone[t.id]).length;
   const recent=recentHTML()||`<div class="lbl" style="padding:4px 8px">Nothing opened yet. This fills in as you work.</div>`;
   const alerts=m.alerts.length?m.alerts:[{b:"✓",t:"No alerts right now",s:"The bell lights up when something new needs you"}];
-  const bb=$("#bellBadge"); bb.hidden=!m.alerts.length; bb.textContent=m.alerts.length;
-  $("#bellPop").innerHTML=`<div class="mh3">Alerts</div>${alerts.map(a=>alertRowHTML(a,false)).join("")}<div class="lbl" style="padding:6px 8px 0">The bell only signals that something is new. The same alerts appear in My Day.</div>`;
+  const nAll=m.alerts.length+NOTIFS.length, bb=$("#bellBadge"); bb.hidden=!nAll; bb.textContent=nAll;
+  $("#bellPop").innerHTML=`<div class="mh3">Alerts</div>${NOTIFS.map(n=>alertRowHTML({b:"→",t:n.t,s:n.s,hot:true},false)).join("")}${alerts.map(a=>alertRowHTML(a,false)).join("")}<div class="lbl" style="padding:6px 8px 0">The bell only signals that something is new. The same alerts appear in My Day.</div>`;
   if(W.mode==="home"){
     rail.innerHTML="";
     const paused=W.tabs.length?`<div class="openwork"><b style="font-size:13px">Paused work</b><span class="lbl">Pick up where you left off:</span>${W.tabs.map(t=>`<button class="chip" data-act="tab" data-id="${esc(t.id)}">${tabIcon(t)} ${esc(tabLabel(t))}</button>`).join("")}</div>`:"";
@@ -2361,13 +2485,14 @@ function tabLabel(t){
   if(t.kind==="wf") return t.key;
   const c=t.st;
   if(c.kind==="app") return APPS[c.app].name;
+  if(c.kind==="case") return APPS[CASE_VIEWS[c.view][0]].name+" · "+CASE_VIEWS[c.view][1];
   if(c.kind==="doc"){ const d=DOCS.find(x=>x.id===c.doc); return d?d.name:"Document"; }
   if(c.kind==="merge"){ const s=DUP.MERGE_SETS[c.set]; return "Merge · "+(s?s.title:"customers"); }
   return {runner:"Cross-product runner",activity:"Activity log",launcher:"Products",dups:"Duplicate customers"}[c.kind]||"Canvas";
 }
 function tabIcon(t){
   if(t.kind==="ro") return gi("file",14);
-  if(t.kind==="cv"){ if(t.st.kind==="app") return tileHTML(t.st.app,"sm"); if(t.st.kind==="doc") return tileHTML("dm","sm"); if(t.st.kind==="dups"||t.st.kind==="merge") return tileHTML("crm-red","sm"); }
+  if(t.kind==="cv"){ if(t.st.kind==="app") return tileHTML(t.st.app,"sm"); if(t.st.kind==="case") return tileHTML(CASE_VIEWS[t.st.view][0],"sm"); if(t.st.kind==="doc") return tileHTML("dm","sm"); if(t.st.kind==="dups"||t.st.kind==="merge") return tileHTML("crm-red","sm"); }
   return gi("box",14);
 }
 function renderTabs(){
@@ -2624,6 +2749,7 @@ function renderDossier(skeleton){
     } else if(c.kind==="doc"){
       const d=DOCS.find(x=>x.id===c.doc);
       if(d) h+=insHTML("file",esc(d.name),`${esc(d.packet)} · ${esc(d.status)} · ${d.signed?"signed "+esc(d.signed):"signature required"}.`)+insHTML("box","Packet",`${DOCS.filter(x=>x.packet===d.packet).length} documents in this packet.`);
+    } else if(c.kind==="case"){ h+=caseDossier();
     } else if(c.kind==="runner"){
       const s=RUN_STEPS[c.run||0];
       h+=insHTML("spark",`Step ${(c.run||0)+1} of ${RUN_STEPS.length} · ${esc(s.lane)}`,`${esc(s.node)} · ${esc(s.uc)}`);
@@ -2768,7 +2894,7 @@ function closePanel(){ clearTimeout(W.collapseT); const p=$("#cpanel"); p.classL
 function panelOpen(){ return !$("#cpanel").classList.contains("hide"); }
 function pendingCfm(){ const th=S.threads[S.cur]; return !!th&&th.turns.some(t=>t.r&&t.r.blocks.some(b=>b.t==="cfm"&&b.state==="pending")); }
 function autoCollapse(){
-  clearTimeout(W.collapseT);
+  clearTimeout(W.collapseT); if(RUN.on) return;   // the runner narrates in the conversation; keep it open
   W.collapseT=setTimeout(()=>{ const p=$("#cpanel"); if(W.hoverPanel||S.streaming||pendingCfm()||p.classList.contains("full")||p.classList.contains("chats")||$("#input").value) return; closePanel(); },6500);
 }
 function chipsFor(){
@@ -2835,7 +2961,7 @@ const ACT={
   gohome:goHome, closemega:closeMega, who:()=>togglePop("personaMenu"),
   activity:()=>openCanvas({kind:"activity"}),
   megaapp:el=>{ const a=el.dataset.app; closeMega(); closePops(); if(AIVA_UNSUPPORTED_APPS.includes(a)) return ask("Open "+APPS[a].name); openCanvas({kind:"app",app:a}); },
-  megacv:el=>{ const k=el.dataset.kind; if(k==="runner") return openCanvas({kind:"runner",run:0}); openCanvas({kind:k}); },
+  megacv:el=>{ const k=el.dataset.kind; if(k==="runner") return runOpen(); openCanvas({kind:k}); },
   openwf:el=>openWf(el.dataset.name),
   level:el=>{ W.level=el.dataset.l; renderModes(); renderRail(); const t=activeTab(); if(W.mode==="work"&&t&&t.kind==="ro"&&t.loaded){ renderPane(); renderDossier(); } renderChips(); },
   bclock:el=>startClock(activeTab(),el.dataset.j),
@@ -2946,12 +3072,424 @@ function initV17(){
 }
 
 /* ==========================================================================
+   v20 — CROSS-PRODUCT RUNNER THAT ACTS
+   Ported from the master prototype (v30 AIVA_RUN_STEPS): every step does
+   something real here — switches role behind a "You are now" screen, types
+   the question into the chat bar, shows the actual confirmation card and
+   confirms it, texts the customer, rings the bell on a hand-off, opens the
+   product screen the step is about, previews the payoff letter in place and
+   then full size, and writes each confirmed step to the activity log.
+   The case and every figure on it are demonstration data (†).
+   ========================================================================== */
+const CASE0={id:"CASE-124211",
+  customer:{name:"Bonita Murray",id:"C73210",phone:"(206) 555-9120"},
+  vehicle:{desc:"2021 Lexus RX 350",miles:"58,240",value:21400,owed:0},
+  ro:{num:"124211"}, blocker:{so:"SO-4471",po:"PO #178658",vendor:"Commercial Partner Supply, Inc.",part:"Recall kit 22LA1 · water pump assembly"},
+  upgrade:{stock:"T1024",ymm:"2025 Toyota Camry SE",vin:"4T1G11AK5RU321889",price:"$28,450",status:"Available"}};
+const CASE={};
+function caseReset(){ Object.assign(CASE,JSON.parse(JSON.stringify(CASE0)),{trail:[],handoffs:[],pending:null,owner:"serviceManager",
+  booked:false,estimateSent:false,decision:null,mpi:false,estimate:false,equity:false,deal:false,jacket:false,comply:false,taxFixed:false}); NOTIFS.length=0; }
+const NOTIFS=[];
+function caseNote(note){ CASE.trail.push({seq:CASE.trail.length+1,actor:PERSONAS[S.persona].label,at:hhmm(now()),note}); }
+const $$c=s=>[...document.querySelectorAll(s)];
+
+/* ---------------- confirmation cards the case uses ---------------- */
+const NEVER=/^\u0000$/;
+function caseHandAuto(to,why){
+  return {re:NEVER,get label(){ return "Hand the case to "+PERSONAS[to].label; },
+    rows:()=>[["Case",CASE.id],["Customer",CASE.customer.name],["Vehicle",CASE.vehicle.desc],["RO","#"+CASE.ro.num],["To",PERSONAS[to].label],["Reason",typeof why==="function"?why():why]],
+    note:"The case leaves your queue when you confirm. Nothing is sent until then.",yes:"Hand it over",no:"Keep it",
+    done:()=>"Handed the case to "+PERSONAS[to].label+" — "+CASE.customer.name+" · RO #"+CASE.ro.num,
+    onDone:()=>caseHandoff(to,typeof why==="function"?why():why)};
+}
+const CASE_AUTO={
+  book:{re:NEVER,label:"Book Bonita Murray's service visit",
+    rows:()=>[["Customer",CASE.customer.name],["Vehicle",CASE.vehicle.desc],["Slot","Thursday 9:00am · waiter"],["Work","Maintenance interval + recall"],["Special order",CASE.blocker.po+" — released to arrive Wednesday"]],
+    note:"Books the bay, texts and emails her the confirmation, and releases the special order.",
+    done:"Booked Bonita Murray Thursday 9:00am; confirmation sent; special order PO #178658 released.",
+    onDone:()=>{ CASE.booked=true; caseNote("Appointment booked Thursday 9:00am; special order released"); custMsg("Statler Toyota: you're booked Thursday 9:00am. We'll have you waiting — coffee's on us."); caseRefresh(); }},
+  estimate:{re:NEVER,label:"Send the engine estimate to Bonita Murray",
+    rows:()=>[["Customer",CASE.customer.name+" · "+CASE.customer.phone],["RO","#"+CASE.ro.num],["Finding","Coolant in the oil"],["Repair","Engine replacement · $9,480"],["Time","5–7 days"]],
+    note:"Texts her the estimate with Approve and Decline. Nothing proceeds until she answers.",yes:"Send it",
+    done:"Sent the $9,480 engine estimate to Bonita Murray for approval.",
+    onDone:()=>{ CASE.estimateSent=true; caseNote("Engine estimate sent for approval"); custMsg("Statler Toyota: your inspection found coolant in the oil. Engine replacement is $9,480 and takes 5–7 days. Approve the repair?",true); }},
+  equity:{re:NEVER,label:"Flag the equity position",
+    rows:()=>[["Customer",CASE.customer.name],["Vehicle value","$21,400"],["Owed","$0 — owned outright"],["Repair estimate","$9,480"],["Equity","$21,400"]],
+    note:"Flags the position on the case so Sales can see it. It does not contact her.",yes:"Flag it",no:"Not yet",
+    done:"Flagged an equity position: $21,400 against a $9,480 repair — visible to Sales.",
+    onDone:()=>{ CASE.equity=true; caseNote("Equity flagged: $21,400 against a $9,480 repair"); openCase("crm-cust"); }},
+  handSales:caseHandAuto("salesManager","Repair estimate $9,480 against $21,400 of equity, owned outright."),
+  quote:{re:NEVER,label:"Create the deal",
+    rows:()=>[["Customer",CASE.customer.name],["Vehicle",CASE.upgrade.stock+" · "+CASE.upgrade.ymm],["Price",CASE.upgrade.price],["Trade",CASE.vehicle.desc+" · $21,400"],["Payoff","$0 — owned outright"],["Lender","Preferred tier · pre-approval likely"]],
+    note:"Creates the deal, runs a soft pre-approval, and starts the trade paperwork. She has not signed anything.",yes:"Create the deal",
+    done:"Created deal D129523 on T1024 and ran a soft pre-approval.",
+    onDone:()=>{ CASE.deal=true; caseNote("Deal D129523 created on T1024"); openCase("crm-deal"); }},
+  handFi:caseHandAuto("fi","Deal D129523 desked and pre-approved. Trade owned outright, payoff verification running."),
+  jacket:{re:NEVER,label:"Assemble the deal jacket",
+    rows:()=>[["Deal","D129523"],["Forms","11 required · 11 assembled"],["Coverage","Extended service contract, tire and wheel"],["Trade","Payoff letter, odometer, title"]],
+    note:"Builds the jacket and routes it for e-signature. She signs; nothing posts until she does.",yes:"Assemble and route",
+    done:"Assembled the D129523 deal jacket (11 forms) and routed it for signature.",
+    onDone:()=>{ CASE.jacket=true; caseNote("Deal jacket assembled and routed for signature"); openCase("fi-jacket"); }},
+  handAcct:caseHandAuto("controller","Deal D129523 signed and compliant. Ready to post."),
+  tax:{re:NEVER,label:"Correct the tax and post the deal",
+    rows:()=>[["Deal","D129523"],["Tax as entered","$1,991.50"],["Tax net of trade","$493.50"],["Variance","$1,498.00 overstated"]],
+    note:"I can't correct this — a person has to. Posting as entered overstates the liability by $1,498.",yes:"Correct and post",no:"Hold — don't post",
+    done:"Corrected a $1,498.00 tax variance on D129523 and posted the deal.",
+    onDone:()=>{ CASE.taxFixed=true; caseNote("Tax variance of $1,498 corrected before posting"); caseRefresh(); }}
+};
+const CASE_AUTO_IX={}; Object.entries(CASE_AUTO).forEach(([k,a])=>{ CASE_AUTO_IX[k]=AUTOMATIONS.length; AUTOMATIONS.push(a); });
+const caseCfm=k=>({t:"cfm",id:"c"+(S.seq++),auto:CASE_AUTO_IX[k],state:"pending"});
+
+/* ---------------- hand-off, bell, arrival ---------------- */
+function caseHandoff(to,why){
+  const rec={seq:CASE.handoffs.length+1,from:S.persona,to,why,at:hhmm(now())};
+  CASE.handoffs.push(rec); CASE.pending=rec; CASE.owner=to;
+  caseNote("Handed to "+PERSONAS[to].label+" — "+why);
+  NOTIFS.unshift({id:"case-"+rec.seq,to,t:"Case handed to "+PERSONAS[to].label,s:CASE.customer.name+" · RO #"+CASE.ro.num+" — "+why});
+  renderMyDay(); ringBell();
+}
+function ringBell(){ const b=$("#bellBtn"); if(!b) return; b.classList.remove("ring"); void b.offsetWidth; b.classList.add("ring"); }
+function caseArrival(pk){
+  const p=CASE.pending; if(!p||p.to!==pk) return false;
+  const th=newThread(pk,CASE.customer.name+" · RO #"+CASE.ro.num); th.caseRun=true; S.cur=th.id;
+  addAI(th,{node:"monitor",trace:["Case hand-off"],lead:`<b>${esc(PERSONAS[p.from].label)}</b> handed you a case at ${esc(p.at)}.`,
+    blocks:[{t:"hand",from:p.from,at:p.at,why:p.why}],chips:[{label:"What's the history on this case?",prompt:"Show me the whole case"}]});
+  CASE.pending=null; const i=NOTIFS.findIndex(n=>n.id==="case-"+p.seq); if(i>-1) NOTIFS.splice(i,1);
+  renderThread(); openPanel(); renderMyDay(); return true;
+}
+function handHTML(b){
+  const f=PERSONAS[b.from], c=PERSONA_COLOR[b.from];
+  return `<div class="handoff" style="border-left-color:${c}"><div class="hf-from" style="color:${c}">${esc(f.label)} handed you this at ${esc(b.at)}</div>${b.why?`<div class="hf-why">${esc(b.why)}</div>`:""}<dl class="cfm-kv"><dt>Customer</dt><dd>${esc(CASE.customer.name)}</dd><dt>Vehicle</dt><dd>${esc(CASE.vehicle.desc)}</dd><dt>RO</dt><dd>#${esc(CASE.ro.num)}${CASE.deal?" · Deal D129523":""}</dd></dl></div>`;
+}
+
+/* ---------------- the customer's lane: a phone, not a second app ---------------- */
+function custMsg(text,choice){
+  const th=S.threads[S.cur]; if(!th) return;
+  const t={id:"m"+(S.seq++),role:"cust",text,choice:!!choice,decided:null}; th.turns.push(t);
+  $("#thread").insertAdjacentHTML("beforeend",custTurnHTML(t)); scrollDown();
+}
+function custTurnHTML(t){
+  return `<div class="turn cust" data-turn="${t.id}"><div class="dev"><div class="dv-cap">${gi("user",13)} Customer · Bonita's phone · text <span class="lbl">${esc(hhmm(now()))}</span></div><div class="dv-bubble">${esc(t.text)}</div>${t.choice?(t.decided?`<div class="dv-done ${t.decided}">${t.decided==="approve"?"She approved the repair":"She declined the repair"}</div>`:`<div class="dv-choice"><button class="btn primary sm" data-case-dec="approve" data-t="${t.id}">Approve</button><button class="btn sm" data-case-dec="decline" data-t="${t.id}">Decline</button></div><div class="dv-note">She decides. Nothing proceeds until she does.</div>`):""}</div></div>`;
+}
+function custDecide(id,dec){
+  let turn=null; Object.values(S.threads).forEach(th=>th.turns.forEach(t=>{ if(t.id===id) turn=t; }));
+  if(!turn||turn.decided) return;
+  turn.decided=dec; CASE.decision=dec;
+  const el=document.querySelector(`.turn.cust[data-turn="${id}"]`); if(el) el.outerHTML=custTurnHTML(turn);
+  logEntry("auto",dec==="approve"?"Recorded Bonita Murray's approval of the $9,480 engine replacement":"Recorded Bonita Murray's decline of the $9,480 engine replacement","se");
+  caseNote(dec==="approve"?"Customer approved the engine replacement":"Customer declined the engine replacement");
+  caseSay(dec==="approve"?"APPROVED":"DECLINED");
+}
+
+/* ---------------- answers ---------------- */
+const SRC=(apps,x)=>srcLine(apps,x||"† demonstration data · Bonita Murray case");
+function caseResp(k){
+  const C=CASE, R={
+  DUE:()=>({node:"monitor",trace:["Service · maintenance intervals","Recalls by VIN"],lead:`One customer is due before she calls: <b>${C.customer.name}</b>. Nobody asked — her ${C.vehicle.desc} has passed its service interval and has an open recall against the VIN.`,
+    blocks:[{t:"tbl",head:["Customer","Vehicle","Due"],rows:[[`<b>${C.customer.name}</b>`,C.vehicle.desc+" · "+C.vehicle.miles+" mi","60k interval + recall 22LA1"],["Kavi Kapoor","2019 Toyota RAV4","Oil service (in 300 mi)"],["Marcus Hill","2020 Toyota 4Runner","Tire rotation"]]},SRC(["se"])],
+    chips:[{label:"What parts would we need for her visit?",prompt:"What parts would we need for her visit?"}],after:()=>openCase("se-due")}),
+  PARTS:()=>({node:"monitor",trace:["Parts · inventory","Parts · special orders"],lead:`For the ${C.vehicle.desc} visit: the maintenance items are on the shelf. The recall part is <b>not</b> — it comes through <b>${C.blocker.po}</b>, which is sitting in Needs Review.`,
+    blocks:[SRC(["pa"],"Inventory + special orders · †")],chips:[{label:"Find her an appointment",prompt:"Find her an appointment"}],after:()=>openCase("pa-so")}),
+  SLOTS:()=>({node:"rules",trace:["Technician capacity","Parts ETA"],lead:"Three slots work against technician capacity and the parts ETA. I'd take the first — it's the only one where the recall part has landed.",
+    blocks:[{t:"ol",items:["<b>Thursday 9:00am</b> — recall part in by Wednesday. Waiter.","Thursday 2:00pm — same day, but tighter on the part.","Friday 10:00am — comfortable on parts, one day later."]},{t:"lim",html:"Advisory — nothing is written until you book it."},SRC(["se","pa"])],
+    chips:[{label:"Book Thursday 9:00am",prompt:"Book Thursday 9:00am",auto:true}],after:()=>openCase("se-sched")}),
+  BOOK:()=>({node:"auto",trace:["Service · scheduling"],lead:"Here's what gets written. Nothing goes out until you confirm.",blocks:[caseCfm("book"),SRC(["se"])],chips:[]}),
+  TECH:()=>({node:"rules",trace:["Vehicle history","MPI template"],lead:`On the ${C.vehicle.desc}, three things are worth the technician's time beyond the booked work:`,
+    blocks:[{t:"ol",items:["Cooling system pressure test — the mileage and the noise complaint point the same way.","Front suspension, both sides — declined at the last visit.","Photograph the underside. If there's seepage I want it on the RO, not in someone's memory."]},SRC(["se"],"Vehicle history + MPI template · †")],
+    chips:[{label:"Review the inspection photos",prompt:"Review the inspection photos"}],after:()=>openCase("se-mpi")}),
+  PHOTOS:()=>({node:"rules",trace:["Inspection photos","MPI results"],lead:"The MPI came back worse than the visit reason suggested. <b>Coolant is in the oil</b> — that's a head gasket at best, and the photos show it has been going a while.",
+    blocks:[{t:"ol",items:["<b>Engine — coolant intrusion.</b> Replacement recommended over repair at this mileage.","Front suspension — both sides, previously declined.","Everything else passed."]},SRC(["se"],"MPI #124211 · 6 photos · †")],
+    chips:[{label:"What would the engine cost?",prompt:"What would the engine cost?"}],after:()=>{ CASE.mpi=true; openCase("se-mpi"); }}),
+  ESTIMATE:()=>({node:"rules",trace:["Parts availability","Labour guide","Valuation"],lead:"Engine replacement runs <b>$9,480</b> — $6,200 in parts, the rest labour. The long block is a special order, five to seven days.",
+    blocks:[{t:"msg",html:`Worth saying out loud before you call her: the ${C.vehicle.desc} books at around <b>$21,400</b> and she owes nothing on it. A $9,480 repair against $21,400 of value is the conversation, not the repair.`},SRC(["pa","se"],"Parts + labour guide + valuation · †")],
+    chips:[{label:"Send her the estimate",prompt:"Send her the estimate",auto:true},{label:"Flag the equity position",prompt:"Flag the equity position",auto:true}],after:()=>{ CASE.estimate=true; openCase("pa-so"); }}),
+  SEND:()=>({node:"auto",trace:["Customer contact preferences"],lead:"She prefers texts. Here's exactly what goes to her — nothing proceeds until she answers.",blocks:[caseCfm("estimate"),SRC(["se","crm-red"])],chips:[]}),
+  DECLINED:()=>({node:"auto",trace:["Customer approval"],lead:"Declined. The RO carries on with the booked work only — and this is exactly the moment the equity conversation is worth having, because she now has a vehicle she has decided not to fix.",
+    blocks:[SRC(["se"])],chips:[{label:"Flag the equity position",prompt:"Flag the equity position",auto:true}]}),
+  APPROVED:()=>({node:"auto",trace:["Customer approval"],lead:"She approved it. Work is authorised and the special order proceeds.",blocks:[SRC(["se","pa"])],chips:[{label:"Flag the equity position",prompt:"Flag the equity position",auto:true}]}),
+  EQUITY:()=>({node:"auto",trace:["Valuation","Customer record"],lead:"This is the bit worth being deliberate about. Flagging equity moves her out of a service conversation and into a sales one.",blocks:[caseCfm("equity"),SRC(["crm-red","se"])],chips:[]}),
+  HANDSALES:()=>(C.equity?{node:"auto",trace:["Case hand-off"],lead:`Handing <b>${C.customer.name}</b> to <b>Sales Manager</b>. Here's what goes with it:`,blocks:[caseCfm("handSales"),SRC(["se","crm-red"])],chips:[]}
+    :{node:"rules",trace:[],lead:"I can, but nothing has been flagged on this case yet — Sales would get a name and no reason. Flag the equity position first.",blocks:[],chips:[{label:"Flag the equity position",prompt:"Flag the equity position",auto:true}]}),
+  SHOW:()=>({node:"rules",trace:["Inventory","Customer record","Valuation"],lead:`<b>${C.upgrade.stock} — ${C.upgrade.ymm}</b>, ${C.upgrade.price}. It's the unit already on her record as a vehicle of interest, so this isn't a guess.`,
+    blocks:[{t:"msg",html:"Against $21,400 of trade equity she's close to a straight swap, and she avoids a $9,480 repair on a vehicle she'd be selling anyway."},SRC(["crm-red"])],
+    chips:[{label:"Prep me for the conversation",prompt:"Prep me for the conversation"},{label:"Show me the unit",prompt:"Show me the unit"}],after:()=>openCase("crm-cust")}),
+  COACH:()=>({node:"auto",trace:["Customer record","Service history"],lead:`<b>${C.customer.name}</b> — the brief before you walk over.`,
+    blocks:[{t:"ol",items:["She came in for maintenance and a recall, not to buy a car. Lead with the repair, not the Camry.","The number that matters to her is $9,480 on a vehicle she owns outright.","RO #124211 is open right now and she's in the lounge.",`Her stated interest is already the ${C.upgrade.ymm}. You are confirming a preference, not creating one.`]},{t:"lim",html:"A draft for you only — nothing is sent and nothing is written."},SRC(["crm-red","se"])],
+    chips:[{label:"Show me the unit",prompt:"Show me the unit"}]}),
+  UNIT:()=>({node:"rules",trace:["Inventory"],lead:`Opened the lot on <b>${C.upgrade.stock}</b> — ${C.upgrade.ymm}, ${C.upgrade.price}, ${C.upgrade.status.toLowerCase()}.`,blocks:[SRC(["crm-red"],"Inventory · †")],
+    chips:[{label:"She's agreed — start the deal",prompt:"She's agreed — start the deal",auto:true}],after:()=>openCase("crm-inv")}),
+  QUOTE:()=>({node:"auto",trace:["Lender programmes","Credit tier","Inventory"],lead:`Quote for <b>${C.customer.name}</b> on ${C.upgrade.stock}. I've picked the lender on approval likelihood at her tier, not on rate alone.`,blocks:[caseCfm("quote"),SRC(["crm-red","fi"])],chips:[]}),
+  HANDFI:()=>({node:"auto",trace:["Case hand-off"],lead:`Handing <b>${C.customer.name}</b> to <b>F&amp;I Manager</b>. Here's what goes with it:`,blocks:[caseCfm("handFi"),SRC(["crm-red","fi"])],chips:[]}),
+  OFFER:()=>({node:"rules",trace:["Coverage catalogue","Vehicle profile","Service history"],lead:"Two are worth presenting on this deal, and one isn't.",
+    blocks:[{t:"ol",items:["<b>Extended service contract</b> — she just lived through a $9,480 engine. This sells itself if you let her tell you why.","<b>Tire and wheel</b> — her service history shows two road-hazard claims.","Paint and fabric — skip it. Nothing in her history supports it and it costs you the credibility of the first two."]},SRC(["fi","se"])],
+    chips:[{label:"Assemble the deal jacket",prompt:"Assemble the deal jacket",auto:true}],after:()=>openCase("fi-menu")}),
+  JACKET:()=>({node:"auto",trace:["Deal parameters","State requirements"],lead:"Assembling the jacket from the deal parameters — every form this deal actually requires, nothing it doesn't.",blocks:[caseCfm("jacket"),SRC(["fi","dm"])],chips:[]}),
+  COMPLY:()=>({node:"rules",trace:["Deal jacket","State requirements"],lead:"Complete bar one thing: <b>the trade payoff letter is on file but unsigned</b>. Disclosures, coverage election and odometer are in and correct.",
+    blocks:[SRC(["fi","dm"])],chips:[{label:"Find the trade documents",prompt:"Find the trade documents"}],after:()=>{ CASE.comply=true; openCase("fi-jacket"); }}),
+  DOCS:()=>({node:"monitor",trace:["Document Management · DEAL-129523"],lead:"<b>Three documents in this jacket's trade packet</b> — and the payoff letter compliance flagged is the first of them:",
+    blocks:[{t:"doc",doc:"b1"},{t:"doc",doc:"b2"},{t:"doc",doc:"b3"},SRC(["dm"],"DEAL-129523 · a read, nothing written")],chips:[{label:"Open the payoff letter",doc:"b1"},{label:"Post it to Accounting",prompt:"Post it to Accounting",auto:true}]}),
+  PREVIEW:()=>({node:"monitor",trace:["Document Management"],lead:"Opening it — first in place, then full size, so you can see the signature block is empty rather than take my word for it.",blocks:[],chips:[]}),
+  HANDACCT:()=>({node:"auto",trace:["Case hand-off"],lead:`Handing <b>${C.customer.name}</b> to <b>Controller / CFO</b>. Here's what goes with it:`,blocks:[caseCfm("handAcct"),SRC(["fi","dr"])],chips:[]}),
+  POST:()=>({node:"rules",trace:["Deal posting","Tax tables"],lead:"Before this posts — the tax on the trade differential looks wrong. It's been calculated on the full selling price rather than net of the trade.",blocks:[caseCfm("tax"),SRC(["dr"])],chips:[],after:()=>openCase("ac-je")}),
+  TRAIL:()=>({node:"monitor",trace:["Case trail","Activity log"],lead:C.trail.length?`Here's where <b>${C.customer.name}</b>'s case has been — one case, ${new Set(C.trail.map(e=>e.actor)).size} roles, every automated step on the record:`:"Nothing has happened on this case yet.",
+    blocks:C.trail.length?[{t:"ol",items:C.trail.map(e=>`${esc(e.actor)} · ${esc(e.at)} — ${esc(e.note)}`)},SRC(["se","crm-red","fi","dr"],"case trail + activity log")]:[],chips:[{label:"Open the activity log",prompt:"/activity"}],after:()=>{ if(C.trail.length) openCanvas({kind:"activity"}); }})
+  };
+  return R[k]();
+}
+const CASE_KW=[["DUE",/who('?s| is) due for service/],["PARTS",/what parts would we need|parts for her visit/],["SLOTS",/find her an appointment|when can we see her|available slots/],["BOOK",/^book (thursday|the appointment|her)|confirm the appointment/],
+  ["TECH",/what should the tech look for|direct the mpi/],["PHOTOS",/review the (inspection )?photos|what did the mpi find/],["ESTIMATE",/what would the engine cost|engine cost|replacement estimate/],["SEND",/send her the estimate|send the asr/],
+  ["EQUITY",/flag the equity/],["HANDSALES",/hand it to sales|pass to sales/],["SHOW",/what should i show her|recommend a vehicle/],["COACH",/prep me|brief me on her|sales coach/],["UNIT",/show me the unit/],
+  ["QUOTE",/she'?s agreed|start the deal|build the quote/],["HANDFI",/hand it to f&i|pass to f&i/],["OFFER",/what should i offer her|coverage options/],["JACKET",/assemble the (deal )?jacket/],["COMPLY",/compliance check|is the deal compliant/],
+  ["DOCS",/find the trade documents|trade documents/],["HANDACCT",/post it to accounting/],["POST",/post the deal/],["TRAIL",/show me the whole case|history on this case|case trail/]];
+function caseRoute(text){ const t=(text||"").toLowerCase().trim(); const m=CASE_KW.find(([k,re])=>re.test(t)); return m?caseResp(m[0]):null; }
+/* An answer AIVA gives without being asked — the runner's equivalent of a resolution. */
+function caseSay(k){
+  const th=S.threads[S.cur]||newThread(S.persona,CASE.customer.name+" · RO #"+CASE.ro.num); S.cur=th.id;
+  const r=caseResp(k); openPanel();
+  if(RUN.fast){ addAI(th,r); renderThread(); if(r.after) r.after(); return; }
+  if(S.streaming) S.streaming.stop();
+  streamTurn(addAI(th,r));
+}
+
+/* ---------------- product screens the steps land on ---------------- */
+const CASE_VIEWS={"se-due":["se","Due for service"],"se-sched":["se","Scheduling"],"se-mpi":["se","Inspections"],"pa-so":["pa","Special orders"],
+  "crm-cust":["crm-red","Customer"],"crm-inv":["crm-red","Inventory"],"crm-deal":["crm-red","Deal D129523"],"fi-menu":["fi","Menu"],"fi-jacket":["fi","Deal jacket"],"ac-je":["dr","Journal Entry"]};
+function openCase(view){ openCanvas({kind:"case",view}); }
+function caseDossier(){
+  const C=CASE, owner=PERSONAS[C.owner].label;
+  return insHTML("user",esc(C.customer.name)+" · "+esc(C.vehicle.desc),`RO #${C.ro.num}${C.deal?" · Deal D129523":""} · with <b>${esc(owner)}</b>`)
+    +(C.equity?insHTML("spark","Equity flagged","$21,400 of equity against a $9,480 repair, owned outright."):"")
+    +insHTML("hist",`Case trail · ${C.trail.length} step${C.trail.length===1?"":"s"}`,C.trail.length?C.trail.slice(-3).map(e=>`${esc(e.actor)} · ${esc(e.note)}`).join("<br>"):"Nothing has happened on this case yet.",`<button class="btn sm" data-prompt="Show me the whole case">Show the whole case</button>`)
+    +`<div class="lbl" style="margin-top:8px"><b>†</b> Demonstration data.</div>`;
+}
+function caseRefresh(){ const t=activeTab(); if(W.mode==="work"&&t&&t.kind==="cv"&&t.st.kind==="case"){ renderCanvas(); renderDossier(); } }
+function caseCanvas(body,view){
+  const [app,sec]=CASE_VIEWS[view], C=CASE;
+  $("#cvTile").innerHTML=tileHTML(app); $("#cvTitle").innerHTML=`${esc(APPS[app].name)} · ${esc(sec)}<small>Statler Toyota · demonstration data †</small>`;
+  const row=(cells,hl)=>`<tr class="${hl?"case-hl":""}">${cells.map(c=>`<td>${c}</td>`).join("")}</tr>`;
+  const tbl=(head,rows)=>`<table class="tbl"><thead><tr>${head.map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table>`;
+  const sec_=(t,h)=>`<div class="cv-sec"><div class="sec-h">${esc(t)}<span class="line"></span></div>${h}</div>`;
+  const pill=(t,k)=>`<span class="pri ${k||""}">${esc(t)}</span>`;
+  let h="";
+  if(view==="se-due") h=sec_("Due for service · next 14 days",tbl(["Customer","Vehicle","Mileage","Due","Contact"],[
+      row([`<b>${C.customer.name}</b>`,C.vehicle.desc,C.vehicle.miles,`60k interval + <b>recall 22LA1</b> ${pill("Now","high")}`,"Not yet contacted"],true),
+      row(["Kavi Kapoor","2019 Toyota RAV4","29,700","Oil service","Text sent"]),row(["Marcus Hill","2020 Toyota 4Runner","41,120","Tire rotation","—"]),row(["Diana Reyes","2022 Toyota Tundra","19,880","Brake inspection","—"])]));
+  else if(view==="pa-so") h=sec_("Special orders",tbl(["Order","Part","For","Vendor","Status"],[
+      row([`${C.blocker.so} → <b>${C.blocker.po}</b>`,C.blocker.part,`${C.customer.name} · RO #${C.ro.num}`,C.blocker.vendor,C.booked?pill("Released","low"):pill("Needs Review","high")],true),
+      ...(C.estimate?[row(["SO-4480 · quote","Long block assembly · $6,200.00",`${C.customer.name} · RO #${C.ro.num}`,"Toyota Logistics Services","5–7 days"],true)]:[]),
+      row(["SO-4466 → PO #178601","Front strut assembly × 2","Stanley Hudson · RO 13452A","Toyota Logistics Services",pill("Arrived","low")]),row(["SO-4459 → PO #178590","A/C compressor","Pam Beesly · RO 13449A","Toyota Logistics Services","ETA tomorrow"])]));
+  else if(view==="se-sched"){ const slot=(d,t,n,k)=>`<div class="slot ${k||""}"><b>${d}</b><span>${t}</span><small>${n}</small></div>`;
+    h=sec_("Scheduling · this week",`<div class="slots">${slot("Thursday","9:00am",C.booked?`Booked · ${C.customer.name} · waiter`:"Recall part in by Wednesday",C.booked?"booked":"rec")}${slot("Thursday","2:00pm","Tighter on the part")}${slot("Friday","10:00am","One day later")}</div>`)
+      +sec_("Thursday · bays",tbl(["Time","Bay","Tech","Customer","Work"],[row(["8:00am","4","J. Casablancas","Christopher Don","Brake inspection + oil"]),row(["9:00am","2","M. Ortiz",C.booked?`<b>${C.customer.name}</b>`:"<span class=lbl>Open</span>",C.booked?"Maintenance interval + recall":"—"],C.booked),row(["10:30am","3","J. Casablancas","Kevin Malone","60k service"])])); }
+  else if(view==="se-mpi"){
+    h=`<div class="rec"><div class="lbl">MPI #124211</div><h3>${C.vehicle.desc} · ${C.customer.name}</h3><div class="meta">RO #${C.ro.num} · ${C.vehicle.miles} mi · Advisor Jim Halpert</div></div>`;
+    h+=C.mpi?sec_("Findings",tbl(["Item","Result","Note"],[row(["<b>Engine</b>",pill("Fail","high"),"Coolant intrusion in oil — replacement recommended"],true),row(["Front suspension",pill("Monitor","med"),"Both sides · previously declined"]),row(["Brakes, tires, fluids, lights",pill("Pass","low"),"—"])]))
+        +sec_("Photos (6)",`<div class="photos">${["Oil cap · milky residue","Dipstick","Coolant reservoir","Underside · seepage","Front left strut","Front right strut"].map((x,i)=>`<div class="ph ${i<4?"bad":""}"><span>${esc(x)}</span></div>`).join("")}</div>`)
+      :sec_("What to look for",`<ol class="steps"><li>Cooling system pressure test</li><li>Front suspension, both sides</li><li>Photograph the underside</li></ol><div class="lbl">Waiting on the technician's results.</div>`);
+  }
+  else if(view==="crm-cust") h=`<div class="rec"><div class="lbl">Customer · ${C.customer.id}</div><h3>${C.customer.name}</h3><div class="meta">${C.customer.phone} · prefers text · service customer since 2021</div></div>`
+      +sec_("Vehicles",tbl(["Vehicle","Value","Owed","Status"],[row([C.vehicle.desc,"$21,400","$0 — owned outright",C.decision==="decline"?"Repair declined · $9,480":"In service · RO #124211"],true)]))
+      +sec_("Opportunity",`<div class="doc"><div class="dm"><b>${C.equity?"Equity flagged — $21,400 against a $9,480 repair":"No opportunity flagged"}</b><small>Vehicle of interest: ${C.upgrade.stock} · ${C.upgrade.ymm} · Owner: ${esc(PERSONAS[C.owner].label)}</small></div>${C.equity?pill("Sales","med"):""}</div>`);
+  else if(view==="crm-inv") h=sec_("Inventory · new",tbl(["Stock","Vehicle","Price","Status","Match"],[
+      row(["<b>T1024</b>",C.upgrade.ymm,"<b>$28,450</b>",C.upgrade.status,`Vehicle of interest · ${C.customer.name}`],true),row(["T1031","2025 Toyota Camry XSE","$32,980","Available","—"]),row(["T1019","2025 Toyota RAV4 XLE","$33,640","In transit","—"]),row(["T1008","2025 Toyota Corolla LE","$23,115","Available","—"])]));
+  else if(view==="crm-deal") h=`<div class="rec"><div class="lbl">Deal D129523</div><h3>${C.customer.name} · ${C.upgrade.stock} ${C.upgrade.ymm}</h3><div class="meta">Created ${C.deal?"today":"—"} · Sales Manager</div></div>`
+      +sec_("Desking",tbl(["Item","Value"],[row(["Selling price",C.upgrade.price]),row(["Trade",C.vehicle.desc+" · $21,400"]),row(["Payoff","$0 — owned outright"]),row(["Lender","Preferred tier"])]))
+      +sec_("Checks",tbl(["Check","Status"],[row(["Soft pre-approval",pill("Clean","low")]),row(["Payoff verification",pill("Running","med")]),row(["Title match",pill("Running","med")])]));
+  else if(view==="fi-menu") h=sec_("Menu · D129523",tbl(["Product","AIVA","Why"],[row(["<b>Extended service contract</b>",pill("Present","low"),"She just lived through a $9,480 engine"],true),row(["<b>Tire and wheel</b>",pill("Present","low"),"Two road-hazard claims in her history"],true),row(["Paint and fabric",pill("Skip","high"),"Nothing in her history supports it"])]));
+  else if(view==="fi-jacket"){ const forms=["Retail installment contract","Buyer's order","Odometer statement","Title application","Trade payoff letter","Privacy notice","Credit application","Extended service contract","Tire and wheel contract","We-owe","Agreement to provide insurance"];
+    h=sec_(`Deal jacket · D129523 · ${C.jacket?"11 of 11 assembled":"not assembled"}`,tbl(["Form","Status"],forms.map(f=>row([f,!C.jacket?"—":f==="Trade payoff letter"&&C.comply?pill("Unsigned","high"):pill(C.comply?"Complete":"Routed for signature",C.comply?"low":"med")],f==="Trade payoff letter"&&C.comply)))); }
+  else if(view==="ac-je") h=`<div class="rec"><div class="lbl">Journal Entry · Deal D129523</div><h3>${C.taxFixed?"Posted":"Draft — not posted"}</h3><div class="meta">${C.taxFixed?"Corrected by Controller / CFO before posting":"AIVA flagged a variance before posting"}</div></div>`
+      +sec_("Lines",tbl(["Account","Debit","Credit"],[row(["Cash / contracts in transit","$9,043.50",""]),row(["Trade-in inventory · "+C.vehicle.desc,"$21,400.00",""]),row(["New vehicle sales","","$28,450.00"]),row(["<b>Sales tax payable</b>","",C.taxFixed?"<b>$493.50</b> <span class=lbl>(was $1,991.50)</span>":`<b>$1,991.50</b> ${pill("$1,498 over","high")}`],true)]));
+  body.innerHTML=h;
+}
+
+/* ---------------- "You are now" — the role change, at a size nobody misses ---------------- */
+function personaSwap(to,from,note){
+  const el=$("#personaSwap"); if(!el) return;
+  const p=PERSONAS[to], c=PERSONA_COLOR[to], ini=(p.short||p.label).split(/[ /&]+/).filter(Boolean).map(x=>x[0]).join("").slice(0,2).toUpperCase();
+  el.innerHTML=`<div class="ps-card"><div class="ps-ring" style="background:${c}">${esc(ini)}</div><div class="ps-now">You are now</div><div class="ps-name" style="color:${c}">${esc(p.label)}</div>${note?`<div class="ps-note">${esc(note)}</div>`:""}${from?`<div class="ps-from">handed over from <b>${esc(PERSONAS[from].label)}</b></div>`:""}</div>`;
+  el.classList.remove("show"); void el.offsetWidth; el.classList.add("show");
+  clearTimeout(personaSwap.t); personaSwap.t=setTimeout(()=>el.classList.remove("show"),2300);
+}
+function runSwitch(pk){
+  const from=CASE.pending&&CASE.pending.to===pk?CASE.pending.from:null;
+  const note=from?`${CASE.customer.name} · RO #${CASE.ro.num} is waiting for you`:"Starting the cross-product flow";
+  if(!RUN.fast) personaSwap(pk,from,note);
+  switchPersona(pk);
+  if(!caseArrival(pk)){ const th=newThread(pk,CASE.customer.name+" · RO #"+CASE.ro.num); th.caseRun=true; S.cur=th.id; renderThread(); }
+  openPanel();
+}
+
+/* ---------------- balloons: point at the thing a step is about ---------------- */
+function balloonsClear(){ $$c(".balloon").forEach(b=>b.remove()); $$c(".bln-hl").forEach(e=>e.classList.remove("bln-hl")); }
+function balloonTarget(txt){
+  const scope=[...$$c("#workspace .cvpane, #thread")];
+  let best=null;
+  scope.forEach(root=>root.querySelectorAll("td,b,small,span,div,li,button,p,h3").forEach(el=>{
+    if(!el.textContent.includes(txt)) return; const r=el.getBoundingClientRect(); if(!r.width||!r.height) return;
+    if(!best||el.textContent.length<best.textContent.length) best=el; }));
+  return best;
+}
+function balloons(list){
+  balloonsClear();
+  list.forEach((b,i)=>{ const el=balloonTarget(b.find); if(!el) return; const r=el.getBoundingClientRect();
+    el.classList.add("bln-hl");
+    const d=document.createElement("div"); d.className="balloon"; d.innerHTML=`${markSVG(13)}<span>${esc(b.say)}</span>`; document.body.appendChild(d);
+    const below=r.bottom+90<innerHeight, w=Math.min(300,innerWidth-24);
+    d.style.width=w+"px"; d.style.left=Math.max(12,Math.min(innerWidth-w-12,r.left+r.width/2-w/2))+"px";
+    d.style.top=(below?r.bottom+12+i*4:Math.max(8,r.top-12-d.offsetHeight))+"px"; d.classList.add(below?"down":"up");
+  });
+  clearTimeout(balloons.t); balloons.t=setTimeout(balloonsClear,5600);
+}
+
+/* ---------------- runner ---------------- */
+const UDEC=x=>String(x).replace(/\\u([0-9a-fA-F]{4})/g,(m,h)=>String.fromCharCode(parseInt(h,16)));
+RUN_STEPS.forEach(st=>{ st.uc=UDEC(st.uc); st.cap=UDEC(st.cap); });
+const RUN={on:false,i:-1,mode:"guided",timers:[],fast:false,startedAs:null};
+const RUN_PACE={charMs:42,holdMs:720,beatMs:900};
+function runLater(fn,ms){ if(RUN.fast){ fn(); return; } RUN.timers.push(setTimeout(fn,ms)); }
+function runCancel(){ RUN.timers.forEach(clearTimeout); RUN.timers=[]; const i=$("#input"); if(i&&RUN.typing){ i.value=""; RUN.typing=false; } }
+function runAsk(text){
+  if(RUN.fast){ ask(text); if(S.streaming) S.streaming.stop(); return; }
+  const inp=$("#input"); openPanel(); inp.focus(); inp.value=""; RUN.typing=true; let i=0;
+  const step=()=>{ i++; inp.value=text.slice(0,i); setComposerState&&setComposerState(); if(i<text.length) runLater(step,RUN_PACE.charMs); else runLater(()=>{ inp.value=""; RUN.typing=false; ask(text); },RUN_PACE.holdMs); };
+  runLater(step,220);
+}
+/* Confirm (or answer) the newest pending card the way a person would: point at the button, then press it. */
+function runConfirm(yes){
+  if(S.streaming) S.streaming.stop();
+  const th=S.threads[S.cur]; if(!th) return;
+  let id=null; th.turns.forEach(t=>{ if(t.r) t.r.blocks.forEach(b=>{ if(b.t==="cfm"&&b.state==="pending") id=b.id; }); });
+  if(!id) return;
+  const btn=document.querySelector(`[data-cfm-${yes===false?"no":"yes"}="${id}"]`);
+  if(btn&&!RUN.fast){ btn.classList.add("run-press"); btn.scrollIntoView&&btn.scrollIntoView({block:"nearest"}); runLater(()=>resolveCfm(id,yes!==false),700); }
+  else resolveCfm(id,yes!==false);
+}
+function runCustomer(dec){
+  if(S.streaming) S.streaming.stop();
+  const turn=[].concat(...Object.values(S.threads).map(th=>th.turns)).reverse().find(t=>t.role==="cust"&&t.choice&&!t.decided); if(!turn) return;
+  const btn=document.querySelector(`[data-case-dec="${dec}"][data-t="${turn.id}"]`);
+  if(btn&&!RUN.fast){ btn.classList.add("run-press"); runLater(()=>custDecide(turn.id,dec),800); } else custDecide(turn.id,dec);
+}
+function runDocPreview(id){
+  const card=[...$$c("#thread [data-open-doc='"+id+"']")].pop(), d=DOCS.find(x=>x.id===id);
+  if(card&&d&&!RUN.fast){ const host=card.closest(".blk")||card.parentElement;
+    host.insertAdjacentHTML("afterend",`<div class="blk"><div class="doc-pv"><div class="paper"><h4>${esc(d.title)}</h4><table>${d.rows.slice(0,4).map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join("")}</table><div class="sig empty"><span>SIGNATURE REQUIRED</span><span>Buyer</span></div></div></div></div>`); scrollDown(); }
+  runLater(()=>{ openCanvas({kind:"doc",doc:id}); runLater(()=>balloons([{find:"SIGNATURE REQUIRED",say:"Empty. That is the whole finding — named by compliance, now seen."}]),500); },RUN.fast?0:1900);
+}
+const RUN_ACTS=[
+  {switches:"serviceManager",ask:"Who is due for service?"},
+  {ask:"What parts would we need for her visit?",balloons:[{find:"PO #178658",say:"This is the blocker. Everything downstream is waiting on this one line."},{find:"Needs Review",say:"Status is why it is stuck — nobody has released it."}]},
+  {act:()=>caseSay("SLOTS"),balloons:[{find:"Scheduling",say:"The board the recommendation is measured against."}]},
+  {act:()=>caseSay("BOOK")},
+  {act:()=>runConfirm(true),balloons:[{find:"Booked ·",say:"The slot the card promised — and her confirmation text is in the chat."}]},
+  {ask:"What should the tech look for?"},
+  {act:()=>caseSay("PHOTOS"),balloons:[{find:"Coolant intrusion",say:"Worse than the visit reason suggested."}]},
+  {act:()=>caseSay("ESTIMATE"),balloons:[{find:"Long block assembly",say:"The long block lands here as a special order — 5 to 7 days."}]},
+  {ask:"Send her the estimate",then:()=>runLater(()=>runConfirm(true),4200)},
+  {act:()=>runCustomer("decline")},
+  {act:()=>caseSay("EQUITY")},
+  {act:()=>runConfirm(true),balloons:[{find:"Equity flagged",say:"Visible to Sales now. She hasn't been contacted."}]},
+  {act:()=>caseSay("HANDSALES")},
+  {act:()=>runConfirm(true),bell:true},
+  {switches:"salesManager",balloons:[{find:"Bonita Murray",say:"Same customer, same RO — carried across the department boundary."}]},
+  {ask:"What should I show her?"},
+  {act:()=>caseSay("COACH")},
+  {act:()=>caseSay("UNIT"),balloons:[{find:"T1024",say:"Her stated vehicle of interest, already on her record. Not a unit picked for the demo."},{find:"$28,450",say:"Against $21,400 of trade equity, close to a straight swap."}]},
+  {act:()=>caseSay("QUOTE")},
+  {act:()=>runConfirm(true),balloons:[{find:"Payoff verification",say:"Running now — the trade paperwork started with the deal."}]},
+  {act:()=>{ caseSay("HANDFI"); runLater(()=>runConfirm(true),2900); }},
+  {switches:"fi",ask:"What should I offer her?"},
+  {act:()=>caseSay("JACKET")},
+  {act:()=>runConfirm(true)},
+  {act:()=>caseSay("COMPLY"),balloons:[{find:"Unsigned",say:"Named specifically — one letter, not 'some paperwork'."}]},
+  {act:()=>caseSay("DOCS"),balloons:[{find:"DEAL-129523",say:"The packet the jacket was built into."},{find:"PayoffLetter-129523.pdf",say:"The document compliance flagged. Until now it could be named but not opened."}]},
+  {act:()=>{ caseSay("PREVIEW"); runLater(()=>runDocPreview("b1"),RUN.fast?0:1700); }},
+  {act:()=>{ const t=W.tabs.find(x=>x.kind==="cv"&&x.st.kind==="doc"); if(t) closeTab(t.id); caseSay("HANDACCT"); runLater(()=>runConfirm(true),2900); }},
+  {switches:"controller",ask:"Post the deal to accounting",balloons:[{find:"Sales tax payable",say:"Caught before it posts, not found in a month-end review."}]},
+  {act:()=>runConfirm(true)},
+  {act:()=>caseSay("TRAIL")}
+];
+function runStepMs(k){
+  const a=RUN_ACTS[k]; let ms=RUN_PACE.beatMs+(a.switches?2300:0)+(a.ask?220+a.ask.length*RUN_PACE.charMs+RUN_PACE.holdMs+2600:2600);
+  if(a.then) ms+=4200; if(a.balloons) ms+=1400; return ms+3600;
+}
+function runFire(k){
+  const a=RUN_ACTS[k];
+  try{
+    if(a.switches) runSwitch(a.switches);
+    if(a.act) a.act();
+    if(a.ask) runLater(()=>runAsk(a.ask),a.switches?1500:260);
+    if(a.then) a.then();
+    if(a.bell){ ringBell(); runLater(()=>{ closePops(); $("#bellPop").classList.add("show"); runLater(()=>closePops(),2600); },700); }
+    if(a.balloons&&a.balloons[0].find&&!RUN.fast){ const wait=(a.ask?(a.switches?1500:260)+a.ask.length*RUN_PACE.charMs+RUN_PACE.holdMs+2800:a.switches?2500:2900)+(a.then?4600:0); runLater(()=>balloons(a.balloons),wait); }
+  }catch(e){ if(window.console) console.warn("[run] step failed",k,e); }
+}
+function runRender(){
+  const bar=$("#runBar"); if(!bar) return;
+  const i=RUN.i, st=RUN_STEPS[i], nk={"MONITORING":"monitor","RULES ENGINE":"rules","AUTOMATION":"auto"};
+  $("#runMeta").innerHTML=st?`<span class="run-chip lane ${st.lane.toLowerCase()}">${st.lane}</span>${nodeTag(nk[st.node])}<span class="run-chip">${esc(st.uc)}</span><span class="run-n">Step ${i+1} of ${RUN_STEPS.length}</span>`:`<span class="run-chip">READY</span>`;
+  $("#runTxt").textContent=st?st.cap:`One customer, carried from a service appointment to a posted deal — ${RUN_STEPS.length} steps, four roles, three departments. Every step acts on the prototype.`;
+  $("#runRibbon").innerHTML=RUN_STEPS.map((s,k)=>`<button class="step-dot ${s.lane.toLowerCase()} ${k<i?"done":k===i?"cur":""}" data-runstep="${k}" title="${k+1}. ${esc(s.cap)}">${k+1}</button>`).join("");
+  const nx=$("#runNext"); nx.textContent=i<0?"Start":i>=RUN_STEPS.length-1?"Done":"Next step"; nx.disabled=i>=RUN_STEPS.length-1;
+  $("#runBack").disabled=i<=0;
+  $("#runGuided").setAttribute("aria-pressed",RUN.mode==="guided"); $("#runAutoBtn").setAttribute("aria-pressed",RUN.mode==="auto");
+}
+function runNext(){
+  if(RUN.i>=RUN_STEPS.length-1) return;
+  runCancel(); balloonsClear(); RUN.i++; runRender();
+  const k=RUN.i; RUN.timers.push(setTimeout(()=>runFire(k),RUN_PACE.beatMs));
+  if(RUN.mode==="auto"&&RUN.i<RUN_STEPS.length-1) RUN.timers.push(setTimeout(runNext,runStepMs(k)));
+}
+function runResetState(){
+  runCancel(); balloonsClear(); if(S.streaming) S.streaming.stop();
+  const ps=$("#personaSwap"); if(ps) ps.classList.remove("show");
+  Object.values(S.threads).filter(t=>t.caseRun).forEach(t=>{ delete S.threads[t.id]; });
+  caseReset(); RUN.i=-1;
+  const back=RUN.startedAs||S.persona; switchPersona(back); renderMyDay();
+}
+/* Jumping replays from the start rather than teleporting, so the screen never shows a state the sequence didn't reach. */
+function runGoTo(n){
+  runResetState(); RUN.fast=true;
+  for(let k=0;k<=n&&k<RUN_STEPS.length;k++){ RUN.i=k; runFire(k); }
+  RUN.fast=false; if(S.streaming) S.streaming.stop(); renderThread(); openPanel(); runRender();
+}
+function runOpen(){
+  if(RUN.on){ runRender(); return; }
+  RUN.on=true; RUN.startedAs=S.persona; RUN.i=-1; caseReset(); closeMega(); closePops(); $("#runMark").innerHTML=markSVG(18);
+  $("#app").classList.add("run-on"); $("#runBar").hidden=false; runRender();
+}
+function runClose(){
+  if(!RUN.on) return; runResetState(); RUN.on=false; RUN.mode="guided";
+  $("#app").classList.remove("run-on"); $("#runBar").hidden=true;
+}
+function runMode(m){ RUN.mode=m; runCancel(); runRender(); if(m==="auto"&&RUN.i<RUN_STEPS.length-1) RUN.timers.push(setTimeout(runNext,RUN.i<0?200:900)); }
+function caseClick(e,g){
+  let el;
+  if((el=g("[data-case-dec]"))){ custDecide(el.dataset.t,el.dataset.caseDec); return true; }
+  if(g("#runNext")){ runNext(); return true; }
+  if(g("#runBack")){ if(RUN.i>0) runGoTo(RUN.i-1); return true; }
+  if(g("#runReset")){ RUN.mode="guided"; runResetState(); runRender(); return true; }
+  if(g("#runClose")){ runClose(); return true; }
+  if(g("#runGuided")){ runMode("guided"); return true; }
+  if(g("#runAutoBtn")){ runMode(RUN.mode==="auto"?"guided":"auto"); return true; }
+  if((el=g("[data-runstep]"))){ runGoTo(+el.dataset.runstep); return true; }
+  return false;
+}
+document.addEventListener("keydown",e=>{
+  if(!RUN.on||RUN.mode!=="guided"||e.code!=="Space") return;
+  const t=e.target; if(t&&/INPUT|TEXTAREA|BUTTON|SELECT/.test(t.tagName)) return;
+  e.preventDefault(); runNext();
+});
+caseReset();
+
+/* ==========================================================================
    EVENTS — one delegated listener
    ========================================================================== */
 document.addEventListener("click",e=>{
   const g=s=>e.target.closest(s);
   let el;
-  if(v17Click(e,g)) return;       // platform bar, popovers, mega menu, tabs, RO workflow, chat dock
+  if(caseClick(e,g)||v17Click(e,g)) return;       // platform bar, popovers, mega menu, tabs, RO workflow, chat dock
   if((el=g("[data-pop]"))) return choosePop(+el.dataset.pop);
   if((el=g("[data-ob]"))){ const a=el.dataset.ob; if(a==="tour") return startTour(); closeWelcome(); return $("#input").focus(); }
   if((el=g("[data-tour-act]"))){ const a=el.dataset.tourAct;
