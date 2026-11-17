@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0e1014">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>AIVA — Unify (v20)</title>
+<title>AIVA — Unify (v28)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -966,8 +966,8 @@ input.xin.ai{border-color:var(--brand);background:var(--surface)}
 .balloon::after{content:"";position:absolute;left:50%;width:10px;height:10px;background:var(--brand);transform:translateX(-50%) rotate(45deg)}
 .balloon.down::after{top:-5px}.balloon.up::after{bottom:-5px}
 .bln-hl{outline:2px solid var(--brand);outline-offset:2px;border-radius:4px}
-#bellBtn.ring svg{animation:ring .9s ease 2;transform-origin:50% 10%}
-@keyframes ring{0%,100%{transform:rotate(0)}20%{transform:rotate(16deg)}40%{transform:rotate(-14deg)}60%{transform:rotate(9deg)}80%{transform:rotate(-5deg)}}
+#bellBtn.ring svg{animation:bellRing .9s ease 2;transform-origin:50% 10%}
+@keyframes bellRing{0%,100%{transform:rotate(0)}20%{transform:rotate(16deg)}40%{transform:rotate(-14deg)}60%{transform:rotate(9deg)}80%{transform:rotate(-5deg)}}
 
 /* confirmation rows, hand-off, customer phone */
 .cfm-kv{display:grid;grid-template-columns:120px 1fr;gap:4px 12px;margin:4px 0 10px;font-size:13px}
@@ -1013,6 +1013,279 @@ tr.case-hl td{background:color-mix(in srgb,var(--brand) 10%,transparent);animati
 .app.run-on:not(.m) .stage.work #cpanel.hide{display:flex}
 @media (max-width:1100px){.app.run-on:not(.m) .stage.work{grid-template-columns:clamp(300px,34vw,380px) minmax(0,1fr)}}
 
+
+/* ============================================================
+   v21 — keyboard: arrow-key field navigation, F2 to chat, hold Ctrl+Space to talk
+   ============================================================ */
+.kf{outline:2.5px solid var(--brand)!important;outline-offset:2px;border-radius:8px;position:relative;z-index:2}
+textarea.kf,input.xin.kf,select.kf{outline-offset:1px}
+tr.kf{outline-offset:-2px}
+.kf.kedit{outline-style:dashed!important}
+.khint{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:5px;width:fit-content;max-width:100%;margin:0 auto 14px;font-size:11.5px;color:var(--text-3);background:var(--surface-2);border:1px solid var(--border);padding:4px 10px;border-radius:8px;transition:color .2s,background .2s,border-color .2s}
+.khint.on{color:var(--text);background:var(--bsoft);border-color:color-mix(in srgb,var(--brand) 40%,transparent)}
+.khint kbd{font-size:10.5px}
+.pane.dense .khint{margin-bottom:8px}
+.cv-body .khint{margin-bottom:12px}
+.app.m .khint{display:none}
+#f2Hint{font-size:11px;padding:2px 4px;cursor:pointer;align-self:center;margin-left:0}
+/* v22 — where AIVA's answer lands, and keeping attention there */
+:root{--aiva:#7c3aed}
+html[data-theme="dark"]{--aiva:#a78bfa}
+.stage>.region{transition:opacity .3s ease,filter .3s ease}
+.stage.cfocus>#myday,.stage.cfocus>#workspace,.stage.cfocus>#dossier{opacity:.62;filter:saturate(.75)}
+.stage.cfocus.cfull>#myday,.stage.cfocus.cfull>#workspace,.stage.cfocus.cfull>#dossier{opacity:.4;filter:saturate(.6)}
+.stage.cfocus>.region{cursor:pointer}
+.stage.cfocus #cpanel{border-color:color-mix(in srgb,var(--aiva) 55%,var(--border-strong));box-shadow:0 18px 44px rgba(0,0,0,.45),0 0 0 3px color-mix(in srgb,var(--aiva) 18%,transparent)}
+.aiva-glow{animation:aivaGlow 1.9s ease-out}
+@keyframes aivaGlow{0%,25%{box-shadow:0 0 0 2px var(--aiva),0 0 28px color-mix(in srgb,var(--aiva) 45%,transparent)}100%{box-shadow:0 0 0 0 transparent}}
+.aiva-hit{animation:aivaHit 2.7s ease-out;border-radius:8px}
+@keyframes aivaHit{0%,30%{box-shadow:0 0 0 2px var(--aiva),0 0 18px color-mix(in srgb,var(--aiva) 50%,transparent);background-color:color-mix(in srgb,var(--aiva) 18%,transparent)}100%{box-shadow:0 0 0 0 transparent;background-color:transparent}}
+tr.aiva-hit{animation:none}
+tr.aiva-hit td{animation:aivaHitBg 2.7s ease-out}
+@keyframes aivaHitBg{0%,30%{background-color:color-mix(in srgb,var(--aiva) 22%,transparent)}100%{background-color:transparent}}
+.aiva-tag-float{position:fixed;z-index:95;display:inline-flex;align-items:center;gap:5px;background:var(--aiva);color:#fff;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.35);pointer-events:none;animation:tagFloat 2.7s ease forwards}
+.aiva-tag-float .mark{color:#fff}
+@keyframes tagFloat{0%{opacity:0;transform:translateY(5px)}12%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0;transform:translateY(-6px)}}
+@keyframes arrive{0%{opacity:0;transform:translateY(-10px);background:color-mix(in srgb,var(--aiva) 26%,var(--surface));border-color:var(--aiva);box-shadow:0 0 18px color-mix(in srgb,var(--aiva) 40%,transparent)}18%{opacity:1;transform:none}60%{background:color-mix(in srgb,var(--aiva) 14%,var(--surface));border-color:color-mix(in srgb,var(--aiva) 55%,transparent)}100%{background:var(--surface-2);border-color:var(--border);box-shadow:none}}
+.aiva-note{align-self:center;display:inline-flex;gap:8px;align-items:center;max-width:100%;background:var(--surface);border:1px solid color-mix(in srgb,var(--aiva) 55%,transparent);color:var(--text);border-radius:999px;padding:6px 12px 6px 10px;font-size:12.5px;box-shadow:0 8px 22px rgba(0,0,0,.3),0 0 0 3px color-mix(in srgb,var(--aiva) 14%,transparent);animation:pop .2s ease;cursor:pointer;text-align:left}
+.aiva-note[hidden]{display:none}
+.aiva-note .mark{color:var(--aiva);flex:none}
+.aiva-note .nt{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aiva-note .where{color:var(--aiva);font-weight:700;white-space:nowrap;flex:none}
+.aitag{border-color:var(--aiva);color:var(--aiva)}
+.aitag button{background:color-mix(in srgb,var(--aiva) 16%,transparent);color:var(--aiva)}
+.threec textarea.ai,.bjob textarea.ai{border-color:var(--aiva);background:color-mix(in srgb,var(--aiva) 10%,var(--surface))}
+input.xin.ai{border-color:var(--aiva)}
+.dos-btn.aiva-hit{background:color-mix(in srgb,var(--aiva) 20%,var(--surface))}
+@media (prefers-reduced-motion:reduce){.aiva-glow,.aiva-hit,tr.aiva-hit td,.aiva-tag-float{animation:none}}
+#chatdock .composer.f2flash{box-shadow:0 0 0 4px color-mix(in srgb,var(--brand) 35%,transparent),var(--shadow)}
+
+/* ============================================================
+   v23 — the chat is its own element below the work, outlined in white
+   ============================================================ */
+.stage{grid-template-rows:minmax(0,1fr) auto;transition:grid-template-rows .35s cubic-bezier(.2,.8,.2,1)}
+.stage.home{grid-template-columns:minmax(0,1fr)}
+.stage.home #myday{margin-bottom:0;grid-row:1}
+#chatdock{position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;z-index:20;min-width:0;min-height:0;grid-row:2;transition:none}
+.stage.home #chatdock{grid-column:1;justify-self:center;width:min(760px,100%)!important}
+.stage.work #chatdock{grid-column:2;width:auto!important}
+.stage.work #myday{grid-column:1;grid-row:1 / span 2}
+.stage.work #workspace{grid-column:2;grid-row:1}
+.stage.work #dossier{grid-column:3;grid-row:1 / span 2}
+#cpanel{transition:max-height .32s cubic-bezier(.2,.8,.2,1),opacity .2s;animation:none}
+#cpanel.hide{display:flex!important;max-height:0!important;opacity:0;border-width:0;box-shadow:none!important;pointer-events:none;margin-bottom:-8px}
+#cpanel.full{height:auto!important;max-height:none!important;flex:1;min-height:0}
+.stage.cfull{grid-template-rows:minmax(96px,.34fr) minmax(0,1fr)}
+.pane{padding-bottom:40px}.pane.dense{padding-bottom:32px}.cvpane .cv-body{padding-bottom:32px}
+/* white outline and glow so the chat never gets lost */
+#chatdock .composer{border:2.5px solid rgba(255,255,255,.9)!important;box-shadow:0 0 0 1px rgba(255,255,255,.12),0 0 18px rgba(255,255,255,.22),0 0 44px rgba(255,255,255,.08)}
+#chatdock .composer:focus-within{border-color:#fff!important;box-shadow:0 0 0 1px rgba(255,255,255,.22),0 0 26px rgba(255,255,255,.36),0 0 60px rgba(255,255,255,.12)}
+html[data-theme="light"] #chatdock .composer{border-color:#14171c!important;box-shadow:0 0 0 4px rgba(20,23,28,.07),0 8px 22px rgba(16,24,40,.16)}
+html[data-theme="light"] #chatdock .composer:focus-within{border-color:var(--brand)!important}
+/* lighter suggestions */
+#chips .chip,#cpanel .acts .chip{background:color-mix(in srgb,#fff 13%,var(--surface));border-color:rgba(255,255,255,.34);color:var(--text);box-shadow:none}
+#chips .chip:hover,#cpanel .acts .chip:hover{background:color-mix(in srgb,#fff 22%,var(--surface));border-color:#fff;color:#fff}
+html[data-theme="light"] #chips .chip,html[data-theme="light"] #cpanel .acts .chip{background:#fff;border-color:var(--border-strong)}
+html[data-theme="light"] #chips .chip:hover,html[data-theme="light"] #cpanel .acts .chip:hover{border-color:var(--brand);color:var(--brand)}
+/* phone, narrow and runner layouts */
+.app.m .stage.work #chatdock,.app.m .stage.work #workspace{grid-column:1}
+.app.m .stage.home #chatdock{width:100%!important}
+.app.m .stage.home #myday{margin-bottom:0}
+.app.run-on:not(.m) .stage.work #chatdock{grid-column:1!important;grid-row:1 / span 2;width:auto!important;justify-content:flex-end}
+.app.run-on:not(.m) .stage.work #cpanel.hide{max-height:none!important;opacity:1;border-width:1px;pointer-events:auto;margin-bottom:0}
+.app.run-on:not(.m) .stage.work #workspace{grid-row:1 / span 2}
+
+/* v24 — rail titles stay put while their content scrolls */
+.md-rail .rail-head{position:sticky;top:-12px;z-index:4;background:var(--surface);margin:-12px -10px 10px;padding:14px 14px 8px}
+.dz .dz-head{position:sticky;top:-14px;z-index:4;background:var(--surface);margin:-14px -14px 12px;padding:14px 14px 10px;border-bottom:1px solid var(--border)}
+/* ===== v25 · technician RO workflows ===== */
+.asg{display:inline-flex;align-items:center;gap:4px;font-weight:600;color:var(--text)}
+.job-ctl{flex-wrap:wrap;justify-content:flex-end}
+.lrun{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rbtn{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;padding:5px 11px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--text)}
+.rbtn:hover{border-color:var(--brand);color:var(--brand)}
+.rbtn.big{padding:8px 14px;font-size:13.5px}
+.rlive{display:inline-flex;align-items:center;gap:8px;padding:4px 5px 4px 11px;border-radius:999px;background:#0b0c0f;color:#fff;font-size:12.5px;font-weight:600;white-space:nowrap}
+.rlive.sm{padding:2px 9px;font-size:11.5px}
+.rlive i,.xrun i{width:7px;height:7px;border-radius:50%;background:#e53935;animation:blink 1.2s infinite;flex:none}
+.rlive b{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.rlive button{background:#fff;color:#111;border:0;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:600;display:inline-flex;gap:4px;align-items:center}
+.rtot{font-size:11.5px;color:var(--text-3);font-family:var(--mono);white-space:nowrap}
+.held{margin:0 4px;display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;color:var(--warning);white-space:nowrap}
+.conflict{margin:0 14px 12px 56px;border:1.5px solid var(--warning);background:color-mix(in srgb,var(--warning) 9%,var(--surface));border-radius:10px;padding:10px 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;animation:fadeIn .2s}
+.conflict .grow{flex:1;min-width:220px}
+.conflict>svg{color:var(--warning)}
+.conflict.dense{margin:0;font-size:12.5px;padding:6px 10px}
+.bjob .conflict,.nextcard .conflict{margin:12px 0 0}
+.chip .sn{font-size:11px;font-weight:700;color:var(--text-3);font-family:var(--mono)}
+.chip.on .sn{color:var(--brand)}
+.chip.sm{padding:3px 9px;font-size:12px}
+.story{margin:0 14px 14px 56px;border:1px solid color-mix(in srgb,var(--brand) 35%,var(--border));border-radius:12px;background:var(--surface-2);padding:12px 14px;animation:fadeIn .2s}
+.story.b{margin:14px 0 0;background:var(--surface);border-color:var(--border)}
+.st-h{display:flex;gap:10px;align-items:baseline;margin-bottom:10px}
+.story label{display:block;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.story.b label{font-size:11.5px}
+.st-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:12px 14px}
+.story.b .st-grid{grid-template-columns:1fr}
+.st-comp{grid-column:1/-1}
+.st-ro{font-size:13.5px;color:var(--text)}
+.story .odo input{width:130px}
+.story textarea{width:100%;font:inherit;font-size:13.5px;border:1px solid var(--border);border-radius:8px;padding:7px 9px;background:var(--surface);color:var(--text);resize:vertical}
+.story.b textarea{font-size:14px;border-radius:10px}
+.story textarea.ai,.xin.ai{border-color:color-mix(in srgb,var(--aiva) 70%,transparent)!important;background:color-mix(in srgb,var(--aiva) 6%,var(--surface))!important}
+.story textarea.need,.xin.need{border-color:var(--danger)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--danger) 18%,transparent)}
+textarea.redraft{animation:redraft .9s ease}
+@keyframes redraft{0%{background:color-mix(in srgb,var(--aiva) 22%,var(--surface))}100%{background:color-mix(in srgb,var(--aiva) 6%,var(--surface))}}
+.st-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.cchip{font-size:12px;padding:4px 10px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--text-2);display:inline-flex;gap:4px;align-items:center}
+.cchip:hover{border-color:var(--brand);color:var(--brand)}
+.cchip.on{background:var(--bsoft);border-color:var(--brand);color:var(--brand);font-weight:600}
+.st-src{font-size:12px;color:var(--aiva);margin-top:6px;line-height:1.5}
+.st-src svg{vertical-align:-2px;margin-right:2px}
+.st-src .linkbtn{color:var(--aiva)}
+.st-src.muted{color:var(--text-3)}
+.st-f .btn.sm{margin-top:6px}
+.st-odo{grid-column:1/-1;display:flex;gap:18px;align-items:flex-end;flex-wrap:wrap}
+.st-odo .st-f{min-width:130px}
+.odo{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text-2)}
+.odo input{width:130px;font:inherit;font-size:13.5px;border:1px solid var(--border);border-radius:8px;padding:7px 9px;background:var(--surface);color:var(--text)}
+.st-foot{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+.st-foot .btn.primary{margin-left:auto}
+.st-saved{font-size:12px;color:var(--text-3);display:inline-flex;gap:5px;align-items:center}
+.st-k{font-size:11.5px}
+.st-need{margin-top:10px;font-size:13px;color:var(--danger);font-weight:600;display:flex;gap:6px;align-items:center}
+.bbtns{display:flex;gap:10px;flex-wrap:wrap}
+.bodo{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.bodo .odo input{width:160px;font-size:15px;padding:9px 11px;border-radius:10px}
+.wrapup{border:1px solid var(--border);border-radius:12px;padding:14px 16px;background:var(--surface);margin-top:16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;animation:fadeIn .25s}
+.wrapup label{display:block;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.wrapup .grow{flex:1;min-width:200px}
+.wrapup.sent{border:2px solid var(--brand)}
+.wrapup.sent>svg{color:var(--brand)}
+.pane.dense .wrapup{padding:10px 12px;font-size:12.5px}
+/* expert */
+.xrc{white-space:nowrap}
+table.x{table-layout:fixed}
+table.x th:nth-child(1){width:34px}table.x th:nth-child(2){width:72px}table.x th:nth-child(4){width:46px}table.x th:nth-child(5){width:200px}table.x th:nth-child(6){width:62px}table.x th:nth-child(7){width:44px}table.x th:nth-child(8){width:34px}table.x th:nth-child(9){width:34px}
+table.x td{overflow:hidden;text-overflow:ellipsis}
+table.x td[colspan]{overflow:visible}
+table.x tr.xl td:nth-child(3){white-space:normal}
+table.x td:nth-child(9){overflow:visible}
+tr.xs input.xin.wide{min-width:0}
+.xstory{max-width:100%}
+.xrc .xbtn{padding:2px 6px;margin-right:3px}
+.xrun{display:inline-flex;align-items:center;gap:6px;font-weight:600;margin-right:6px}
+.xrun b{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.xbtn.on{border-color:var(--brand);color:var(--brand);background:var(--bsoft)}
+tr.xs td{background:var(--surface-2);padding:8px 10px;white-space:normal;height:auto}
+.xstory{display:grid;grid-template-columns:86px 1fr;gap:5px 10px;align-items:center;font-size:12.5px}
+.xs-l{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);font-weight:600}
+.xs-c{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.xs-chips{display:flex;flex-wrap:wrap;gap:4px}
+.xchip{font-size:11.5px;padding:2px 7px;border:1px solid var(--border);border-radius:5px;background:var(--surface);color:var(--text-2);display:inline-flex;gap:5px;align-items:center}
+.xchip kbd{font-size:10px;padding:0 4px;min-width:0}
+.xchip.on{border-color:var(--brand);color:var(--brand);background:var(--bsoft);font-weight:600}
+input.xin.wide,textarea.xin{width:100%;border-color:var(--border);background:var(--surface)}
+textarea.xin{font:inherit;font-size:12.5px;border:1px solid var(--border);border-radius:5px;padding:4px 6px;color:var(--text);min-height:44px;resize:vertical}
+textarea.xin:focus{outline:0;border-color:var(--border-strong)}
+input.xodo{width:90px;min-width:0;border-color:var(--border);background:var(--surface)}
+.xs-src{font-size:11.5px;color:var(--aiva);display:flex;gap:6px;align-items:center;flex-wrap:wrap;min-height:16px}
+.xneed{color:var(--danger)}
+.xs-saved{color:var(--text-3);font-size:11px;margin-left:auto}
+/* timer in insights */
+.timer .ttop{flex-wrap:wrap;gap:8px}
+.timer .tbtns{display:flex;gap:6px}
+.timer .tbtns .stop{padding:6px 10px;font-size:12.5px}
+/* My Hours */
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:999px;padding:3px;background:var(--surface-2);gap:2px}
+.seg button{border:0;background:transparent;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:600;color:var(--text-2);display:inline-flex;gap:6px;align-items:center}
+.seg button.on{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.hdays{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 16px}
+.hstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.hstat{border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:var(--surface)}
+.hstat .k{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3)}
+.hstat .v{font-size:22px;font-weight:700;margin:2px 0;font-variant-numeric:tabular-nums}
+.htab{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surface)}
+.htab td{vertical-align:middle}
+.htab td:nth-child(1),.htab td:nth-child(2){white-space:nowrap}
+.htab td.mono{font-family:var(--mono);font-size:12.5px}
+tr.hrun td{background:color-mix(in srgb,var(--brand) 6%,transparent)}
+.ptype{font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border)}
+.ptype.diag{color:#b45309;border-color:color-mix(in srgb,#b45309 40%,transparent)}
+.ptype.labor{color:var(--brand);border-color:color-mix(in srgb,var(--brand) 40%,transparent)}
+.hempty{border:1.5px dashed var(--border-strong);border-radius:14px;padding:28px 22px;text-align:center;color:var(--text-2);background:var(--surface)}
+.hempty h3{margin:8px 0 6px;color:var(--text);font-size:16px}
+.hempty p{max-width:460px;margin:0 auto 14px}
+.hpend{display:grid;gap:8px}
+.hp{display:flex;gap:10px;align-items:center;border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--surface)}
+.hp .grow{flex:1}
+.mtime-btn{display:block;width:100%;border:0;background:transparent;padding:0;text-align:left;color:inherit;cursor:pointer}
+.mtime-btn:hover .mbar i{filter:brightness(1.1)}
+/* punch times in insights */
+.pf{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.pgrp{margin-bottom:10px}
+.pg-h{display:flex;gap:6px;align-items:baseline;flex-wrap:wrap;font-size:12.5px;margin-bottom:4px}
+.pg-h .lbl{margin-left:auto;font-family:var(--mono);font-size:11px}
+.pun{display:flex;gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--border);font-size:12.5px}
+.pic{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--surface-2);border:1px solid var(--border);flex:none}
+.pic.diag{color:#b45309}.pic.labor{color:var(--brand)}
+.ptx{flex:1;font-weight:600}
+.ptx .lbl{font-weight:400}
+.pdur{font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums}
+@media (max-width:1100px){.st-grid{grid-template-columns:1fr}.hstats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.app.m .story,.app.m .conflict{margin-left:14px;margin-right:14px}
+
+
+/* ===== v26 · Expert focus mode: My Day and AIVA Insights slide off to side tabs ===== */
+.stage.work{transition:grid-template-columns .34s cubic-bezier(.2,.8,.2,1),grid-template-rows .35s cubic-bezier(.2,.8,.2,1)}
+.sidetab{display:none}
+.app:not(.m) .stage.work.wfocus{grid-template-columns:46px minmax(0,1fr) 46px}
+.stage.wfocus #myday>:not(.sidetab),.stage.wfocus #dossier>:not(.sidetab){display:none}
+.stage.wfocus #myday,.stage.wfocus #dossier{display:block;animation:none}
+.stage.wfocus .sidetab{display:flex;flex-direction:column;align-items:center;gap:12px;position:absolute;inset:0;width:100%;border:0;background:var(--surface);padding:14px 0;color:var(--text-2);font-weight:600;font-size:12.5px;cursor:pointer;animation:fadeIn .3s}
+.sidetab:hover{color:var(--brand);background:var(--surface-2)}
+.sidetab .vt{writing-mode:vertical-rl;letter-spacing:.02em;white-space:nowrap}
+#sideL .vt{transform:rotate(180deg)}
+.sidetab .sb{min-width:18px;height:18px;border-radius:9px;background:var(--aiva);color:#fff;font-size:10.5px;font-weight:700;display:grid;place-items:center;padding:0 5px}
+.sidetab .sb.hot{background:var(--danger)}
+.sidetab .sclk{width:9px;height:9px;border-radius:50%;background:#e53935;animation:blink 1.2s infinite}
+.sidetab.new{color:var(--aiva)}
+.stage.wfocus.peek-l #myday,.stage.wfocus.peek-r #dossier{position:absolute;top:12px;bottom:12px;width:var(--railw);z-index:40;box-shadow:0 18px 44px rgba(0,0,0,.28);animation:peekIn .26s cubic-bezier(.2,.8,.2,1)}
+.stage.wfocus.peek-l #myday{left:12px}
+.stage.wfocus.peek-r #dossier{right:12px;width:var(--dosw);animation-name:peekInR}
+.stage.wfocus.peek-l #myday>:not(.sidetab),.stage.wfocus.peek-r #dossier>:not(.sidetab){display:revert}
+.stage.wfocus.peek-l #myday>.md-full,.stage.wfocus.peek-l #myday>.cnote,.stage.wfocus.peek-r #dossier>.cnote{display:none}
+.stage.wfocus.peek-l #sideL,.stage.wfocus.peek-r #sideR{display:none}
+@keyframes peekIn{from{transform:translateX(-24px);opacity:0}to{transform:none;opacity:1}}
+@keyframes peekInR{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
+.tb-sep{width:1px;height:20px;background:var(--border-strong);align-self:center;margin:0 4px 4px}
+.wf-focus{align-self:center;margin-bottom:4px;display:inline-flex;gap:6px;align-items:center;font-weight:600}
+.wf-focus.on{background:var(--bsoft);border-color:var(--brand);color:var(--brand)}
+.stage.wfocus #workspace{box-shadow:0 0 0 1px color-mix(in srgb,var(--brand) 30%,transparent)}
+
+/* v28 — onboarding for the v21–v27 features */
+.ob-new{font-size:12.5px;line-height:1.5;color:var(--text-2);background:var(--bsoft);border:1px solid color-mix(in srgb,var(--brand) 30%,transparent);border-radius:10px;padding:8px 12px;margin:0 0 14px;text-align:left}
+.ob-new b{color:var(--brand);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;margin-right:6px}
+.demo-land{position:relative;height:92px}
+.demo-land .dl-work{display:grid;gap:6px;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface-2)}
+.demo-land .dl-work i{display:block;height:9px;border-radius:4px;background:var(--surface-3)}
+.demo-land .dl-work i.hit{animation:dlHit 2.8s ease-in-out infinite}
+.demo-land .dl-note{position:absolute;right:6px;bottom:28px;display:flex;gap:5px;align-items:center;font-size:11px;font-weight:600;color:var(--brand);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:2px 8px;animation:dlNote 2.8s ease-in-out infinite}
+.demo-land .dl-chat{position:absolute;left:6px;right:6px;bottom:0;font-size:11.5px;color:var(--text-2);border:1px solid var(--border-strong);border-radius:9px;padding:4px 8px;background:var(--surface)}
+@keyframes dlHit{0%,30%{background:var(--surface-3)}45%,80%{background:color-mix(in srgb,var(--brand) 45%,var(--surface-3));box-shadow:0 0 0 2px color-mix(in srgb,var(--brand) 40%,transparent)}100%{background:var(--surface-3)}}
+@keyframes dlNote{0%,35%{opacity:0;transform:translateY(6px)}48%,85%{opacity:1;transform:none}100%{opacity:0}}
+.demo-talk{gap:6px}
+.demo-talk .wave{display:inline-flex;gap:3px;align-items:center;height:20px;margin:0 6px}
+.demo-talk .wave i{width:3px;height:6px;border-radius:2px;background:var(--brand);animation:wave .9s ease-in-out infinite}
+.demo-talk .wave i:nth-child(2){animation-delay:.1s}.demo-talk .wave i:nth-child(3){animation-delay:.2s}.demo-talk .wave i:nth-child(4){animation-delay:.3s}.demo-talk .wave i:nth-child(5){animation-delay:.4s}
+.demo-time{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.demo-time .rbtn.on{border-color:var(--brand);color:var(--brand)}
+.demo-focus{display:flex;gap:4px;height:54px}
+.demo-focus i{display:block;border-radius:6px;border:1px solid var(--border);background:var(--surface-2)}
+.demo-focus .mid{flex:1;background:var(--bsoft);border-color:color-mix(in srgb,var(--brand) 40%,transparent)}
+.demo-focus .side{width:34%;animation:dfSide 3s ease-in-out infinite}
+@keyframes dfSide{0%,25%{width:26%}55%,85%{width:6%}100%{width:26%}}
+@media (prefers-reduced-motion:reduce){.demo-land *,.demo-focus .side,.demo-talk .wave i{animation:none}}
 </style>
 </head>
 <body>
@@ -1051,7 +1324,7 @@ tr.case-hl td{background:color-mix(in srgb,var(--brand) 10%,transparent);animati
     <div class="mh3">Help</div>
     <button class="list-row" data-prompt="/help"><span class="badge">?</span><span><div class="t">Show every command</div><div class="s">What AIVA can do for your role</div></span></button>
     <button class="list-row" data-prompt="/learn"><span class="badge">▶</span><span><div class="t">Tutorials and walkthroughs</div><div class="s">Including the welcome tour</div></span></button>
-    <button class="list-row" data-prompt="/drive"><span class="badge">⌨</span><span><div class="t">Your CDK Drive commands</div><div class="s">Type a code in the chat bar</div></span></button>
+    <button class="list-row" data-prompt="/keys"><span class="badge">⌨</span><span><div class="t">Working from the keyboard</div><div class="s">Arrows, Enter, Esc and F2</div></span></button>
     <div class="lbl" style="padding:6px 8px 0">Shared-service placeholder: CDK University and Customer Care would also live here.</div>
   </div>
   <div class="ppop" id="personaMenu" role="menu" style="right:12px;width:340px">
@@ -1084,16 +1357,25 @@ tr.case-hl td{background:color-mix(in srgb,var(--brand) 10%,transparent);animati
     <button class="step" data-act="script" data-s="home"><span class="n">2</span><span>Go back to My Day, then <b>click an RO card</b> to see it fly in.</span></button>
     <button class="step" data-act="script" data-s="note"><span class="n">3</span><span><b>"Note front pads at 3 mm"</b>: a small change with an inline Undo.</span></button>
     <button class="step" data-act="script" data-s="pads"><span class="n">4</span><span><b>"Add front brake pads to line A"</b>: the chat confirms first because it changes the price.</span></button>
-    <button class="step" data-act="script" data-s="tce"><span class="n">5</span><span>Type the Drive code <b>TCE</b> to clock on.</span></button>
+    <button class="step" data-act="script" data-s="tce"><span class="n">5</span><span>From the keyboard, <b>start labor time on line A</b>: the highlight lands on Labor, press <b>Enter</b>.</span></button>
     <button class="step" data-act="script" data-s="done"><span class="n">6</span><span>Mark line A <b>Done</b> and watch the insights update.</span></button>
     <button class="step" data-act="script" data-s="mode"><span class="n">7</span><span>Switch <b>Beginner / Knowledgeable / Expert</b> from your name in the top-right.</span></button>
-    <button class="step" data-act="script" data-s="mic"><span class="n">8</span><span><b>Hold the mic</b> button to talk.</span></button>
+    <button class="step" data-act="script" data-s="keys"><span class="n">8</span><span>Open the RO and press <b>↓</b>: move between fields with the arrow keys, <b>Enter</b> to edit or toggle, <b>Esc</b> to step back out.</span></button>
+    <button class="step" data-act="script" data-s="mic"><span class="n">9</span><span><b>Press F2</b> to type to AIVA (Esc returns you to your field). <b>Hold Ctrl+Space</b>, or hold the mic button, to talk.</span></button>
+    <div class="lbl" style="padding:8px 4px 2px;font-weight:600">Technician RO workflows (v25)</div>
+    <button class="step" data-act="script" data-s="conflict"><span class="n">10</span><span><b>Start time on a line</b> while clocked on another RO: hold it and start here, in one step.</span></button>
+    <button class="step" data-act="script" data-s="kstory"><span class="n">11</span><span><b>Write the story inline</b> from the keyboard: arrow to a cause, <b>Enter</b>, then <b>Ctrl+Enter</b> finishes the line and moves to the next.</span></button>
+    <button class="step" data-act="script" data-s="punch"><span class="n">12</span><span><b>Punch times on the RO</b> in AIVA Insights, filtered by diagnostic or labor.</span></button>
+    <button class="step" data-act="script" data-s="hours"><span class="n">13</span><span><b>My Hours</b>: punch times and flagged hours, and what an empty day looks like.</span></button>
+    <button class="step" data-act="script" data-s="nextjob"><span class="n">14</span><span><b>Finish and move on</b>: send for review, and the next assigned job is one key away.</span></button>
+    <button class="step" data-act="script" data-s="focus"><span class="n">15</span><span><b>Focus</b> (any level): My Day and AIVA Insights slide off to side tabs. Your open tabs stay.</span></button>
     <div class="drow" style="justify-content:flex-end;margin-top:10px"><button class="btn sm" data-act="reset">Reset demo</button></div>
   </div>
 
   <!-- ============================ STAGE ============================ -->
   <main class="stage home" id="stage">
     <section class="region" id="myday" aria-label="My Day">
+      <button class="sidetab" id="sideL" data-side="l" aria-label="Show My Day" title="My Day"></button>
       <div class="md-full" id="mdFull"></div>
       <div class="md-rail" id="mdRail"></div>
       <span class="cnote" id="mdNote" style="top:8px;right:12px">My Day · AI-arranged for today, balanced with your pins</span>
@@ -1110,12 +1392,13 @@ tr.case-hl td{background:color-mix(in srgb,var(--brand) 10%,transparent);animati
     </section>
 
     <aside class="region" id="dossier" aria-label="AIVA Insights">
+      <button class="sidetab" id="sideR" data-side="r" aria-label="Show AIVA Insights" title="AIVA Insights"></button>
       <div class="dz" id="dz"></div>
       <span class="cnote" style="top:8px;right:12px">AIVA Insights · a living dossier for the work in front of you</span>
     </aside>
 
     <div id="chatdock">
-      <span class="cnote" style="top:-30px;left:0">AI chat · centered in your work area · plain English, Drive codes, voice</span>
+      <span class="cnote" style="top:-30px;left:0">AI chat · centered in your work area · plain English, voice, F2 from anywhere</span>
       <div id="cpanel" class="hide">
         <div class="cp-h">
           <button class="icon-btn" id="cpChats" title="All chats" aria-label="All chats"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h16M4 12h11M4 17h16"/></svg></button>
@@ -1128,16 +1411,18 @@ tr.case-hl td{background:color-mix(in srgb,var(--brand) 10%,transparent);animati
         <div class="scroll" id="scroll"><div class="col" id="thread"></div></div>
       </div>
       <div id="listen" class="hide"><div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><b>Listening…</b><div class="lbl">Release to send</div></div>
+      <button class="aiva-note" id="aivaNote" hidden title="Open the conversation"></button>
       <div id="chips" class="hide"></div>
       <div class="composer-wrap">
         <div class="composer">
           <div class="pop" id="pop" role="listbox"></div>
           <div class="c-row">
             <button class="icon-btn" id="histBtn" title="Chat history" aria-label="Chat history"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg></button>
-            <textarea id="input" rows="1" placeholder="Ask anything, / for commands, @ for records, or a Drive code" aria-label="Message AIVA"></textarea>
+            <textarea id="input" rows="1" placeholder="Ask anything, / for commands, or @ for records" aria-label="Message AIVA"></textarea>
             <button class="icon-btn d-only" id="slashBtn" title="Commands (/)" aria-label="Commands"><kbd>/</kbd></button>
             <button class="icon-btn d-only" id="atBtn" title="Mention a record (@)" aria-label="Mention a record"><kbd>@</kbd></button>
-            <button class="icon-btn mic" id="micBtn" title="Hold to talk" aria-label="Hold to talk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+            <span class="kbd-hint d-only" id="f2Hint" title="F2: type to AIVA from anywhere · hold Ctrl+Space: talk"><kbd>F2</kbd></span>
+            <button class="icon-btn mic" id="micBtn" title="Hold to talk (Ctrl+Space)" aria-label="Hold to talk (Ctrl+Space)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
             <button class="send" id="sendBtn" aria-label="Send" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
           </div>
         </div>
@@ -1168,7 +1453,7 @@ PERSONAS.newHire = {label:"Service Advisor (new hire)",short:"New Hire",
   banner:"Your first week — orientation, walkthroughs and the commands you'll use most.",
   activity:[
     {icon:"se",text:"Welcome tour",sub:"3 steps · about a minute"},
-    {icon:"se",text:"Your Drive commands in Unify",sub:"TCE, CHK and the codes you know · type them in the message box"},
+    {icon:"se",text:"Work from the keyboard",sub:"Arrows move · Enter acts · Esc steps back · F2 asks AIVA"},
     {icon:"se",text:"Walkthrough: find a repair order",sub:"One line — try RO 124210"},
     {icon:"crm-red",text:"Walkthrough: look up a customer",sub:"Use @ to pick a record"},
     {icon:"is",text:"Meet your products",sub:"9 Unify products · they open beside the chat"}],
@@ -1482,7 +1767,7 @@ function greetingWord(){ const h=now().getHours(); return h<12?"Good morning":h<
    ========================================================================== */
 const AIVA_CHIP_CAP = 4;
 function starters(pk){
-  if(pk==="newHire") return [{label:"Start the welcome tour",prompt:"/tour"},{label:"Show my Drive commands",prompt:"/drive"},{label:"TCE",prompt:"TCE"},{label:"RO 124210",prompt:"RO 124210"}];
+  if(pk==="newHire") return [{label:"Start the welcome tour",prompt:"/tour"},{label:"How do I use the keyboard?",prompt:"/keys"},{label:"RO 124210",prompt:"RO 124210"}];
   const p=PERSONAS[pk], c0=(p.cards||[])[0], c1=(p.cards||[])[1], a0=(p.activity||[])[0];
   const s=[{label:"What should I focus on today?",prompt:"What should I focus on today?"}];
   if(c1) s.push({label:`Show my ${c1.title}`,prompt:`Show my ${c1.title}`});
@@ -1541,6 +1826,7 @@ function aivaCiFind(text){
 const INTENTS = [
   {id:"tour",re:/^\/tour\b|\b(welcome tour|start the tour|show me around)\b/i},
   {id:"learn",re:/^\/learn\b|\b(tutorials?|orientation|walkthroughs)\b/i},
+  {id:"keys",re:/^\/keys\b|^(how do i use the )?keyboard\b|\bkeyboard (shortcuts?|navigation)\b/i},
   {id:"drivelist",re:/^\/drive\b|\bdrive (commands?|codes?)\b/i},
   {id:"wtro",re:/walk me through finding a repair order/i},
   {id:"wtcust",re:/walk me through looking up a customer/i},
@@ -1658,7 +1944,7 @@ const RESPONDERS = {
     return {node:"monitor",trace:["Product catalog"],lead:`I can reach <b>${Object.keys(APPS).length-AIVA_UNSUPPORTED_APPS.length} of ${Object.keys(APPS).length}</b> Unify products. Pick one to open it beside the chat.`,blocks:[{t:"tbl",head:["Product","What I can see"],rows,click:Object.keys(APPS).map(k=>"Open "+APPS[k].name)},srcLine(Object.keys(APPS).filter(k=>!AIVA_UNSUPPORTED_APPS.includes(k)))],chips:(P().apps||[]).slice(0,3).map(a=>openChip(a))};
   },
   help(){
-    const rows=[["<kbd>/today</kbd>","Your briefing: what needs you today"],["<kbd>/apps</kbd>","Every product and what I can see in it"],["<kbd>/runner</kbd>","Play the cross-product flow on the canvas"],["<kbd>/learn</kbd>","Tutorials, walkthroughs and the welcome tour"],["<kbd>/drive</kbd>","Your CDK Drive codes — type one in the message box and press Enter"],["<kbd>/activity</kbd>","Everything AIVA has written, and who confirmed it"],["<kbd>/duplicates</kbd>","Duplicate customers, and a gated merge"],["<kbd>@</kbd>","Reference an RO, deal, PO, customer or document"],["Ask about a number","“Show my Open ROs”, “What's my PVR?”"],["Ask about a record","“What's going on with RO #124211?”"],["Ask me to act","“Send the MPI to the customer” — I'll ask before I do it"]];
+    const rows=[["<kbd>/today</kbd>","Your briefing: what needs you today"],["<kbd>/apps</kbd>","Every product and what I can see in it"],["<kbd>/runner</kbd>","Play the cross-product flow on the canvas"],["<kbd>/learn</kbd>","Tutorials, walkthroughs and the welcome tour"],["<kbd>/keys</kbd>","Working from the keyboard: arrows, Enter, Esc, F2"],["<kbd>/activity</kbd>","Everything AIVA has written, and who confirmed it"],["<kbd>/duplicates</kbd>","Duplicate customers, and a gated merge"],["<kbd>@</kbd>","Reference an RO, deal, PO, customer or document"],["Ask about a number","“Show my Open ROs”, “What's my PVR?”"],["Ask about a record","“What's going on with RO #124211?”"],["Ask me to act","“Send the MPI to the customer” — I'll ask before I do it"],["<kbd>F2</kbd>","Jump to this message box from anywhere — <kbd>Esc</kbd> takes you back to your field"],["Hold <kbd>Ctrl</kbd> <kbd>Space</kbd>","Talk to AIVA; release to send"],["<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd>","Move between fields in the workflow; <kbd>Enter</kbd> edits or presses, <kbd>Esc</kbd> steps back out"]];
     return {node:"monitor",trace:[],lead:`Here's everything I can do as your <b>${esc(P().label)}</b> assistant.`,blocks:[{t:"tbl",head:["Try","What happens"],rows},{t:"msg",html:`Every answer is tagged with what produced it: ${nodeTag("monitor")} reads, ${nodeTag("rules")} recommends, ${nodeTag("auto")} acts — and only after you confirm.`}],chips:starters(S.persona)};
   },
   priorPeriod(){
@@ -1703,7 +1989,7 @@ const IS_MAC = /Mac|iPhone|iPad/.test((navigator&&navigator.platform)||"");
 const MOD = IS_MAC ? "⌘" : "Ctrl";
 const TUTORIAL_CTA = {
   "Welcome tour":{label:"Start tour",tour:true,prompt:"/tour"},
-  "Your Drive commands in Unify":{label:"Show commands",prompt:"/drive"},
+  "Work from the keyboard":{label:"Show me how",prompt:"/keys"},
   "Walkthrough: find a repair order":{label:"Start",prompt:"Walk me through finding a repair order"},
   "Walkthrough: look up a customer":{label:"Start",prompt:"Walk me through looking up a customer"},
   "Meet your products":{label:"Open",prompt:"/apps"}
@@ -1763,25 +2049,46 @@ function newHireBriefing(first){
   return {node:"monitor",trace:["Orientation"],
     lead:`${first?greetingWord()+". ":""}Welcome to your first day at <b>Statler Toyota</b>. Nothing here is urgent — start with the tour, then try a command or two.`,
     blocks:[{t:"tasks",title:"Start here",items:tasks},
-      {t:"kbd",html:`Know CDK Drive? Your codes still work: ${driveKbd("TCE")}`},
+      {t:"kbd",html:`Work from the keyboard: <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> move · <kbd>Enter</kbd> act · <kbd>Esc</kbd> step back · <kbd>F2</kbd> ask AIVA`},
       srcLine(["se","crm-red","dm"],"orientation")],
     chips:starters("newHire").concat([{label:"Show every command",prompt:"/help"}])};
 }
 function learnAnswer(){
-  const rows=[["Welcome tour","3 steps · the composer, your Drive commands, where things open","/tour"],
-    ["Your Drive commands","Every code you know, typed straight into the message box","/drive"],
+  const rows=[["Welcome tour","3 steps · the composer, the keyboard, where things open","/tour"],
+    ["Working from the keyboard","Arrows, Enter, Esc and F2 · every screen, no mouse","/keys"],
     ["Find a repair order","One line, every product it appears in","Walk me through finding a repair order"],
     ["Look up a customer","Use @ to pick a record","Walk me through looking up a customer"],
     ["Meet your products","All nine Unify products, opened beside the chat","/apps"],
-    ["See work cross products","A 31-step case from Service to Accounting","/runner"]];
+    ["See work cross products","A 31-step case from Service to Accounting","/runner"],
+    ["What's new in Unify","7 steps · keyboard on My Day, voice, time on the line, the story, My Hours, Focus","/whatsnew"]];
   return {node:"monitor",trace:["Orientation"],lead:"Here's everything you can learn from, in about the order I'd take it.",
     blocks:[{t:"tbl",head:["Tutorial","What you'll learn"],rows:rows.map(r=>[`<b>${esc(r[0])}</b>`,esc(r[1])]),click:rows.map(r=>r[2])},
       {t:"msg",html:"Tap any row to load it into this conversation. You can come back here any time with <kbd>/learn</kbd>."}],
-    chips:[{label:"Start the welcome tour",prompt:"/tour"},{label:"Show my Drive commands",prompt:"/drive"}]};
+    chips:[{label:"Start the welcome tour",prompt:"/tour"},{label:"How do I use the keyboard?",prompt:"/keys"}]};
 }
 RESPONDERS.tour=()=>({node:"monitor",trace:[],lead:"Starting the welcome tour — three steps.",blocks:[],chips:[{label:"Show all tutorials",prompt:"/learn"}],after:()=>startTour()});
 RESPONDERS.learn=learnAnswer;
-RESPONDERS.drivelist=()=>({node:"monitor",trace:["Drive command map"],lead:`Your CDK Drive codes work here. Type the code in the message box and press <kbd>↵</kbd> — no special keys.`,
+const WHATS_NEW=[
+  ["Answers land where the work is","AIVA puts the change in the workflow, AIVA Insights or My Day, and the chat bar says where"],
+  ["Keyboard on My Day","Arrows, Enter and Esc on My Day as well as in every workflow"],
+  ["Talk hands-free","Hold Ctrl+Space (or the mic), speak, let go to send · F2 jumps to AIVA"],
+  ["Start time on the line","Diagnostic or Labor on each line — holds the other job for you"],
+  ["Write the story inline","Cause and correction drafted from the dealership's story library"],
+  ["My Hours","Punch times and flagged hours for the day"],
+  ["Focus","My Day and AIVA Insights slide to side tabs so the work gets the screen"]];
+INTENTS.unshift({id:"whatsnew",re:/^\/whatsnew\b|\bwhat'?s new\b/i});
+/* Each row opens its own step of the tour, so it shows the real screen for any role. */
+RESPONDERS.whatsnew=(it,text)=>{
+  const m=/tour\s*(\d)?/i.exec(text||""), n=m&&m[1]?Math.min(7,Math.max(1,+m[1])):1;
+  return m?{node:"monitor",trace:["Orientation"],lead:n>1?`Showing <b>${esc(WHATS_NEW[n-1][0])}</b> — step ${n} of 7 in the What's new tour.`:"Starting the <b>What's new</b> tour — seven steps.",blocks:[],chips:[],after:()=>startTour(TOUR.findIndex(x=>x.part==="What's new")+n-1)}
+  :{node:"monitor",trace:["Orientation"],lead:"Seven things are new in Unify. Tap one to see it on the real screen, or take the short tour.",
+    blocks:[{t:"tbl",head:["What's new","What it does"],rows:WHATS_NEW.map(r=>[`<b>${esc(r[0])}</b>`,esc(r[1])]),click:WHATS_NEW.map((r,i)=>"/whatsnew tour "+(i+1))}],
+    chips:[{label:"Take the tour · 7 steps",prompt:"/whatsnew tour"},{label:"Show all tutorials",prompt:"/learn"}]};
+};
+RESPONDERS.keys=()=>({node:"monitor",trace:["Help · keyboard"],lead:"Every workflow in Unify works from four keys. Press <kbd>↓</kbd> in the workflow space and a highlight appears.",
+  blocks:[{t:"tbl",head:["Key","What it does"],rows:[["<kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd>","Move the highlight to the next field, button or tab, in the direction you press"],["<kbd>Enter</kbd>","Act on what's highlighted: edit a field, press a button, toggle a switch"],["<kbd>Esc</kbd>","Step back: stop editing, then leave the highlight. From the chat, it returns you to the field you left"],["<kbd>F2</kbd>","Ask AIVA from anywhere, even mid-edit. Hold <kbd>Ctrl</kbd><kbd>Space</kbd> to talk instead"],["<kbd>Ctrl</kbd><kbd>Enter</kbd>","In a repair line's story: finish the line and move to the next one"]]}],
+  chips:[{label:"What's my next RO?",prompt:"What's my next RO?"}]});
+RESPONDERS.drivelist=()=>({node:"monitor",trace:["Drive command map"],lead:`Your CDK Drive codes still work if you type them here. The faster way in Unify is the keyboard itself: arrow keys move, <kbd>Enter</kbd> acts, <kbd>Esc</kbd> steps back, <kbd>F2</kbd> asks AIVA.`,
   blocks:[{t:"tbl",head:["Drive code","Opens","Keyboard"],rows:DRIVE_CMDS.map(c=>[`<kbd>${esc(c.code)}</kbd>${c.grounded?"":'<span class="dag">†</span>'}`,`<b>${esc(c.label)}</b><div class="lbl">${esc(c.note)}</div>`,driveKbd(c.code)]),click:DRIVE_CMDS.map(c=>c.code+(c.arg?" 124210":""))},
     {t:"lim",html:"<b>TCE</b> is confirmed: it was Drive's quick-launch code for the timeclock, and Unify's equivalent is the ETC tile. Codes marked † are placeholders awaiting SME confirmation."},
     {t:"h",text:"Accounting · from Accounting Connect"},
@@ -1809,7 +2116,7 @@ const NAV_ITEMS = [
 ];
 const TOUR = [
   {part:"Basics",n:1,sel:".composer",title:"Ask anything — or type /",body:"Start every task here in plain words. Type <kbd>/</kbd> to see every command AIVA knows — that's the fastest way to find something new.",demo:"type"},
-  {part:"Basics",n:2,sel:".composer",title:"Your Drive commands still work",body:`Type a Drive code like <kbd>TCE</kbd> or <kbd>CHK</kbd> right in the message box and press <kbd>↵</kbd>. No special keys — it's a command like any other.`,demo:"keys"},
+  {part:"Basics",n:2,sel:".composer",title:"Work from the keyboard",body:`Press <kbd>↓</kbd> and a highlight appears. Arrow keys move it, <kbd>Enter</kbd> acts, <kbd>Esc</kbd> steps back, and <kbd>F2</kbd> jumps here to ask AIVA from anywhere.`,demo:"keys"},
   {part:"Basics",n:3,sel:"#myday",title:"…and they open right here",body:"The answer appears just above the chat bar, and bigger tools open as tabs in the middle of the screen. No new windows, no hunting through menus.",demo:"open"},
   {checkpoint:true},
   {part:"Explore",n:1,nav:true,place:"right",prep:"nav"},
@@ -1817,6 +2124,21 @@ const TOUR = [
     body:"This is your queue. Every row is a customer waiting on something. When Kapoor checks in for his 10:00, his row lights up — tap it and AIVA drafts the RO from his appointment notes, so you start the walk-around with the paperwork already done. Inspection approvals wait here too, until the customer says yes to the photos AIVA texted them.",demo:"queue"},
   {part:"Explore",n:3,sel:"#cvBody .cv-sec",pick:1,place:"left",prep:"service",title:"Service · Dashboards",
     body:"The numbers behind your lane. Open ROs splits into waiting on parts, in the bay, and ready for review. When Ready for Review climbs, that's your cue — each one is a customer to call with good news, and AIVA can draft the text before you pick up the phone.",demo:"donut"},
+  {checkpoint:"explore"},
+  {part:"What's new",n:1,sel:"#chatdock",title:"Answers land where the work is",
+    body:"When AIVA changes something on screen, the answer goes there — a field in the workflow, AIVA Insights, or My Day — and a short note on the chat bar says where: <b>↑ In the workflow</b>, <b>→ AIVA Insights</b> or <b>← My Day</b>. While the chat is open, the rest of the screen dims so you know where to look. Click the work to put the chat away.",demo:"land"},
+  {part:"What's new",n:2,desk:true,sel:"#mdFull .khint",alt:"#mdQueue",title:"The keyboard works on My Day too",
+    body:"Press <kbd>↓</kbd> on My Day and the same highlight you use in a workflow appears. Arrow through your queue, tasks and pins, and press <kbd>Enter</kbd> to open one. The hint line at the top always shows which keys do what.",demo:"keys"},
+  {part:"What's new",n:3,desk:true,sel:"#micBtn",alt:".composer",title:"Talk without letting go of the work",
+    body:"Hold <kbd>Ctrl</kbd>+<kbd>Space</kbd> anywhere — or hold the mic — speak, and let go to send. <kbd>F2</kbd> jumps to the message box from any field, and <kbd>Esc</kbd> takes you straight back to the field you left.",demo:"talk"},
+  {part:"What's new",n:4,sel:'#wscontent [data-act="rstart"]',pick:0,place:"left",prep:"ro",title:"Start time on the line you're working",
+    body:"Every line on an RO has its own <b>Diagnostic</b> and <b>Labor</b> buttons, so there's no clock code to remember. If you're still on another job, Unify offers to hold it and start this one in a single step. Every punch is listed in AIVA Insights, filtered by diagnostic or labor.",demo:"time"},
+  {part:"What's new",n:5,sel:"#wscontent .story",place:"left",prep:"story",title:"Write the story as you go",
+    body:"Choose what you found and AIVA drafts the cause and correction from the dealership's story library for that labor op. Edit it in place; <kbd>Ctrl</kbd>+<kbd>Enter</kbd> finishes the line and moves you to the next one. When every line is done, the next assigned job is one key away."},
+  {part:"What's new",n:6,sel:"#wscontent .hstats",alt:"#wscontent .pane",prep:"hours",title:"My Hours",
+    body:"Punch times and flagged hours for the day in one place — open it from the time card on My Day, or ask \"show my hours\". It also shows jobs with time still running, so nothing is left clocked on overnight."},
+  {part:"What's new",n:7,desk:true,sel:".wf-focus",prep:"focus",title:"Focus",
+    body:"<b>Focus</b> slides My Day and AIVA Insights off to slim tabs at the edges, so the workflow gets the whole screen. Your open tabs stay. Tap a side tab to peek at it; <kbd>Esc</kbd> or a click back in the work puts it away.",demo:"focus"},
   {final:true}
 ];
 const TOUR_STATE={i:0,sub:0,on:false,timer:null,prepped:null};
@@ -1830,9 +2152,10 @@ function showWelcome(){
     <p>You're set up as a <b>Service Advisor</b> at Statler Toyota. Everything starts with a conversation — ask for what you need and AIVA brings the right tool to you.</p>
     <div class="ob-points">
       <div><span class="ob-ic">${markSVG(18)}</span><span><b>Ask in plain words</b><small>Type <kbd>/</kbd> to discover every command</small></span></div>
-      <div><span class="ob-ic"><kbd>TCE</kbd></span><span><b>Your CDK Drive commands still work</b><small>Type a code like <kbd>TCE</kbd> or <kbd>CHK</kbd> in the message box</small></span></div>
+      <div><span class="ob-ic"><kbd>F2</kbd></span><span><b>Work from the keyboard</b><small>Arrows move · <kbd>Enter</kbd> acts · <kbd>Esc</kbd> steps back · <kbd>F2</kbd> asks AIVA</small></span></div>
       <div><span class="ob-ic">↗</span><span><b>Functions open right in the chat</b><small>No new windows to manage</small></span></div>
     </div>
+    <div class="ob-new"><b>New</b> Hold <kbd>Ctrl</kbd>+<kbd>Space</kbd> to talk · start time on the line · write the story inline · My Hours · Focus</div>
     <div class="ob-actions"><button class="btn primary" data-ob="tour">Show me around · 3 steps</button><button class="btn ghost" data-ob="skip">I'll explore on my own</button></div>
   </div>`;
   el.classList.add("show"); setTimeout(()=>{ const b=el.querySelector('[data-ob="tour"]'); if(b) b.focus(); },50);
@@ -1840,21 +2163,30 @@ function showWelcome(){
 function closeWelcome(){ const el=$("#obLayer"); if(el){ el.classList.remove("show"); el.innerHTML=""; } }
 function tourVisible(el){ if(!el) return false; for(let n=el;n&&n.nodeType===1;n=n.parentElement){ if(getComputedStyle(n).display==="none") return false; } return true; }
 function tourTarget(st){ let t=document.querySelector(st.sel); if(!tourVisible(t)) t=st.alt?document.querySelector(st.alt):null; return tourVisible(t)?t:document.querySelector("#chatdock"); }
-function startTour(){
+function startTour(from){
   closeWelcome(); if(S.streaming) S.streaming.stop(); closePops(); closeMega(); closePanel(); aivaCloseStage();
   let el=$("#tour"); if(!el){ el=document.createElement("div"); el.id="tour"; el.className="tour"; el.innerHTML=`<div class="tour-hole" id="tourHole"></div><div class="tour-ptr" id="tourPtr"><svg width="34" height="34" viewBox="0 0 24 24"><path d="M5 3l14 7-6.2 1.8L10 18z" fill="#fff" stroke="#0a0a0c" stroke-width="1.4" stroke-linejoin="round"/></svg></div><div class="tour-card" id="tourCard" role="dialog" aria-live="polite"></div>`; $("#app").appendChild(el); }
-  TOUR_STATE.on=true; TOUR_STATE.i=0; TOUR_STATE.sub=0; TOUR_STATE.prepped=null; el.classList.add("show"); renderTour();
+  TOUR_STATE.tabs0=W.tabs.map(t=>t.id); TOUR_STATE.ros0=Object.keys(W.ros); TOUR_STATE.clock0=W.clock;
+  TOUR_STATE.on=true; TOUR_STATE.last=null; TOUR_STATE.i=from>0?from:0; TOUR_STATE.sub=0; TOUR_STATE.prepped=null; el.classList.add("show"); renderTour();
 }
 function endTour(){ TOUR_STATE.on=false; clearInterval(TOUR_STATE.timer); TOUR_STATE.prepped=null; const el=$("#tour"); if(el) el.classList.remove("show");
   // Back to the conversation: close every sheet the tour opened, then focus the message box.
-  [...W.tabs].filter(t=>t.kind==="cv").forEach(t=>closeTab(t.id)); goHome(); closePop();
+  if(W.focus) setWFocus(false);
+  const keep=TOUR_STATE.tabs0||[]; [...W.tabs].filter(t=>t.kind==="cv"||!keep.includes(t.id)).forEach(t=>closeTab(t.id));
+  Object.keys(W.ros).forEach(k=>{ if(TOUR_STATE.ros0&&!TOUR_STATE.ros0.includes(k)) delete W.ros[k]; });
+  if(TOUR_STATE.ros0&&W.clock!==TOUR_STATE.clock0) setClock(TOUR_STATE.clock0||null);
+  goHome(); closePop();
   setTimeout(()=>{ const inp=$("#input"); if(inp&&!isMobile()) inp.focus(); },320); }
 function demoHTML(kind){
   if(kind==="queue") return `<div class="demo-queue"><div class="dq-row r1"><b>10:00 Arrival</b><span>Kapoor, K. · checked in</span></div><div class="dq-row r2"><b>MPI Approval</b><span>RO #98664 · Lacy, C.</span></div><div class="dq-ro"><span class="dc-tag auto">AUTOMATION</span><b>Draft RO for Kapoor, K.</b><span>From appointment notes · confirm to save</span></div></div>`;
   if(kind==="donut") return `<div class="demo-donut"><svg width="64" height="64" viewBox="0 0 68 68"><circle cx="34" cy="34" r="26" fill="none" stroke="var(--surface-3)" stroke-width="10"/><circle class="seg s1" cx="34" cy="34" r="26" fill="none" stroke="var(--warning)" stroke-width="10" stroke-dasharray="27.8 135.6" transform="rotate(-90 34 34)"/><circle class="seg s2" cx="34" cy="34" r="26" fill="none" stroke="var(--brand)" stroke-width="10" stroke-dasharray="83.3 80.1" stroke-dashoffset="-27.8" transform="rotate(-90 34 34)"/><circle class="seg s3" cx="34" cy="34" r="26" fill="none" stroke="var(--success)" stroke-width="10" stroke-dasharray="52.3 111.1" stroke-dashoffset="-111.1" transform="rotate(-90 34 34)"/></svg><div class="dd-legend"><span><i style="background:var(--warning)"></i>Waiting on parts</span><span><i style="background:var(--brand)"></i>In the bay</span><span class="hl"><i style="background:var(--success)"></i>Ready — call the customer</span></div></div>`;
-  if(kind==="type") return `<div class="demo-comp"><span id="demoText"></span><i class="demo-caret"></i></div><div class="demo-pop" id="demoPop"><div><kbd>/today</kbd><small>Your briefing</small></div><div><kbd>/drive</kbd><small>Drive commands</small></div><div><kbd>/learn</kbd><small>Tutorials</small></div></div>`;
-  if(kind==="keys") return `<div class="demo-comp demo-typed"><span class="k k4">T</span><span class="k k5">C</span><span class="k k6">E</span><i class="demo-caret"></i><kbd class="k k7">↵</kbd></div>`;
-  if(kind==="open") return `<div class="demo-chat"><div class="dc-user">TCE</div><div class="dc-ai"><span class="dc-tag">MONITORING</span><div class="dc-card"><b>Hours Logged</b><span>5.2 today</span><i></i></div></div></div>`;
+  if(kind==="type") return `<div class="demo-comp"><span id="demoText"></span><i class="demo-caret"></i></div><div class="demo-pop" id="demoPop"><div><kbd>/today</kbd><small>Your briefing</small></div><div><kbd>/keys</kbd><small>Keyboard</small></div><div><kbd>/learn</kbd><small>Tutorials</small></div></div>`;
+  if(kind==="keys") return `<div class="demo-comp demo-typed"><kbd class="k k4">↓</kbd><kbd class="k k5">→</kbd><kbd class="k k6">Enter</kbd><kbd class="k k7">F2</kbd></div>`;
+  if(kind==="open") return `<div class="demo-chat"><div class="dc-user">Show my hours</div><div class="dc-ai"><span class="dc-tag">MONITORING</span><div class="dc-card"><b>Hours Logged</b><span>5.2 today</span><i></i></div></div></div>`;
+  if(kind==="land") return `<div class="demo-land"><div class="dl-work"><i></i><i class="hit"></i><i></i></div><div class="dl-note">${markSVG(11)} ↑ In the workflow</div><div class="dl-chat">Note front pads at 3 mm</div></div>`;
+  if(kind==="talk") return `<div class="demo-comp demo-talk"><kbd>Ctrl</kbd><kbd>Space</kbd><span class="wave"><i></i><i></i><i></i><i></i><i></i></span><kbd>F2</kbd></div>`;
+  if(kind==="time") return `<div class="demo-time"><span class="rbtn">▶ Diagnostic</span><span class="rbtn on">▶ Labor</span><span class="rlive sm"><i></i>0:12:40</span></div>`;
+  if(kind==="focus") return `<div class="demo-focus"><i class="side l"></i><i class="mid"></i><i class="side r"></i></div>`;
   if(kind==="done") return `<div class="demo-done">${markSVG(40)}<i class="ob-spark s1"></i><i class="ob-spark s2"></i><i class="ob-spark s3"></i></div>`;
   return "";
 }
@@ -1871,6 +2203,14 @@ function runDemo(kind){
 }
 function tourPrep(st,cb){
   closePops(); closeMega(); closePanel();
+  if(W.focus&&st.prep!=="focus") setWFocus(false);
+  const roReady=then=>{ const on=W.mode==="work"&&W.active==="ro:13456B"&&activeTab().loaded;
+    if(!on) openRO("13456B"); setTimeout(()=>{ const t=activeRO(); if(t&&W.level==="beginner"){ t.st.bOpen=(t.st.jobs.find(x=>!x.done)||t.st.jobs[0]).L; renderPane(); } then(); },on?120:1300); };
+  if(st.prep==="ro") return roReady(()=>{ const b=document.querySelector(st.sel); if(b&&b.scrollIntoView) b.scrollIntoView({block:"center"}); cb(); });
+  if(st.prep==="story") return roReady(()=>{ const t=activeRO(), j=t.st.jobs.find(x=>!x.done)||t.st.jobs[0]; j.story=true; ensureDraft(j); if(W.level==="beginner") t.st.bOpen=j.L; renderPane();
+    const b=document.querySelector(st.sel); if(b&&b.scrollIntoView) b.scrollIntoView({block:"center"}); setTimeout(cb,160); });
+  if(st.prep==="hours"){ const on=W.mode==="work"&&W.active==="wf:My Hours"; if(!on){ W.hrs.view="punch"; W.hrs.day=0; openWf("My Hours"); } return setTimeout(cb,on?120:1100); }
+  if(st.prep==="focus") return roReady(()=>{ setWFocus(true); setTimeout(cb,420); });
   if(st.prep==="service"){
     const already=S.canvas.open&&S.canvas.kind==="app"&&S.canvas.app==="se";
     if(!already) openCanvas({kind:"app",app:"se",tab:"Overview"});
@@ -1880,10 +2220,11 @@ function tourPrep(st,cb){
   if(W.mode!=="home"){ goHome(); return setTimeout(cb,400); }   // Basics and the navigation tour both run on My Day
   cb();
 }
-function tourLabel(st){ return `${st.part} · ${st.n} of 3`; }
+const tourVis=s=>!(s.desk&&isMobile());   // keyboard, Ctrl+Space and Focus steps are for a keyboard and a wide screen
+function tourLabel(st){ const ps=TOUR.filter(x=>x.part===st.part&&tourVis(x)); return `${st.part} · ${ps.indexOf(st)+1} of ${ps.length}`; }
 function tourDots(i){
-  const steps=TOUR.filter(s=>s.part), cur=TOUR[i];
-  return `<div class="tour-dots">${steps.map(s=>{ const k=TOUR.indexOf(s); return `<i class="${k<i||(cur&&cur.final)?"done":k===i?"on":""}${s.part==="Explore"&&s.n===1?" gap":""}"></i>`; }).join("")}</div>`;
+  const steps=TOUR.filter(s=>s.part&&tourVis(s)), cur=TOUR[i];
+  return `<div class="tour-dots">${steps.map(s=>{ const k=TOUR.indexOf(s); return `<i class="${k<i||(cur&&cur.final)?"done":k===i?"on":""}${s.part!=="Basics"&&s===TOUR.filter(x=>x.part===s.part&&tourVis(x))[0]?" gap":""}"></i>`; }).join("")}</div>`;
 }
 function placeCard(card,rect,o,place){
   const cw=card.offsetWidth, ch=card.offsetHeight, m=12;
@@ -1901,6 +2242,9 @@ function placeCard(card,rect,o,place){
 }
 function renderTour(){
   if(!TOUR_STATE.on) return;
+  let dir=TOUR_STATE.i<(TOUR_STATE.last==null?-1:TOUR_STATE.last)?-1:1;
+  while(TOUR[TOUR_STATE.i]&&!tourVis(TOUR[TOUR_STATE.i])) TOUR_STATE.i=Math.max(0,TOUR_STATE.i+dir);
+  TOUR_STATE.last=TOUR_STATE.i;
   const st=TOUR[TOUR_STATE.i];
   if(!st) return endTour();
   if(st.part&&TOUR_STATE.prepped!==TOUR_STATE.i){ const at=TOUR_STATE.i; return tourPrep(st,()=>{ if(TOUR_STATE.on&&TOUR_STATE.i===at){ TOUR_STATE.prepped=at; drawTour(); } }); }
@@ -1912,9 +2256,11 @@ function drawTour(){
   if(st.checkpoint||st.final){
     hole.style.cssText=`left:${o.w/2}px;top:${o.h/2}px;width:0;height:0;`; ptr.classList.add("gone"); clearInterval(TOUR_STATE.timer);
     card.className="tour-card center";
-    card.innerHTML=st.checkpoint
-      ?`${demoHTML("done")}<h3>That's the basics</h3><p>You can ask in plain words, find any command with <kbd>/</kbd>, and type your Drive codes right in the message box.</p>${tourDots(i)}<div class="tour-actions"><button class="btn ghost" data-tour-act="done">Done</button><button class="btn primary" data-tour-act="explore">Next: explore more →</button></div>`
-      :`${demoHTML("done")}<h3>You're ready</h3><p>You know where everything lives, and how your day runs in Service. The rest you'll pick up by asking.</p>${tourDots(i)}<div class="tour-actions"><button class="btn ghost" data-tour-act="done">Done</button><button class="btn primary" data-tour-act="learn">Show all tutorials →</button></div>`;
+    card.innerHTML=st.checkpoint==="explore"
+      ?`${demoHTML("done")}<h3>You know your way around</h3><p>That's where everything lives and how your day runs in Service. Next: what's new in Unify — answers that land where you work, time on the line, the story, My Hours, and more.</p>${tourDots(i)}<div class="tour-actions"><button class="btn ghost" data-tour-act="done">Done</button><button class="btn primary" data-tour-act="explore">Next: what's new →</button></div>`
+      :st.checkpoint
+      ?`${demoHTML("done")}<h3>That's the basics</h3><p>You can ask in plain words, find any command with <kbd>/</kbd>, and move around any screen with the arrow keys, <kbd>Enter</kbd>, <kbd>Esc</kbd> and <kbd>F2</kbd>.</p>${tourDots(i)}<div class="tour-actions"><button class="btn ghost" data-tour-act="done">Done</button><button class="btn primary" data-tour-act="explore">Next: explore more →</button></div>`
+      :`${demoHTML("done")}<h3>You're ready</h3><p>You know where everything lives, how your day runs in Service, and what's new. Type <kbd>/whatsnew</kbd> any time to see the new features again.</p>${tourDots(i)}<div class="tour-actions"><button class="btn ghost" data-tour-act="done">Done</button><button class="btn primary" data-tour-act="learn">Show all tutorials →</button></div>`;
     card.style.left=Math.max(8,(o.w-card.offsetWidth)/2)+"px"; card.style.top=Math.max(8,(o.h-card.offsetHeight)/2)+"px";
     return;
   }
@@ -2059,7 +2405,7 @@ function addAI(th,r){ const t={id:"m"+(S.seq++),role:"ai",r}; th.turns.push(t); 
 function ask(text,opts){
   text=(text||"").trim(); if(!text) return;
   if(S.streaming) S.streaming.stop();      // a new ask finishes the answer in flight instead of being dropped
-  closePop(); openPanel();
+  closePop(); const wasOpen=panelOpen();
   let th=S.threads[S.cur];
   if(!th || th.persona!==S.persona){ th=newThread(S.persona); S.cur=th.id; renderThread(); }
   if(!th.turns.length) $("#thread").innerHTML="";
@@ -2068,9 +2414,14 @@ function ask(text,opts){
   $("#thread").insertAdjacentHTML("beforeend",userTurnHTML(u));
   $("#threadTitle").textContent=th.title; renderRail(); scrollDown();
   const r=respond(text.replace(/^\/(\w+)\s*$/,(m,c)=>"/"+c));
+  // v22: an answer that acts on the work lands in the workflow or in AIVA Insights, not in the floating box
+  const quiet=!!r.dest&&!wasOpen&&!RUN.on;
+  if(!quiet) openPanel();
   $("#cpanel").classList.toggle("brief",!!r.brief);
-  if(r.brief||r.after){ const a=r.after; r.after=()=>{ if(a) a(); autoCollapse(); }; }   // answers that act on the workspace step aside
+  if(quiet){ const a=r.after, rr=r; r.after=()=>{ if(a) a(); aivaNote(rr); }; }
+  else if(r.brief||r.after){ const a=r.after; r.after=()=>{ if(a) a(); autoCollapse(); }; }   // answers that act on the workspace step aside
   const t=addAI(th,r); streamTurn(t);
+  if(quiet){ aivaNote(null); setTimeout(()=>{ if(S.streaming) S.streaming.stop(); },380); }
 }
 function seedThreads(pk){
   if(pk==="newHire") return;   // new at the company: no history, no pins
@@ -2121,7 +2472,9 @@ function logEntry(node,action,app){
 function resolveCfm(id,yes){
   const f=findCfm(id); if(!f||f.b.state!=="pending") return;
   const a=AUTOMATIONS[f.b.auto];
-  if(yes){ const dt=typeof a.done==="function"?a.done():a.done; f.b.state="done"; f.b.at=hhmm(now()); f.b.by=S.persona; f.b.doneText=dt; logEntry("auto",dt,f.t.r.blocks.find(b=>b.t==="src").apps[0]); if(a.onDone) a.onDone(); renderMyDay(); toast("Done — written to the activity log"); }
+  if(yes){ const dt=typeof a.done==="function"?a.done():a.done; f.b.state="done"; f.b.at=hhmm(now()); f.b.by=S.persona; f.b.doneText=dt; logEntry("auto",dt,f.t.r.blocks.find(b=>b.t==="src").apps[0]);
+    if(a.dest&&!RUN.on){ setTimeout(()=>{ closePanel(); if(a.onDone) a.onDone(); renderMyDay(); aivaNote({lead:esc(dt),dest:a.dest}); },850); }
+    else { if(a.onDone) a.onDone(); renderMyDay(); toast("Done — written to the activity log"); } }
   else { f.b.state="cancel"; toast("Cancelled — nothing written"); }
   const el=document.querySelector(`[data-cfm="${id}"]`); if(el) el.outerHTML=cfmHTML(f.b,f.t.id);
 }
@@ -2145,7 +2498,8 @@ function syncOpenButtons(){
   document.querySelectorAll("[data-open-app]").forEach(b=>{ const on=c.open&&c.kind==="app"&&c.app===b.dataset.openApp; b.classList.toggle("active",on&&b.classList.contains("chip")); if(b.classList.contains("chip")){ const sp=b.querySelector("span:last-child"); if(sp){ sp.dataset.label=sp.dataset.label||sp.textContent; sp.textContent=on?"Close "+APPS[b.dataset.openApp].name:sp.dataset.label; } } });
   document.querySelectorAll("[data-open-doc]").forEach(b=>{ const on=c.open&&c.kind==="doc"&&c.doc===b.dataset.openDoc; b.dataset.label=b.dataset.label||b.textContent; b.textContent=on?"Close":b.dataset.label; b.classList.toggle("active",on); });
 }
-function renderCanvas(){
+function renderCanvas(){ _renderCanvas(); kAfterRender(); }
+function _renderCanvas(){
   const c=S.canvas, body=$("#cvBody");
   if(c.kind==="app"){
     const a=APPS[c.app]; $("#cvTile").innerHTML=tileHTML(c.app); $("#cvTitle").innerHTML=`${esc(a.name)}<small>Statler Toyota</small>`;
@@ -2184,7 +2538,7 @@ function renderCanvas(){
 /* ==========================================================================
    COMPOSER — / commands and @ records
    ========================================================================== */
-const COMMANDS=[["/today","Your briefing for today"],["/apps","Every product and what I can see"],["/runner","Play the cross-product flow"],["/learn","Tutorials and walkthroughs"],["/tour","Replay the welcome tour"],["/drive","Your CDK Drive commands"],["/activity","The audit log"],["/duplicates","Duplicate customers to review"],["/help","Show every command"],["/new","Start a new chat"],["/theme","Switch light / dark"]];
+const COMMANDS=[["/today","Your briefing for today"],["/apps","Every product and what I can see"],["/runner","Play the cross-product flow"],["/learn","Tutorials and walkthroughs"],["/tour","Replay the welcome tour"],["/whatsnew","What's new in Unify"],["/keys","Working from the keyboard"],["/activity","The audit log"],["/duplicates","Duplicate customers to review"],["/help","Show every command"],["/new","Start a new chat"],["/theme","Switch light / dark"]];
 let POP={mode:null,items:[],sel:0,start:0};
 function openPop(mode,q){
   let items;
@@ -2198,7 +2552,7 @@ function openPop(mode,q){
   POP={mode,items,sel:0,start:POP.start};
   const pop=$("#pop");
   if(!items.length){ closePop(); return; }
-  pop.innerHTML=`<div class="ph">${mode==="/"?"Commands":mode==="k"?"CDK Drive commands · press Enter to run":"Records"}</div>`+items.map((it,i)=>`<button data-pop="${i}" class="${i===0?"sel":""}" role="option">${it.label}<small>${esc(it.sub)}</small></button>`).join("");
+  pop.innerHTML=`<div class="ph">${mode==="/"?"Commands":mode==="k"?"Matching commands · press Enter to run":"Records"}</div>`+items.map((it,i)=>`<button data-pop="${i}" class="${i===0?"sel":""}" role="option">${it.label}<small>${esc(it.sub)}</small></button>`).join("");
   pop.classList.add("show");
 }
 function closePop(){ POP.mode=null; $("#pop").classList.remove("show"); }
@@ -2244,7 +2598,7 @@ function toggleTheme(){ const r=document.documentElement; r.dataset.theme=r.data
 function switchPersona(pk){
   if(S.streaming) S.streaming.stop();
   S.persona=pk; closePops(); closeMega(); closePanel();
-  setClock(null); W.tabs=[]; W.active=null; W.taskDone={}; W.lastEdit=null; W.level=levelFor(pk);   // switching role starts fresh
+  setClock(null); W.tabs=[]; W.ros={}; W.active=null; W.taskDone={}; W.lastEdit=null; W.level=levelFor(pk);   // switching role starts fresh
   renderTabs(); renderModes(); setStage("home");
   startBriefing(pk); maybeWelcome(pk);
   toast("Now working as "+PERSONAS[pk].label);
@@ -2279,7 +2633,7 @@ function applyMode(){
   document.body.classList.toggle("preview-on",!small&&!!S.preview);
   const b=$("#modeBtn"); b.hidden=small; b.setAttribute("aria-pressed",String(!!S.preview));
   $("#modeLabel").textContent=S.preview?"Desktop view":"Mobile view";
-  $("#input").placeholder=m?"Message AIVA":"Ask anything, / for commands, @ for records, or a Drive code";
+  $("#input").placeholder=m?"Message AIVA":"Ask anything, / for commands, or @ for records";
 }
 function toggleMode(){ S.preview=!S.preview; try{localStorage.setItem("aiva-preview",S.preview?"1":"0");}catch(e){} closeDrawer(); applyMode(); scrollDown(); toast(S.preview?"Mobile view — same app, phone layout":"Desktop view"); }
 function newChatClick(){
@@ -2393,9 +2747,10 @@ function syncCanvasState(){
 function setStage(m){
   W.mode=m; const st=$("#stage");
   st.classList.toggle("home",m==="home"); st.classList.toggle("work",m==="work");
-  if(m==="home") st.classList.remove("dos-open");
+  if(m==="home"){ st.classList.remove("dos-open"); if(W.focus) setWFocus(false); }
   $("#mdNote").textContent=m==="work"?"My Day rail · condensed, still actionable":"My Day · AI-arranged for today, balanced with your pins";
   syncCanvasState(); renderMyDay(); renderChips(); syncOpenButtons();
+  if(m==="home"){ K.on=false; K.el=null; kMark(); }
 }
 function goHome(){ closeMega(); closePops(); setStage("home"); }
 
@@ -2403,7 +2758,7 @@ function goHome(){ closeMega(); closePops(); setStage("home"); }
 function dayModel(pk){
   const p=PERSONAS[pk];
   if(pk==="tech"){
-    return {greet:", "+TECH_USER.first,sub:`${p.short} · Statler Toyota ${TECH_USER.bay}`,queueTitle:"My queue today",
+    return {greet:", "+TECH_USER.first,sub:`${p.short} · Statler Toyota ${TECH_USER.bay}`,queueTitle:"Assigned to me today",
       queue:RO_QUEUE.map((k,i)=>({ro:k,next:i===0,title:"RO "+k,meta:RO[k].vehicle,line:RO[k].summary+" · "+RO[k].status,why:RO[k].why,tag:i===0?"Next up":"Queue",tagCls:i===0?"acc":"",rk:"Promised",rv:RO[k].promised})),
       smart:TECH_TASKS.map(t=>({id:t.id,t:t.t,s:t.s,ro:t.ro,wf:t.wf})),
       alerts:TECH_ALERTS, time:true, pins:TECH_PINS.map(x=>x[1])};
@@ -2463,7 +2818,7 @@ function renderMyDay(){
        <div class="md-col">
          <div class="mcard" id="mdSmart"><div class="mh3">${gi("spark",13)} AI smart activity <span class="tag">${open} open</span></div>${m.smart.map(t=>smartRowHTML(t)).join("")||'<div class="lbl">Nothing waiting on you.</div>'}</div>
          <div class="mcard" id="mdAlerts"><div class="mh3">${gi("alert",13)} Alerts</div>${alerts.map(a=>alertRowHTML(a,false)).join("")}</div>
-         ${m.time?`<div class="mcard" id="mdTime"><div class="mh3">${gi("clock",13)} My time today</div>${timeHTML(false)}</div>`:m.cards.length?`<div class="mcard" id="mdNumbers"><div class="mh3">${gi("spark",13)} Your numbers</div>${numbersHTML(m)}</div>`:`<div class="mcard" id="mdNumbers"><div class="mh3">${gi("term",13)} Know CDK Drive?</div><div style="font-size:13px">Your codes still work. Type <kbd>TCE</kbd> or <kbd>RO 124210</kbd> in the chat bar.</div><div style="margin-top:10px"><button class="btn sm" data-prompt="/drive">Show my Drive commands</button></div></div>`}
+         ${m.time?`<div class="mcard" id="mdTime"><div class="mh3">${gi("clock",13)} My time today</div>${timeHTML(false)}</div>`:m.cards.length?`<div class="mcard" id="mdNumbers"><div class="mh3">${gi("spark",13)} Your numbers</div>${numbersHTML(m)}</div>`:`<div class="mcard" id="mdNumbers"><div class="mh3">${gi("term",13)} Work from the keyboard</div><div style="font-size:13px">Press <kbd>↓</kbd> in any workflow. Arrows move, <kbd>Enter</kbd> acts, <kbd>Esc</kbd> steps back, <kbd>F2</kbd> asks AIVA.</div><div style="margin-top:10px"><button class="btn sm" data-prompt="/keys">Show me how</button></div></div>`}
          <div class="mcard" id="mdPins"><div class="mh3">${gi("pin",13)} My apps &amp; workflows</div><div class="apptiles">${pinsHTML(m,false)}</div></div>
        </div>
      </div>`;
@@ -2547,9 +2902,10 @@ function showSkeleton(){
 const aitag=what=>`<span class="aitag">${gi("spark",12)} Added by AI <button data-act="undo" data-what="${what}">Undo</button></span>`;
 const partMenu=(j,plain)=>`<button class="pal-item" data-act="addpart" data-j="${j.L}" data-p="pads"><span class="badge" style="width:24px;height:24px">${gi("box",13)}</span><span>${plain?"":"<b>BRF-1478</b> "}Front brake pad set</span></button><button class="pal-item" data-act="addpart" data-j="${j.L}" data-p="rotor"><span class="badge" style="width:24px;height:24px">${gi("box",13)}</span><span>${plain?"":"<b>BRR-2290</b> "}Front brake rotor</span></button>`;
 function clockBtnLabel(t){ return W.clock&&W.clock.ro===t.key?"Clocked on · line "+W.clock.L:"Clock on"; }
-function renderPane(){
+function renderPane(){ _renderPane(); kAfterRender(); }
+function _renderPane(){
   const t=activeTab(); if(!t) return;
-  if(t.kind==="cv") return renderCanvas();
+  if(t.kind==="cv") return _renderCanvas();
   const ws=$("#wscontent");
   if(t.kind==="wf"){
     ws.innerHTML=`<div class="pane"><div class="ro-head"><div><div class="ro-title">${esc(t.key)}</div><div class="ro-sub">Placeholder workflow. Shown to demonstrate tabs and navigation, not designed yet.</div></div></div>
@@ -2688,7 +3044,7 @@ function renderExpert(t){
    <div style="overflow-x:auto"><table class="x"><thead><tr><th style="width:34px">Ln</th><th>Op</th><th>Description</th><th>Hrs</th><th>Diag</th><th>Done</th><th>Cause</th><th>Pts</th><th></th></tr></thead>
    <tbody><tr class="xg"><td colspan="9">Customer concerns</td></tr>${conc.map(row).join("")}
    <tr class="xg"><td colspan="9">Recommendations <button class="xact" data-act="asr" style="float:right;font-size:11px;text-transform:none;letter-spacing:0">+ ASR (R)</button></td></tr>${asr.map(row).join("")}</tbody></table></div>
-   <div class="xkeys"><span><kbd>↑</kbd><kbd>↓</kbd> line</span><span><kbd>C</kbd> clock</span><span><kbd>D</kbd> diag</span><span><kbd>X</kbd> done</span><span><kbd>P</kbd> add part</span><span><kbd>E</kbd> edit cause</span><span><kbd>R</kbd> ASR</span><span><kbd>/</kbd> chat</span></div>
+   <div class="xkeys"><span><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> move</span><span><kbd>C</kbd> clock</span><span><kbd>D</kbd> diag</span><span><kbd>X</kbd> done</span><span><kbd>P</kbd> add part</span><span><kbd>E</kbd> edit cause</span><span><kbd>R</kbd> ASR</span><span><kbd>F2</kbd> chat</span></div>
   </div>`;
   clearFlash(st);
 }
@@ -2735,6 +3091,7 @@ function renderDossier(skeleton){
   }
   const follow=`<div class="ro-only">${gi("spark",12)} Context follows the active tab</div>`;
   if(t.kind==="wf"){
+    if(t.key==="My Hours"){ dz.innerHTML=head("Today")+timerHTML(t)+follow+hoursDossier(); return; }
     const roT=W.tabs.find(x=>x.kind==="ro");
     dz.innerHTML=head()+timerHTML(t)+follow+insHTML("file","Related to your open work",roT?`RO ${roT.key} · ${esc(RO[roT.key].vehicle)} is open in another tab.`:"No related RO open.")+insHTML("book","Placeholder",`Context for ${esc(t.key)} would appear here.`);
     return;
@@ -2766,6 +3123,8 @@ function renderDossier(skeleton){
   dz.innerHTML=head("RO "+t.key)+timerHTML(t)+`
    <div class="mh3">${gi("spark",13)} Live insights</div>
    <div id="insList">${st.insights.map((x,i)=>`<div class="ins ${x.fresh?"arrive":""}"><span class="ic">${gi(x.ic,14)}</span><div class="tt">${esc(x.t)}</div><div class="bd">${esc(x.b)}</div>${x.a?`<div class="ac">${x.a.done?'<span class="tag acc">'+gi("check",12)+" "+esc(x.a.done)+"</span>":`<button class="btn sm" data-act="${x.a.act}" data-i="${i}">${esc(x.a.label)}</button>`}</div>`:""}</div>`).join("")}</div>
+   <div class="mh3" style="margin-top:16px">${gi("clock",13)} Time on this RO</div>
+   ${punchSecHTML(t)}
    <div class="mh3" style="margin-top:16px">${gi("file",13)} Context</div>
    ${S.persona==="tech"?`<div class="ro-only">${gi("lock",12)} Read-only for technicians. The advisor owns this information.</div>`:""}
    ${sec("cust","user",esc(d.customer),"Customer #"+d.custNo+" · "+esc(d.waiting),`<dl class="dkv"><dt>Since</dt><dd>${d.since} · ${d.visits} visits</dd><dt>Contact</dt><dd>${esc(d.contact)}</dd><dt>Advisor</dt><dd>${esc(d.advisor)}</dd><dt>Promised</dt><dd>${esc(d.promised)}</dd></dl>`)}
@@ -2776,8 +3135,9 @@ function renderDossier(skeleton){
 }
 function pushInsight(tabId,ins){
   const t=tabById(tabId); if(!t||t.kind!=="ro") return;
+  if(W.focus&&!$("#stage").classList.contains("peek-r")){ W.insNew=(W.insNew||0)+1; syncSideTabs(); }
   t.st.insights.unshift(Object.assign({},ins,{fresh:true}));
-  if(W.active===tabId&&W.mode==="work"){ renderDossier(); const dz=$("#dz"); if(dz.scrollTo) dz.scrollTo({top:0,behavior:"smooth"}); }
+  if(W.active===tabId&&W.mode==="work"){ renderDossier(); const dz=$("#dz"); if(dz.scrollTo) dz.scrollTo({top:0,behavior:"smooth"}); aivaRegion("#dossier"); }
 }
 
 /* ---------------- RO edits ---------------- */
@@ -2794,7 +3154,7 @@ function addPart(tab,L,kind,ai){
   const j=tab.st.jobs.find(x=>x.L===L)||tab.st.jobs[0];
   const p=kind==="pads"?{pn:"BRF-1478",desc:"Front brake pad set",qty:"1",st:"In stock · A-07"}:{pn:"BRR-2290",desc:"Front brake rotor",qty:"2",st:"In stock · A-09"};
   j.parts.push(Object.assign({},p,{ai:!!ai,flash:true})); j.menu=false;
-  if(W.active===tab.id&&W.mode==="work"){ renderPane(); scrollToJob(j.L); }
+  if(W.active===tab.id&&W.mode==="work"){ renderPane(); if(ai) setTimeout(()=>aivaHit(aivaFind(p.desc),"Added by AIVA"),80); else scrollToJob(j.L); }
   pushInsight(tab.id,kind==="pads"
     ?{ic:"box",t:"Pads in stock: 3 at bin A-07",b:"Rotor BRR-2290: 2 in stock if measurement calls for it. Torque caliper bolts to 26 ft-lb.",a:{label:"Add rotors",act:"askrotor"}}
     :{ic:"box",t:"Rotors reserved: 2 at bin A-09",b:"Parts counter notified. Machining isn't needed; replacing the pair."});
@@ -2806,7 +3166,7 @@ function addRecall(){
   t.st.jobs.push({L,group:"asr",recall:true,ai:true,flash:true,title:"Recall 23S12: Rear Axle Bolt Inspection",code:"RC1",concern:"Open recall found on this VIN. Warranty, no cost to the customer.",labor:[{op:"23S12A",desc:"Inspect / replace rear axle bolt",hrs:"0.40"}],parts:[],diag:false,done:false,c3:false,cause:"",corr:"",menu:false});
   const ins=t.st.insights.find(x=>x.a&&x.a.act==="addrecall"); if(ins) ins.a.done="Added as line "+L;
   logEntry("auto","Recall 23S12 added to RO 13456B as line "+L+" (warranty, no price change; Undo available)","se");
-  if(W.active===t.id&&W.mode==="work"){ renderPane(); renderDossier(); scrollToJob(L); }
+  if(W.active===t.id&&W.mode==="work"){ renderPane(); renderDossier(); setTimeout(()=>aivaHit(document.getElementById("job-"+L),"Added by AIVA"),80); }
   return L;
 }
 function undoEdit(what){
@@ -2822,55 +3182,57 @@ function undoEdit(what){
 /* AUTOMATION offers for the RO workflow. Price changes always confirm first. */
 const AUTO_PADS={re:/^\u0000$/,label:"Add front brake pad set BRF-1478 to line A",what:["Add BRF-1478 × 1 to RO 13456B, line A","This changes what the customer pays: +$89.95† parts, plus 0.8 h† labor","Send the approval request to advisor Jim Halpert"],done:"Front pad set BRF-1478 added to RO 13456B line A; approval request sent to Jim Halpert.",onDone:()=>addPart(ensureROTab("13456B"),"A","pads",true)};
 const AUTO_ROTOR={re:/^\u0000$/,label:"Add front brake rotors BRR-2290 (×2) to line A",what:["Add BRR-2290 × 2 to RO 13456B, line A","This changes what the customer pays: +$148.40† parts","Send the approval request to advisor Jim Halpert"],done:"Front rotors BRR-2290 (×2) added to RO 13456B line A; approval request sent to Jim Halpert.",onDone:()=>addPart(ensureROTab("13456B"),"A","rotor",true)};
+AUTO_PADS.dest="work"; AUTO_ROTOR.dest="work";
 AUTOMATIONS.push(AUTO_PADS,AUTO_ROTOR);
 
 /* ---------------- chat intents for the RO workflow ----------------
    Runs first in respond(). Returns null to hand over to the AIVA engine.
    Two tiers of write: a small reversible edit applies at once with Undo;
    anything that changes a price or a record goes through a confirmation. */
-function roRoute(text){
+function roRouteV24(text){
   const t=(text||"").toLowerCase().trim(), code=(text||"").trim().toUpperCase();
   const cur=activeRO(), tech=S.persona==="tech", live=cur&&RO[cur.key].status!=="Closed";
   const src=(x)=>srcLine(["se"],x||"† concept placeholder record");
   const brief=o=>Object.assign({node:"monitor",trace:["Service · repair orders"],blocks:[src()],chips:[],brief:true},o);
-  if(/^(go )?home$|^(go to |open )?my day$/.test(t)) return brief({trace:["Navigation"],lead:"Back to <b>My Day</b>.",blocks:[],after:goHome});
-  if(/^undo\b/.test(t)&&W.lastEdit) { const w=W.lastEdit; return brief({node:"auto",lead:"Undone. The RO is back to how it was.",after:()=>undoEdit(w)}); }
+  if(/^(go )?home$|^(go to |open )?my day$/.test(t)) return brief({dest:"home",trace:["Navigation"],lead:"Back to <b>My Day</b>.",blocks:[],after:()=>{ goHome(); aivaRegion("#myday"); }});
+  if(/^undo\b/.test(t)&&W.lastEdit) { const w=W.lastEdit; return brief({dest:"work",node:"auto",lead:"Undone. The RO is back to how it was.",after:()=>{ undoEdit(w); aivaRegion("#workspace"); }}); }
   if((code==="TCE"||/clock (me )?(on|off|in|out)/.test(t))&&(live||(tech&&/clock/.test(t)))){
     if(!live) return brief({lead:"Open an RO first, and I'll clock you on its active line.",chips:[{label:"What's my next RO?",prompt:"What's my next RO?"}]});
     const on=W.clock&&W.clock.ro===cur.key, L=(cur.st.jobs.find(j=>!j.done)||cur.st.jobs[0]).L, at=hhmm(now()), pre=code==="TCE"?"<b>TCE</b> — Tech Clock Entry. ":"";
-    return brief({node:"auto",trace:["Drive command TCE","Service · time clock"],
+    return brief({dest:"work",node:"auto",trace:["Drive command TCE","Service · time clock"],
       lead:on?`${pre}Clocked <b>off</b> RO ${cur.key} at ${esc(at)}.`:`${pre}Clocked <b>on</b> RO ${cur.key}, line ${L} at ${esc(at)}.`,
-      blocks:[src("Tech Clock Entry · small edit, undo with TCE")],chips:[{label:on?"Clock back on":"Clock off",prompt:"TCE"}],
-      after:()=>{ if(on){ setClock(null); logEntry("auto","Clocked off RO "+cur.key+" at "+at,"se"); } else { setClock({ro:cur.key,L,t:Date.now()}); logEntry("auto","Clocked on RO "+cur.key+", line "+L+" at "+at,"se"); } refreshWork(); }});
+      blocks:[src("Time clock · small edit")],chips:[{label:on?"Clock back on":"Clock off",prompt:on?"clock on":"clock off"}],
+      after:()=>{ if(on){ setClock(null); logEntry("auto","Clocked off RO "+cur.key+" at "+at,"se"); } else { setClock({ro:cur.key,L,t:Date.now()}); logEntry("auto","Clocked on RO "+cur.key+", line "+L+" at "+at,"se"); } refreshWork();
+        setTimeout(()=>{ aivaHit(document.querySelector('#wscontent [data-act="clock"]'),on?"Clocked off":"Clocked on"); const tm=document.querySelector("#dz .timer"); if(tm){ aivaHit(tm); aivaRegion("#dossier"); } },80); }});
   }
   if(tech&&/next (ro|repair)|what'?s next|my next/.test(t)){
     const k=RO_QUEUE.find(q=>!isOpenRO(q))||RO_QUEUE[0], d=RO[k];
-    return brief({lead:`Your next RO is <b>${k}</b>, a ${esc(d.vehicle)}: ${esc(d.summary.toLowerCase())}, promised ${esc(d.promised)}. Opening it now.`,after:()=>openRO(k,{via:"chat"})});
+    return brief({dest:"work",lead:`Your next RO is <b>${k}</b>, a ${esc(d.vehicle)}: ${esc(d.summary.toLowerCase())}, promised ${esc(d.promised)}. Opening it now.`,after:()=>{ openRO(k,{via:"chat"}); aivaOpened(); }});
   }
   if(tech&&/parts? (arrive|in\b|here)|did my parts/.test(t)) return brief({trace:["Parts · special orders"],lead:"Yes. The <b>front struts for RO 13452A</b> arrived at 9:40 AM and are at the parts counter (ticket 4471).",blocks:[srcLine(["pa","se"],"† concept placeholder record")],chips:[{label:"Resume RO 13452A",prompt:"RO 13452A"}]});
   const m=/^@?\s*(?:ro\s*)?#?(\d{4,5}[a-z]?)$/i.exec(t);
-  if(m&&RO[m[1].toUpperCase()]){ const k=m[1].toUpperCase(); return brief({lead:`Opening <b>RO ${k}</b> — ${esc(RO[k].vehicle)}, ${esc(RO[k].summary.toLowerCase())}.`,after:()=>openRO(k)}); }
+  if(m&&RO[m[1].toUpperCase()]){ const k=m[1].toUpperCase(); return brief({dest:"work",lead:`Opening <b>RO ${k}</b> — ${esc(RO[k].vehicle)}, ${esc(RO[k].summary.toLowerCase())}.`,after:()=>{ openRO(k); aivaOpened(); }}); }
   if((cur||tech)&&/^how (do|can) i|^what('?s| is| are) (a |the )?(3c|labor op|flag)/.test(t)){
     const help=o=>brief(Object.assign({trace:["Help · technician workflow"],blocks:[]},o));
     if(/part/.test(t)) return help({lead:"Open the line you're working on and choose <b>Add a part</b>, or just tell me, e.g. \"add front brake pads to line A\". Anything that changes the price gets the advisor's approval first."});
-    if(/clock|time/.test(t)) return help({lead:"Choose <b>Clock on</b> at the top of the RO, or type <kbd>TCE</kbd> here. Your time shows in AIVA Insights on the right."});
+    if(/clock|time/.test(t)) return help({lead:"Choose <b>Diagnostic</b> or <b>Labor</b> on the line you're working: arrow to it and press <kbd>Enter</kbd>, or just ask me. Your time shows in AIVA Insights on the right, and every punch is in <b>My Hours</b>."});
     if(/3c|cause|correction/.test(t)) return help({lead:"<b>Complaint</b> is what the customer said, <b>Cause</b> is what you found, and <b>Correction</b> is what you did. Each line needs all three."});
     return help({lead:"In Beginner mode, the steps at the top of each RO show what to do next. You can also ask me about parts, clocking on or the 3C's."});
   }
   if((cur||tech)&&/\bhistory\b/.test(t)){
     if(!cur) return brief({lead:"Open an RO first and I'll bring up its vehicle history in AIVA Insights.",blocks:[]});
-    return brief({lead:RO[cur.key].history.length?"Vehicle history is open in <b>AIVA Insights</b> on the right.":"There are no prior visits on file for this vehicle.",after:()=>{ cur.st.open.hist=true; $("#stage").classList.add("dos-open"); renderDossier(); setTimeout(()=>{ const h=document.querySelector('[data-k="hist"]'); if(h&&h.scrollIntoView) h.scrollIntoView({behavior:"smooth",block:"start"}); },100); }});
+    return brief({dest:RO[cur.key].history.length?"insights":undefined,lead:RO[cur.key].history.length?"Vehicle history is open in <b>AIVA Insights</b> on the right.":"There are no prior visits on file for this vehicle.",after:()=>{ cur.st.open.hist=true; $("#stage").classList.add("dos-open"); renderDossier(); aivaRegion("#dossier"); setTimeout(()=>{ const h=document.querySelector('[data-k="hist"]'); if(h){ if(h.scrollIntoView) h.scrollIntoView({behavior:"smooth",block:"start"}); aivaHit(h.closest(".dsec"),"From AIVA"); } },120); }});
   }
   if((cur||tech)&&/\bnote\b|measured|\bmm\b/.test(t)){
     if(!live) return brief({lead:"Notes go on an open RO. Try it on <b>RO 13456B</b>.",blocks:[],chips:[{label:"Open RO 13456B",prompt:"RO 13456B"}]});
     const j=cur.st.jobs.find(x=>!x.done)||cur.st.jobs[0], pads=cur.key==="13456B"&&/pad/.test(t);
     const body=pads?"Front pads measured 3 mm. Below the 4 mm minimum; source of the grinding noise.":text.trim().replace(/^(please\s+)?(add (a )?)?note:?\s*(that\s+)?/i,"").replace(/^./,c=>c.toUpperCase());
-    return brief({node:"auto",lead:`Added to the <b>cause</b> on line ${j.L} of RO ${cur.key}. It's a small edit, so it's already in — <b>Undo</b> is on the field.`,
+    return brief({dest:"work",node:"auto",lead:`Added to the <b>cause</b> on line ${j.L} of RO ${cur.key}. It's a small edit, so it's already in — <b>Undo</b> is on the field.`,
       blocks:[src("RO "+cur.key+" · line "+j.L+" · 3C's")],chips:[{label:"Undo",prompt:"Undo"}].concat(pads?[{label:"Add front brake pads to line A",prompt:"Add front brake pads to line A",auto:true}]:[]),
       after:()=>{ j.c3=true; j.prevCause=j.cause; j.cause=body; j.causeAI=true; W.lastEdit="note:"+j.L;
         logEntry("auto","Note added to RO "+cur.key+" line "+j.L+" cause (dictated; Undo available)","se");
         if(W.active===cur.id) renderPane();
-        setTimeout(()=>{ const el=document.querySelector('[data-field="cause"][data-j="'+j.L+'"]'); if(el&&el.scrollIntoView) el.scrollIntoView({behavior:"smooth",block:"center"}); },60);
+        setTimeout(()=>{ const el=document.querySelector('[data-field="cause"][data-j="'+j.L+'"]'); if(el){ if(el.scrollIntoView) el.scrollIntoView({behavior:"smooth",block:"center"}); aivaHit(el,"Added by AIVA"); } },80);
         if(pads) pushInsight(cur.id,{ic:"spark",t:"Pads below minimum: recommend replacement",b:"3 mm vs 4 mm minimum. Front pads BRF-1478 fit this vehicle. Ask me to add them to line A."}); }});
   }
   const wantsPads=/pad/.test(t)&&/add|replace|put/.test(t), wantsRotor=/rotor/.test(t)&&/add|replace|put/.test(t);
@@ -2882,15 +3244,52 @@ function roRoute(text){
   }
   if((cur||tech)&&/\brecall\b/.test(t)){
     if(cur&&cur.key==="13456B"){ const has=cur.st.jobs.some(j=>j.recall);
-      return brief({node:has?"monitor":"auto",lead:has?"Recall <b>23S12</b> is already on this RO.":"Added recall <b>23S12</b> to this RO as a new line. It's warranty work, so the price doesn't change — <b>Undo</b> is on the line.",blocks:[src("† placeholder recall")],after:()=>{ if(!has){ const L=addRecall(); if(L) W.lastEdit="job:"+L; } }}); }
+      return brief({dest:has?undefined:"work",node:has?"monitor":"auto",lead:has?"Recall <b>23S12</b> is already on this RO.":"Added recall <b>23S12</b> to this RO as a new line. It's warranty work, so the price doesn't change — <b>Undo</b> is on the line.",blocks:[src("† placeholder recall")],after:()=>{ if(!has){ const L=addRecall(); if(L) W.lastEdit="job:"+L; } }}); }
     return brief({lead:"No open recalls on this vehicle.",blocks:[src("† placeholder recall check")]});
   }
   return null;
 }
 
 /* ---------------- chat dock ---------------- */
-function openPanel(){ const p=$("#cpanel"); clearTimeout(W.collapseT); if(p.classList.contains("hide")){ p.classList.remove("hide"); $("#histBtn").classList.add("on"); renderChips(); setTimeout(scrollDown,0); } }
-function closePanel(){ clearTimeout(W.collapseT); const p=$("#cpanel"); p.classList.add("hide"); p.classList.remove("full","chats"); $("#histBtn").classList.remove("on"); renderChips(); }
+function openPanel(){ const p=$("#cpanel"); clearTimeout(W.collapseT); if(p.classList.contains("hide")){ p.classList.remove("hide"); $("#histBtn").classList.add("on"); renderChips(); setTimeout(scrollDown,0); } aivaNoteHide(); syncFocus(); }
+function closePanel(){ clearTimeout(W.collapseT); const p=$("#cpanel"); p.classList.add("hide"); p.classList.remove("full","chats"); $("#histBtn").classList.remove("on"); renderChips(); syncFocus(); }
+/* v22 — keep attention where AIVA is answering */
+function syncFocus(){
+  const st=$("#stage"), on=panelOpen()&&!$("#app").classList.contains("run-on");
+  st.classList.toggle("cfocus",on); st.classList.toggle("cfull",on&&$("#cpanel").classList.contains("full"));
+}
+function aivaRegion(sel){
+  const el=$(sel); if(!el) return;
+  if(getComputedStyle(el).display==="none"){ if(sel==="#dossier"){ const b=document.querySelector(".dos-btn"); if(b) aivaHit(b); } return; }
+  el.classList.remove("aiva-glow"); void el.offsetWidth; el.classList.add("aiva-glow"); setTimeout(()=>el.classList.remove("aiva-glow"),2000);
+}
+function aivaHit(el,label){
+  if(!el) return;
+  const box=(el.tagName==="INPUT"&&el.type==="checkbox"&&el.closest("label"))||el;
+  if(box.scrollIntoView&&!box.closest(".plat")) box.scrollIntoView({behavior:"smooth",block:box.closest("#wscontent,.cv-body")?"center":"nearest"});
+  box.classList.remove("aiva-hit"); void box.offsetWidth; box.classList.add("aiva-hit"); setTimeout(()=>box.classList.remove("aiva-hit"),2800);
+  if(label) setTimeout(()=>{ const r=box.getBoundingClientRect(); if(!r.width) return;
+    const t=document.createElement("div"); t.className="aiva-tag-float"; t.innerHTML=markSVG(11)+"<span>"+esc(label)+"</span>"; document.body.appendChild(t);
+    t.style.left=Math.max(8,Math.min(innerWidth-t.offsetWidth-8,r.right-t.offsetWidth))+"px"; t.style.top=Math.max(60,r.top-t.offsetHeight-6)+"px";
+    setTimeout(()=>t.remove(),2800); },340);
+}
+function aivaFind(text){
+  let best=null;
+  document.querySelectorAll("#wscontent tr, #wscontent .pr, #wscontent .bcol").forEach(el=>{ if(el.textContent.includes(text)&&(!best||el.textContent.length<best.textContent.length)) best=el; });
+  return best;
+}
+function aivaNote(r){
+  const n=$("#aivaNote"); clearTimeout(aivaNote.t);
+  if(!r){ n.innerHTML=`${markSVG(14)}<span class="nt">AIVA is on it…</span>`; n.hidden=false; return; }
+  const txt=htmlToText(r.lead).replace(/\s+/g," ").trim(), where=r.dest==="insights"?"→ AIVA Insights":r.dest==="home"?"← My Day":"↑ In the workflow";
+  n.innerHTML=`${markSVG(14)}<span class="nt">${esc(txt.length>96?txt.slice(0,94)+"…":txt)}</span><span class="where">${where}</span>`; n.hidden=false;
+  aivaNote.t=setTimeout(aivaNoteHide,5200);
+}
+function aivaOpened(){
+  aivaRegion("#workspace");
+  setTimeout(()=>{ aivaHit(document.querySelector("#wscontent .ro-head, #wscontent .xhead, #wscontent .learnbar"),"Opened by AIVA"); },1000);
+}
+function aivaNoteHide(){ const n=$("#aivaNote"); if(n) n.hidden=true; }
 function panelOpen(){ return !$("#cpanel").classList.contains("hide"); }
 function pendingCfm(){ const th=S.threads[S.cur]; return !!th&&th.turns.some(t=>t.r&&t.r.blocks.some(b=>b.t==="cfm"&&b.state==="pending")); }
 function autoCollapse(){
@@ -2899,9 +3298,9 @@ function autoCollapse(){
 }
 function chipsFor(){
   const t=activeRO(), pk=S.persona;
-  if(t&&t.key==="13456B"&&W.level==="beginner") return ["How do I add a part?","What are the 3C's?","Note front pads at 3 mm","TCE"];
-  if(t&&t.key==="13456B") return ["Note front pads at 3 mm","Add front brake pads to line A","TCE","Show vehicle history"];
-  if(t) return ["TCE","Show vehicle history","What's my next RO?"].slice(0,pk==="tech"?3:2);
+  if(t&&t.key==="13456B"&&W.level==="beginner") return ["What are the 3C's?","Note front pads at 3 mm","Draft the correction for line A","Show my punch times"];
+  if(t&&t.key==="13456B") return ["Note front pads at 3 mm","Draft the correction for line A","Add front brake pads to line A","Finish the ready lines"];
+  if(t) return ["Show my punch times","Show vehicle history","What's my next RO?"].slice(0,pk==="tech"?3:2);
   if(pk==="tech") return ["What's my next RO?","Did my parts arrive?","/","@13461C"];
   return starters(pk).slice(0,3).map(s=>s.prompt).concat(["/"]);
 }
@@ -2930,7 +3329,7 @@ function stopListen(){
 
 /* ---------------- mega menu & popovers ---------------- */
 function renderMega(){
-  const res=[["Tutorials and walkthroughs","prompt","/learn"],["Welcome tour","tour",""],["Your CDK Drive commands","prompt","/drive"],["CDK University","wf","CDK University"],["Customer Care","wf","Customer Care"]];
+  const res=[["Tutorials and walkthroughs","prompt","/learn"],["Welcome tour","tour",""],["Working from the keyboard","prompt","/keys"],["CDK University","wf","CDK University"],["Customer Care","wf","Customer Care"]];
   const more=[["Cross-product runner","runner"],["Duplicate customers","dups"],["Activity log","activity"],["All products","launcher"]];
   $("#mega").innerHTML=`<div class="mega-h"><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><b style="font-size:16px">Navigate</b>
      <button class="chip" data-act="gohome">${gi("home",13)} My Day</button><span class="lbl">Everything opens in a new tab</span></div>
@@ -3005,9 +3404,10 @@ const ACT={
     if(s==="home") return asTech(goHome);
     if(s==="note") return onRO(()=>typeAndSend("Note front pads at 3 mm"));
     if(s==="pads") return onRO(()=>typeAndSend("Add front brake pads to line A"));
-    if(s==="tce") return onRO(()=>{ const inp=$("#input"); inp.focus(); inp.value="TCE"; onInput(); renderChips(); });
+    if(s==="tce") return onRO(()=>{ const t=activeRO(), j=t.st.jobs.find(x=>!x.done)||t.st.jobs[0]; if(W.level==="beginner") t.st.bOpen=j.L; renderPane(); focusSel(`[data-act="rstart"][data-type="labor"][data-j="${j.L}"]`,false); });
     if(s==="done") return onRO(()=>{ scrollToJob("A"); setTimeout(()=>{ const t=tabById("ro:13456B"); if(t){ markDone(t,"A",true); refreshWork(); } },500); });
     if(s==="mode") return onRO(()=>setTimeout(()=>togglePop("personaMenu"),200));
+    if(s==="keys") return onRO(()=>{ const ae=document.activeElement; if(ae&&ae.blur) ae.blur(); K.el=null; K.on=false; kMove("down"); });
     if(s==="mic"){ const mb=$("#micBtn"); if(mb.animate) mb.animate([{transform:"scale(1)"},{transform:"scale(1.3)"},{transform:"scale(1)"}],{duration:500,iterations:3}); else toast("Hold the mic button to talk"); }
   }
 };
@@ -3022,7 +3422,8 @@ function v17Click(e,g){
   if(g("#cdkLogoBtn")){ goHome(); return true; }
   if(g("#histBtn")){ panelOpen()?closePanel():openPanel(); return true; }
   if(g("#cpClose")){ closePanel(); return true; }
-  if(g("#cpFull")){ $("#cpanel").classList.toggle("full"); scrollDown(); return true; }
+  if(g("#cpFull")){ $("#cpanel").classList.toggle("full"); syncFocus(); scrollDown(); return true; }
+  if(g("#aivaNote")){ aivaNoteHide(); openPanel(); return true; }
   if(g("#cpChats")){ $("#cpanel").classList.toggle("chats"); return true; }
   if(g("#micBtn")){ if(Date.now()-W.micT<900) return true; startListen(); setTimeout(stopListen,1100); return true; }
   if(g("[data-thread]")&&!g("[data-pin]")&&!g("[data-del]")) $("#cpanel").classList.remove("chats");
@@ -3053,17 +3454,7 @@ function initV17(){
   document.addEventListener("keydown",e=>{
     const ae=document.activeElement, typing=ae&&((ae.tagName==="INPUT"&&ae.type!=="checkbox")||ae.tagName==="TEXTAREA"||ae.tagName==="SELECT");
     const t=activeRO();
-    if(W.level==="expert"&&t&&t.loaded&&!typing&&!e.metaKey&&!e.ctrlKey&&!e.altKey&&RO[t.key].status!=="Closed"&&!megaOpen()&&!(typeof TOUR_STATE!=="undefined"&&TOUR_STATE.on)){
-      const Ls=t.st.jobs.map(j=>j.L), i=Ls.indexOf(t.st.sel), k=(e.key||"").toLowerCase(), sel=t.st.jobs.find(j=>j.L===t.st.sel)||t.st.jobs[0];
-      if(e.key==="ArrowDown"||e.key==="ArrowUp"){ e.preventDefault(); t.st.sel=Ls[Math.max(0,Math.min(Ls.length-1,i+(e.key==="ArrowDown"?1:-1)))]; return renderPane(); }
-      if(k==="c"){ e.preventDefault(); if(W.clock&&W.clock.ro===t.key){ setClock(null); refreshWork(); } else startClock(t,sel.L); return; }
-      if(k==="d"){ e.preventDefault(); sel.diag=!sel.diag; if(sel.diag&&!W.clock) setClock({ro:t.key,L:sel.L,t:Date.now()}); return refreshWork(); }
-      if(k==="x"){ e.preventDefault(); return markDone(t,sel.L,!sel.done); }
-      if(k==="p"){ e.preventDefault(); t.st.jobs.forEach(x=>{ if(x!==sel) x.menu=false; }); sel.menu=!sel.menu; return renderPane(); }
-      if(k==="e"){ e.preventDefault(); const c=document.querySelector('input.xin[data-j="'+sel.L+'"]'); if(c) c.focus(); return; }
-      if(k==="r"){ e.preventDefault(); return ACT.asr(); }
-    }
-    if((e.key==="Escape"||e.key==="Enter")&&ae&&ae.classList&&ae.classList.contains("xin")) return ae.blur();
+    if((e.key==="Escape"||e.key==="Enter")&&ae&&ae.tagName==="INPUT"&&ae.classList&&ae.classList.contains("xin")) return ae.blur();
     if(e.key==="Escape"){ if(megaOpen()) return closeMega(); if(document.querySelector(".ppop.show")) return closePops(); if(panelOpen()&&!(typeof TOUR_STATE!=="undefined"&&TOUR_STATE.on)&&!$("#pop").classList.contains("show")) return closePanel(); }
     if(e.key==="Enter"&&e.target.dataset&&e.target.dataset.act==="closetab") return ACT.closetab(e.target);
     if(e.key==="/"&&!typing&&!e.metaKey&&!e.ctrlKey){ e.preventDefault(); const inp=$("#input"); inp.focus(); inp.value="/"; onInput(); renderChips(); }
@@ -3484,6 +3875,842 @@ document.addEventListener("keydown",e=>{
 caseReset();
 
 /* ==========================================================================
+   v21 — KEYBOARD
+   Arrow keys move a visible highlight between every field of the workflow
+   (and its tabs); Enter edits, toggles or presses; Esc steps back out.
+   F2 jumps to the AIVA message box from anywhere, and Esc there returns to
+   the field you left. Hold Ctrl+Space to talk.
+   ========================================================================== */
+const K={on:false,el:null,key:null,editing:false,prog:false};
+const isTextF=el=>!!el&&(el.tagName==="TEXTAREA"||(el.tagName==="INPUT"&&!["checkbox","radio","button"].includes(el.type)));
+const kBox=el=>(el.tagName==="INPUT"&&el.type==="checkbox"&&el.closest("label.tog"))||el;
+const kKey=el=>[el.tagName,el.dataset.act||"",el.dataset.j||"",el.dataset.field||"",el.dataset.p||"",el.dataset.id||"",el.dataset.prompt||"",el.dataset.cvtab||"",(el.textContent||"").trim().slice(0,24)].join("|");
+function kZone(el){ return !!el&&!!el.closest&&!!el.closest("#tabbar,#wscontent,#canvas"); }
+function kFields(){
+  const sel=["#tabbar button","#tabbar [data-act=\"closetab\"]",
+    "#wscontent .pane button","#wscontent .pane input","#wscontent .pane textarea","#wscontent .pane select","#wscontent .pane summary",
+    "#canvas .cv-head button","#cvBody button","#cvBody input","#cvBody select","#cvBody summary","#cvBody tr.click"].join(",");
+  return [...document.querySelectorAll(sel)].filter(el=>{ if(el.disabled||(el.readOnly&&el.tagName==="TEXTAREA")) return false; const r=kBox(el).getBoundingClientRect(); return r.width>0&&r.height>0; });
+}
+function kHint(){
+  const t=activeTab(), on=K.on&&K.el&&document.contains(K.el), el=K.el;
+  let h;
+  if(!on) h='<kbd>↓</kbd> work from the keyboard · <kbd>F2</kbd> ask AIVA · hold <kbd>Ctrl</kbd><kbd>Space</kbd> talk';
+  else if(K.editing) h=isTextF(el)?'Editing · <kbd>Esc</kbd> back to moving · <kbd>F2</kbd> chat':'Choosing · <kbd>↑</kbd><kbd>↓</kbd> change · <kbd>Enter</kbd> done';
+  else { const verb=isTextF(el)?"edit":el.tagName==="SELECT"?"choose":el.type==="checkbox"?"toggle":"select";
+    h=`<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> move · <kbd>Enter</kbd> ${verb} · <kbd>Esc</kbd> exit · <kbd>F2</kbd> chat`; }
+  document.querySelectorAll(".khint").forEach(x=>{ x.innerHTML=h; x.classList.toggle("on",!!on); });
+}
+function kInjectHint(){
+  if(W.mode!=="work") return;
+  const t=activeTab(); if(!t) return;
+  const host=t.kind==="cv"?$("#cvBody"):document.querySelector("#wscontent .pane");
+  if(host&&!host.querySelector(":scope > .khint")) host.insertAdjacentHTML("afterbegin",'<div class="khint" aria-live="polite"></div>');
+  kHint();
+}
+function kMark(){
+  document.querySelectorAll(".kf").forEach(x=>x.classList.remove("kf","kedit"));
+  if(K.on&&K.el&&document.contains(K.el)){ const b=kBox(K.el); b.classList.add("kf"); b.classList.toggle("kedit",K.editing); }
+  kHint();
+}
+function kVisible(el){
+  const sc=el.closest("#wscontent,.cv-body,.md-full"); if(!sc) return;
+  const r=kBox(el).getBoundingClientRect(), c=sc.getBoundingClientRect(), dock=$("#chatdock").getBoundingClientRect();
+  const limit=Math.min(c.bottom,dock.top)-14;
+  if(r.bottom>limit) sc.scrollBy({top:r.bottom-limit+12,behavior:"smooth"});
+  else if(r.top<c.top+10) sc.scrollBy({top:r.top-c.top-24,behavior:"smooth"});
+}
+function kSet(el,editing){
+  if(!el) return;
+  K.on=true; K.el=el; K.key=kKey(el); K.editing=!!editing;
+  if(el.tabIndex<0&&!el.hasAttribute("tabindex")) el.setAttribute("tabindex","-1");
+  if(document.activeElement!==el){ K.prog=true; el.focus({preventScroll:true}); K.prog=false; }
+  if(isTextF(el)&&!editing){ try{ el.setSelectionRange(el.value.length,el.value.length); }catch(_){} }
+  kVisible(el); kMark();
+  const tr=el.closest("tr.xl"), t=activeTab();
+  if(tr&&t&&t.st&&t.st.sel!==tr.dataset.j){ t.st.sel=tr.dataset.j; document.querySelectorAll("tr.xl").forEach(r=>r.classList.toggle("sel",r.dataset.j===t.st.sel)); }
+}
+function kExit(){ K.on=false; K.editing=false; if(K.el&&document.activeElement===K.el) K.el.blur(); K.el=null; kMark(); }
+function kMove(dir){
+  const all=kFields(); if(!all.length) return;
+  if(!K.el||!document.contains(K.el)){   // start at the first field in view
+    const sc=W.mode==="home"?$("#mdFull"):$("#workspace").classList.contains("cv")?$("#cvBody"):$("#wscontent"), c=sc.getBoundingClientRect();
+    kSet(all.find(el=>sc.contains(el)&&kBox(el).getBoundingClientRect().top>=c.top)||all[0]); return; }
+  const a=kBox(K.el).getBoundingClientRect(), ax=a.left+a.width/2, ay=a.top+a.height/2;
+  const others=all.filter(el=>el!==K.el&&kBox(el)!==kBox(K.el)).map(el=>({el,r:kBox(el).getBoundingClientRect()}));
+  const vOver=(p,q)=>Math.min(p.bottom,q.bottom)-Math.max(p.top,q.top)>Math.min(p.height,q.height)*0.4;
+  const cx=r=>r.left+r.width/2, cy=r=>r.top+r.height/2;
+  let best=null;
+  if(dir==="down"||dir==="up"){
+    const c=others.filter(o=>!vOver(o.r,a)&&(dir==="down"?cy(o.r)>ay:cy(o.r)<ay));
+    if(c.length){
+      const edge=dir==="down"?Math.min(...c.map(o=>o.r.top)):Math.max(...c.map(o=>o.r.bottom));
+      const ref=c.find(o=>(dir==="down"?o.r.top:o.r.bottom)===edge).r;
+      const row=c.filter(o=>vOver(o.r,ref)||Math.abs((dir==="down"?o.r.top:o.r.bottom)-edge)<14);
+      const d=o=>(o.r.left<=ax&&o.r.right>=ax)?0:Math.min(Math.abs(o.r.left-ax),Math.abs(o.r.right-ax));
+      row.sort((p,q)=>d(p)-d(q)); best=row[0].el;
+    }
+  } else {
+    const c=others.filter(o=>vOver(o.r,a)&&(dir==="right"?cx(o.r)>ax:cx(o.r)<ax));
+    c.sort((p,q)=>Math.abs(cx(p.r)-ax)-Math.abs(cx(q.r)-ax)); if(c.length) best=c[0].el;
+  }
+  if(best) kSet(best,false);
+}
+function kAfterRender(){
+  kInjectHint();
+  if(!K.on||!K.key||document.activeElement===$("#input")) return kMark();
+  const m=kFields().find(el=>kKey(el)===K.key);
+  if(m) kSet(m,false); else { K.el=null; kMark(); }
+}
+/* F2 · chat round trip */
+function chatFocus(){
+  if(K.on&&K.key&&document.activeElement!==$("#input")) S.kret={key:K.key,tab:W.active,mode:W.mode};
+  closeMega(); closePops();
+  const inp=$("#input"); inp.focus(); try{ inp.select(); }catch(_){}
+  const c=document.querySelector("#chatdock .composer"); if(c){ c.classList.remove("f2flash"); void c.offsetWidth; c.classList.add("f2flash"); setTimeout(()=>c.classList.remove("f2flash"),600); }
+}
+function chatReturn(){
+  const r=S.kret, inp=$("#input"); S.kret=null;
+  if(!r||r.mode!==W.mode||r.tab!==W.active){ inp.blur(); return; }
+  const m=kFields().find(el=>kKey(el)===r.key);
+  inp.blur(); if(m) kSet(m,false);
+}
+document.addEventListener("focusin",e=>{
+  if(K.prog) return;
+  const el=e.target;
+  if(kZone(el)){ K.on=true; K.el=el; K.key=kKey(el); K.editing=isTextF(el); kMark(); }
+  else if(K.on){ K.on=false; K.editing=false; K.el=null; kMark(); }
+});
+document.addEventListener("click",e=>{
+  const st=$("#stage"); if(!st.classList.contains("cfocus")) return;
+  if(e.target.closest&&e.target.closest("#myday,#workspace,#dossier")&&!e.target.closest("#chatdock")){ if(isMobile()){ closePanel(); return; } e.preventDefault(); e.stopPropagation(); closePanel(); }
+},true);
+let talkKey=false;
+document.addEventListener("keydown",e=>{
+  // F2 — type to AIVA, from anywhere (even mid-edit)
+  if(e.key==="F2"){ e.preventDefault(); e.stopImmediatePropagation(); if(!e.repeat) chatFocus(); return; }
+  // Hold Ctrl+Space — talk
+  if(e.code==="Space"&&e.ctrlKey&&!e.metaKey){ e.preventDefault(); e.stopImmediatePropagation(); if(e.repeat||talkKey) return;
+    talkKey=true; if(K.on&&K.key&&document.activeElement!==$("#input")) S.kret={key:K.key,tab:W.active,mode:W.mode}; closeMega(); closePops(); startListen(); return; }
+  // Arrow-key field navigation in the workflow space
+  if(isMobile()||megaOpen()||e.metaKey||e.ctrlKey||e.altKey) return;
+  if((typeof TOUR_STATE!=="undefined"&&TOUR_STATE.on)||document.querySelector("#obLayer.show")) return;
+  const ae=document.activeElement, inp=$("#input");
+  if(ae===inp||(ae&&ae.closest&&ae.closest(".ppop,#chatdock,#runBar"))) return;
+  if(W.mode==="work"){ const t=activeTab(); if(!t||(t.kind!=="cv"&&!t.loaded)) return; }
+  const arrows={ArrowUp:"up",ArrowDown:"down",ArrowLeft:"left",ArrowRight:"right"};
+  const inZone=kZone(ae);
+  if(!K.on||!inZone){
+    if(arrows[e.key]&&(!ae||ae===document.body||inZone)){ e.preventDefault(); e.stopImmediatePropagation(); K.el=null; kMove(arrows[e.key]); }
+    return;
+  }
+  const el=K.el||ae;
+  if(K.editing){
+    if(e.key==="Escape"||(e.key==="Enter"&&(el.tagName==="SELECT"||(el.tagName==="INPUT"&&isTextF(el))))){ e.preventDefault(); e.stopImmediatePropagation(); K.editing=false; if(el.tagName==="SELECT") el.dispatchEvent(new Event("change",{bubbles:true})); kMark(); }
+    return;   // native caret and value keys while editing
+  }
+  if(arrows[e.key]){ e.preventDefault(); e.stopImmediatePropagation(); kMove(arrows[e.key]); return; }
+  if(e.key==="Escape"){ e.preventDefault(); e.stopImmediatePropagation(); kExit(); return; }
+  if(e.key==="Enter"){
+    if(isTextF(el)||el.tagName==="SELECT"){ e.preventDefault(); e.stopImmediatePropagation(); K.editing=true; kMark(); return; }
+    if((el.tagName==="INPUT"&&el.type==="checkbox")||el.matches('[data-act="closetab"]')||el.tagName==="TR"){ e.preventDefault(); e.stopImmediatePropagation(); el.click(); return; }
+    return;   // buttons and summaries: native Enter
+  }
+  if(isTextF(el)&&e.key.length===1&&W.level!=="expert"){ K.editing=true; kMark(); return; }   // typing starts editing
+},true);
+document.addEventListener("keyup",e=>{
+  if(talkKey&&(e.code==="Space"||e.key==="Control")){ e.preventDefault(); talkKey=false; stopListen(); }
+},true);
+window.addEventListener("blur",()=>{ if(talkKey){ talkKey=false; stopListen(); } });
+
+/* ==========================================================================
+   v25 — TECHNICIAN RO WORKFLOWS
+   Six workflows from the live-video analysis, rebuilt for Unify:
+   1 start time on a line · 2 view punch times · 3 review punch times on an RO
+   4 view flagged hours · 5 next assigned job · 6 write the story inline.
+   Work is always assigned to the technician. The speed comes from finishing
+   every workflow from the keyboard, not from memorising codes.
+   ========================================================================== */
+Object.assign(GI,{
+  play:'<path d="M7 4.5v15l12-7.5z"/>',
+  pause:'<rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/>',
+  stopsq:'<rect x="5.5" y="5.5" width="13" height="13" rx="2"/>',
+  save:'<path d="M5 3h11l3 3v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M8 3v5h7V3M7 21v-7h10v7"/>'
+});
+W.ros={}; W.hrs={view:"punch",day:0};
+const MIN=60e3, HR=3600e3;
+const VNOW0=(()=>{ const d=new Date(); d.setHours(12,40,0,0); return Math.max(Date.now(),+d); })();
+const VOFF=VNOW0-Date.now();   // shown clock = real clock + VOFF (zero after 12:40 PM)
+const hm=ms=>hhmm(new Date(ms+VOFF));
+const hrsOf=ms=>(ms/HR).toFixed(2);
+const typeName=x=>x==="diag"?"Diagnostic":x==="labor"?"Labor":"Shop time";
+
+/* Dealer story library, mapped to labor ops. Placeholder text (†). */
+const STORY_LIB={
+ BRK01:{src:"Statler Toyota story library · BRK01",
+   base:"Inspected the brake system: measured pad thickness and checked the rotors, calipers and hardware.",
+   tags:[["Pads worn below minimum","Front pads were worn below minimum thickness; replaced the front pad set and cleaned and lubricated the caliper slides.",/below (the )?(\d+ ?mm )?minimum|worn below/i],
+         ["Loose lining","The inner pad lining was loose on its backing plate; replaced with the new pad set.",/loose lining|lining (is )?loose/i],
+         ["Rotors scored","Front rotors were scored; replaced both front rotors.",/scored/i],
+         ["Rotor runout over spec","Front rotor runout was over specification; replaced both front rotors.",/runout/i],
+         ["Caliper slide sticking","Caliper slide pins were sticking; cleaned and lubricated the slide pins.",/slide|sticking/i],
+         ["Pad corrosion","Pad abutments were corroded; cleaned them and replaced the abutment clips.",/corro/i]],
+   end:"Torqued to specification and road tested. The noise is no longer present."},
+ OF002:{src:"Statler Toyota story library · OF002",
+   base:"Drained the engine oil and replaced the oil filter. Refilled with 5.7 qt 0W-20 synthetic.",
+   tags:[["Due by mileage","",/mileage|schedule/i],["Oil life below 15%","",/oil life/i],["Oil dark and dirty","",/dark|dirty/i],["Drain plug gasket worn","Replaced the drain plug gasket.",/gasket/i]],
+   end:"Reset the oil life monitor and checked for leaks."},
+ M60K:{src:"Statler Toyota story library · M60K",
+   base:"Performed the 60,000 mile maintenance per the manufacturer schedule.",
+   tags:[["Due by schedule","",/schedule/i],["Engine air filter dirty","Replaced the engine air filter.",/air filter/i],["Cabin filter dirty","Replaced the cabin air filter.",/cabin/i],["Tires due for rotation","Rotated the tires and set pressures.",/rotat/i]],
+   end:"Reset the maintenance reminder and road tested."},
+ AC100:{src:"Statler Toyota story library · AC100",
+   base:"Performed an A/C performance test and checked system pressures.",
+   tags:[["Compressor clutch not engaging","Replaced the A/C compressor.",/clutch|compressor/i],["Refrigerant low","Evacuated and recharged the system to specification.",/low|leak/i]],
+   end:"Verified vent temperature at specification."},
+ SUS22:{src:"Statler Toyota story library · SUS22",
+   base:"Inspected the front suspension.",
+   tags:[["Strut leaking","Replaced both front strut assemblies.",/leak/i],["Strut mount worn","Replaced the strut mounts with the assemblies.",/mount/i]],
+   end:"Torqued to specification, checked alignment angles and road tested. The clunk is gone."}
+};
+const libFor=j=>STORY_LIB[(j.labor[0]||{}).op];
+function activeTags(j){ const lib=libFor(j); if(!lib) return []; return lib.tags.filter(tg=>(j.tags||[]).includes(tg[0])||tg[2].test(j.cause||"")); }
+function draftFor(j){
+  const lib=libFor(j), cause=(j.cause||"").trim();
+  if(!lib) return cause?{text:"Diagnosed and repaired: "+cause.replace(/\.$/,"")+". Verified the repair.",src:"your cause (no library story is mapped to this op)",mapped:false}:null;
+  const m=/(\d+(?:\.\d+)?)\s?mm/.exec(cause), op=j.labor[0].op;
+  const parts=[lib.base];
+  if(m&&op==="BRK01") parts.push("Front pads measured "+m[1]+" mm.");
+  activeTags(j).forEach(tg=>{ if(tg[1]&&!parts.includes(tg[1])) parts.push(tg[1]); });
+  parts.push(lib.end);
+  return {text:parts.join(" "),src:lib.src,mapped:true};
+}
+function ensureDraft(j){
+  if((j.corr||"").trim()||j.corrDismissed) return;
+  const d=draftFor(j); if(d){ j.corr=d.text; j.corrAI=true; j.corrSrc=d.src; }
+}
+const storyN=j=>1+(!!(j.cause||"").trim())+(!!(j.corr||"").trim());
+
+/* ---------- RO state now lives per RO, so punches survive closing a tab ---------- */
+function newROState(k){
+  if(W.ros[k]) return W.ros[k];
+  const s={jobs:JSON.parse(JSON.stringify(RO[k].jobs)).map(j=>Object.assign(j,{diag:false,done:false,c3:false,cause:"",corr:"",menu:false,punches:[],hold:false,story:false,tags:[],corrAI:false,corrSrc:"",need:null,saved:0,doneAt:0})),
+    insights:RO[k].insights.map(x=>Object.assign({},x,x.a?{a:Object.assign({},x.a)}:{})),open:{cust:false,veh:false,hist:false,punch:true},odoOut:"",pf:"all",started:false};
+  if(k==="13456B"){ const s0=Date.now()-35*MIN; s.jobs[0].punches.push({type:"diag",s:s0,e:s0+1823e3}); }
+  W.ros[k]=s; return s;
+}
+const roState=k=>normJobs(newROState(k));
+function normJobs(st){ st.jobs.forEach(j=>{ if(!j.punches) Object.assign(j,{punches:[],hold:false,story:!!j.c3,tags:[],corrAI:false,corrSrc:"",need:null,saved:0,doneAt:0,cause:j.cause||"",corr:j.corr||""}); }); return st; }
+function roStatus(t){ const d=RO[t.key], st=t.st; if(st.review) return "Ready for Review"; if(d.status==="Not Started"&&(st.started||W.clock&&W.clock.ro===t.key)) return "Being Repaired"; return d.status; }
+function lineTot(j,type){ return j.punches.filter(p=>p.type===type).reduce((a,p)=>a+((p.e||Date.now())-p.s),0); }
+
+/* ---------- 1 · start time on a line ---------- */
+function setClock(c){
+  const prev=W.clock;
+  if(prev){ const ps=W.ros[prev.ro]; const j=ps&&ps.jobs.find(x=>x.L===prev.L); const p=j&&j.punches.find(x=>x.e==null); if(p) p.e=Date.now();
+    if(j&&c&&(c.ro!==prev.ro||c.L!==prev.L)) j.hold=true; }
+  if(c){ c.type=c.type||"labor"; const s=roState(c.ro), j=s.jobs.find(x=>x.L===c.L); if(j){ j.punches.push({type:c.type,s:c.t,e:null}); j.hold=false; j.diag=c.type==="diag"; } s.started=true; }
+  W.clock=c;
+  if(c&&!W.tick) W.tick=setInterval(()=>{ if(!W.clock) return; const ms=Date.now()-W.clock.t;
+    document.querySelectorAll("[data-tick]").forEach(el=>el.textContent=fmtClock(ms));
+    const h=document.getElementById("tmrHrs"); if(h) h.textContent=hrsOf(ms)+" h"; },1000);
+  if(!c&&W.tick){ clearInterval(W.tick); W.tick=null; }
+}
+function startClock(t,L,type){ runStart(t,L,type||"labor"); }
+function runStart(t,L,type,opt){
+  opt=opt||{}; if(!t) return;
+  const j=t.st.jobs.find(x=>x.L===L); if(!j||j.done) return;
+  if(W.clock&&W.clock.ro===t.key&&W.clock.L===L&&W.clock.type===type) return;
+  if(W.clock&&W.clock.ro!==t.key&&!opt.confirmed){ t.st.conflict={L,type}; renderPane(); focusSel('[data-act="rconf"]'); return; }
+  const prev=W.clock; t.st.conflict=null;
+  setClock({ro:t.key,L,t:Date.now(),type});
+  logEntry("auto",`Started ${typeName(type).toLowerCase()} time on RO ${t.key}, line ${L} at ${hm(Date.now())}`,"se");
+  if(prev&&prev.ro===t.key&&prev.L!==L) toast(`Line ${prev.L} on hold · ${typeName(type)} time running on line ${L}`);
+  if(prev&&prev.ro!==t.key){ const pt=tabById("ro:"+prev.ro); if(pt) pushInsight(pt.id,{ic:"clock",t:"On hold",b:`Line ${prev.L} was put on hold when you started RO ${t.key}.`}); toast(`RO ${prev.ro} line ${prev.L} on hold`); }
+  if(t.key==="13456B"&&L==="A"&&type==="diag"&&!t.st.diagIns){ t.st.diagIns=true; pushInsight(t.id,{ic:"wrench",t:"Diagnostic time is running",b:"Recommended measurement: pad thickness and rotor runout."}); }
+  refreshWork();
+}
+function runStop(t,L,hold){
+  if(!W.clock||W.clock.ro!==t.key||W.clock.L!==L) return;
+  setClock(null); const j=t.st.jobs.find(x=>x.L===L); if(j) j.hold=!!hold;
+  logEntry("auto",`${hold?"Put":"Stopped"} RO ${t.key} line ${L}${hold?" on hold":""} at ${hm(Date.now())}`,"se");
+  refreshWork();
+}
+function conflictHTML(t,j,dense){
+  const c=t.st.conflict; if(!c||c.L!==j.L||!W.clock) return "";
+  const o=W.clock, od=RO[o.ro], ms=Date.now()-o.t;
+  return `<div class="conflict ${dense?"dense":""}" role="alert">${gi("clock",16)}<div class="grow">You're clocked on <b>RO ${o.ro} · line ${o.L}</b> (${typeName(o.type).toLowerCase()}, <span data-tick>${fmtClock(ms)}</span>) on the ${esc(od.vehicle)}. Starting here puts that line on hold.</div>
+    <button class="btn primary sm" data-act="rconf" data-j="${j.L}">${gi("pause",12)} Hold RO ${o.ro} and start ${typeName(c.type).toLowerCase()}</button><button class="btn sm" data-act="rcancel">Cancel</button></div>`;
+}
+function runCtl(t,j,big){
+  if(j.done){ const l=lineTot(j,"labor"), d=lineTot(j,"diag"); return (l||d)?`<span class="rtot">${d?"Diag "+hrsOf(d)+" h":""}${d&&l?" · ":""}${l?"Labor "+hrsOf(l)+" h":""}</span>`:""; }
+  const on=W.clock&&W.clock.ro===t.key&&W.clock.L===j.L;
+  if(on) return `<span class="rlive ${big?"big":""}"><i></i>${typeName(W.clock.type)} <b data-tick>${fmtClock(Date.now()-W.clock.t)}</b><button data-act="rhold" data-j="${j.L}">${gi("pause",11)} Hold</button><button data-act="rstop" data-j="${j.L}">${gi("stopsq",11)} Stop</button></span>`;
+  const l=lineTot(j,"labor"), d=lineTot(j,"diag");
+  return `<span class="lrun">${j.hold?'<span class="held">'+gi("pause",11)+" On hold</span>":""}<button class="rbtn ${big?"big":""}" data-act="rstart" data-type="diag" data-j="${j.L}">${gi("play",11)} Diagnostic</button><button class="rbtn ${big?"big":""}" data-act="rstart" data-type="labor" data-j="${j.L}">${gi("play",11)} ${j.hold?"Resume labor":"Labor"}</button>${(l||d)&&!big?`<span class="rtot">${d?"D "+hrsOf(d):""}${d&&l?" · ":""}${l?"L "+hrsOf(l):""} h</span>`:""}</span>`;
+}
+
+/* ---------- 6 · the story, inline on the line ---------- */
+function storyHTML(t,j,mode){
+  const lib=libFor(j), tags=lib?lib.tags:[], on=activeTags(j).map(x=>x[0]), b=mode==="b", d=RO[t.key];
+  const src=j.corrAI?`<div class="st-src">${gi("spark",12)} Drafted by AIVA from <b>${esc(j.corrSrc)}</b>. It updates as you change the cause. <button class="linkbtn" data-act="undo" data-what="corr:${j.L}">Undo</button></div>`
+    :j.corrSrc?`<div class="st-src muted">${gi("check",12)} Started from ${esc(j.corrSrc)} · edited by you</div>`
+    :draftFor(j)?`<button class="btn sm" data-act="draft" data-j="${j.L}">${gi("spark",12)} Draft with AIVA</button>`:"";
+  const need=j.need==="cause"?"Add the cause before you finish this line.":j.need==="corr"?"Add the correction before you finish this line. Warranty claims are rejected without all three C's.":"";
+  return `<div class="story ${mode}" data-story="${j.L}" id="story-${j.L}">
+    ${b?"":`<div class="st-h"><b>Story</b><span class="lbl">Complaint, cause, correction · line ${j.L}</span></div>`}
+    <div class="st-grid">
+      <div class="st-f st-comp"><label>Complaint${b?" · what the customer said":""}</label><div class="st-ro">${esc(j.concern)}</div></div>
+      <div class="st-f"><label for="c-${j.L}">Cause${b?" · what did you find?":""}</label>
+        <textarea id="c-${j.L}" class="${j.causeAI?"ai":""} ${j.need==="cause"?"need":""}" data-field="cause" data-j="${j.L}" rows="${b?3:2}" placeholder="${b?"Pick what you found below, or type it":"What did you find?"}">${esc(j.cause)}</textarea>
+        ${j.causeAI?'<div style="margin-top:4px">'+aitag("note:"+j.L)+"</div>":""}
+        ${tags.length?`<div class="st-chips" role="group" aria-label="Common causes for ${esc(j.labor[0].op)}">${tags.map((tg,i)=>`<button class="cchip ${on.includes(tg[0])?"on":""}" data-act="ctag" data-j="${j.L}" data-i="${i}" aria-pressed="${on.includes(tg[0])}">${on.includes(tg[0])?gi("check",11):""}${esc(tg[0])}</button>`).join("")}</div>`:""}</div>
+      <div class="st-f"><label for="r-${j.L}">Correction${b?" · what did you do?":""}</label>
+        <textarea id="r-${j.L}" class="${j.corrAI?"ai":""} ${j.need==="corr"?"need":""}" data-field="corr" data-j="${j.L}" rows="${b?5:4}" placeholder="What did you do?">${esc(j.corr)}</textarea>${src}</div>
+      <div class="st-odo"><div class="st-f"><label>Odometer in</label><div class="st-ro">${d.miles} mi</div></div>
+        <div class="st-f"><label for="o-${j.L}">Odometer out</label><span class="odo"><input id="o-${j.L}" data-field="odo" data-j="${j.L}" inputmode="numeric" value="${esc(t.st.odoOut)}" placeholder="${d.miles}"><span>mi</span></span></div></div>
+    </div>
+    ${need?`<div class="st-need" role="alert">${gi("alert",13)} ${need}</div>`:""}
+    <div class="st-foot"><span class="st-saved" id="saved-${j.L}">${gi("save",12)} ${j.saved?"Saved "+hm(j.saved):"Autosaves as you type. Nothing is lost if you leave."}</span>
+      <span class="lbl st-k"><kbd>Ctrl</kbd><kbd>Enter</kbd> finish line</span>
+      <button class="btn primary" data-act="finline" data-j="${j.L}">${gi("check",13)} Mark line ${j.L} done</button></div>
+  </div>`;
+}
+function focusSel(sel,editing){ setTimeout(()=>{ const el=document.querySelector(sel); if(!el) return; kSet(el,!!editing); if(el.scrollIntoView&&!el.closest("#dz")) kVisible(el); },40); }
+function finishLine(t,L,opt){
+  opt=opt||{}; const j=t.st.jobs.find(x=>x.L===L); if(!j||j.done) return false;
+  const miss=!(j.cause||"").trim()?"cause":!(j.corr||"").trim()?"corr":null;
+  if(miss){ j.story=true; j.need=miss; if(miss==="corr") ensureDraft(j); renderPane(); focusSel(`[data-field="${miss}"][data-j="${L}"]`,true); return false; }
+  j.need=null; j.story=false; markDone(t,L,true);
+  const nx=t.st.jobs.find(x=>!x.done), hrs=j.labor.reduce((a,l)=>a+(parseFloat(l.hrs)||0),0);
+  toast(`Line ${L} done · ${hrs.toFixed(2)} h flagged`);
+  if(nx){ if(W.level!=="beginner"){ nx.story=true; ensureDraft(nx); } if(W.level==="expert") t.st.sel=nx.L; }
+  if(W.active===t.id){ renderPane(); renderDossier();
+    if(nx&&W.level!=="beginner"){ if(opt.keys) focusSel(`[data-field="cause"][data-j="${nx.L}"]`,true); else scrollToJob(nx.L); }
+    else if(!nx&&opt.keys) focusSel('.wrapup [data-field="odo"]',true); }
+  return true;
+}
+function finishAll(t){
+  const ready=t.st.jobs.filter(j=>!j.done&&(j.cause||"").trim()&&(j.corr||"").trim());
+  if(!ready.length){ toast("No line has a complete story yet"); return 0; }
+  ready.forEach(j=>{ j.story=false; j.need=null; markDone(t,j.L,true); });
+  toast(`Finished ${ready.length} line${ready.length>1?"s":""}: ${ready.map(j=>j.L).join(", ")}`); refreshWork(); return ready.length;
+}
+function markDone(t,L,val){
+  const j=t.st.jobs.find(x=>x.L===L); if(!j) return; j.done=val; j.doneAt=val?Date.now():0;
+  if(j.done&&W.clock&&W.clock.ro===t.key&&W.clock.L===j.L){ setClock(null); renderMyDay(); renderDossier(); }
+  if(W.active===t.id) renderPane();
+  if(j.done){ const nx=t.st.jobs.find(x=>!x.done);
+    pushInsight(t.id,nx&&nx.L==="B"&&t.key==="13456B"?{ic:"check",t:"Line A complete. Next up: line B",b:"Oil capacity 5.7 qt with filter · drain plug 20 ft-lb · reset the oil life monitor."}
+      :{ic:"check",t:"Line "+j.L+" complete",b:nx?"Next: line "+nx.L+", "+nx.title+".":"All lines are done. Record odometer out and send it for review."}); }
+  renderMyDay();
+}
+function undoEdit(what){
+  const t=activeRO()||tabById("ro:13456B"); if(!t) return false;
+  const [kind,L,i]=what.split(":");
+  if(kind==="part"){ const j=t.st.jobs.find(x=>x.L===L); if(j) j.parts.splice(+i,1); }
+  if(kind==="note"){ const j=t.st.jobs.find(x=>x.L===L); if(j){ j.cause=j.prevCause||""; j.causeAI=false; } }
+  if(kind==="corr"){ const j=t.st.jobs.find(x=>x.L===L); if(j){ j.corr=""; j.corrAI=false; j.corrSrc=""; j.corrDismissed=true; } }
+  if(kind==="job"){ const idx=t.st.jobs.findIndex(x=>x.L===L); if(idx>=0){ const j=t.st.jobs[idx]; t.st.jobs.splice(idx,1); if(j.recall){ const ins=t.st.insights.find(x=>x.a&&x.a.act==="addrecall"); if(ins) delete ins.a.done; } } }
+  logEntry("auto","Undid an AI edit on RO "+t.key+" ("+kind+", line "+L+")","se");
+  W.lastEdit=null; refreshWork(); return true;
+}
+function toggleTag(t,L,i){
+  const j=t.st.jobs.find(x=>x.L===L), lib=j&&libFor(j); if(!lib||!lib.tags[i]) return;
+  const tg=lib.tags[i], phrase=tg[0]+".", isOn=activeTags(j).some(x=>x[0]===tg[0]);
+  j.tags=j.tags||[];
+  if(isOn){ j.tags=j.tags.filter(x=>x!==tg[0]); j.cause=(j.cause||"").replace(phrase,"").replace(/\s{2,}/g," ").trim(); if(tg[2].test(j.cause)) j.cause=j.cause.replace(tg[2],"").trim(); }
+  else { j.tags.push(tg[0]); const c=(j.cause||"").trim(); j.cause=c?c.replace(/[.;,]?$/,". ")+phrase:phrase; }
+  j.causeAI=false; j.need=null; j.saved=Date.now(); if(j.corrAI){ const d=draftFor(j); if(d){ j.corr=d.text; j.corrSrc=d.src; } }
+  renderPane();
+}
+
+/* ---------- 5 · next assigned job ---------- */
+const nextAssigned=k=>RO_QUEUE.find(q=>q!==k&&!(W.ros[q]&&W.ros[q].review));
+function wrapUpHTML(t,mode){
+  const st=t.st, d=RO[t.key]; if(!st.jobs.length||st.jobs.some(j=>!j.done)) return "";
+  const nk=nextAssigned(t.key);
+  if(st.review) return `<div class="wrapup sent">${gi("check",18)}<div class="grow"><b>Sent to ${esc(d.advisor)} for review.</b><div class="lbl">Your next job is already assigned to you${nk?": RO "+nk+", "+esc(RO[nk].vehicle)+" · "+esc(RO[nk].summary.toLowerCase())+" · promised "+esc(RO[nk].promised):""}.</div></div>
+    ${nk?`<button class="btn primary" data-act="openro" data-ro="${nk}">${gi("car",14)} Open RO ${nk}${mode==="x"?" (N)":""}</button>`:""}</div>`;
+  return `<div class="wrapup"><div class="st-f"><label for="wo">Odometer out</label><span class="odo"><input id="wo" data-field="odo" value="${esc(st.odoOut)}" inputmode="numeric" placeholder="${d.miles}"><span>mi</span></span></div>
+    <div class="grow lbl">Every line is done${st.odoOut?"":". Record odometer out"}, then send it back to ${esc(d.advisor)}.</div>
+    <button class="btn primary" data-act="breview">${gi("check",14)} Send for review</button></div>`;
+}
+
+/* ---------- Knowledgeable (and closed ROs) ---------- */
+function _renderPane(){
+  const t=activeTab(); if(!t) return;
+  if(t.kind==="cv") return _renderCanvas();
+  if(t.kind==="ro") normJobs(t.st);
+  const ws=$("#wscontent");
+  if(t.kind==="wf"){
+    if(t.key==="My Hours") return renderHours();
+    ws.innerHTML=`<div class="pane"><div class="ro-head"><div><div class="ro-title">${esc(t.key)}</div><div class="ro-sub">Placeholder workflow. Shown to demonstrate tabs and navigation, not designed yet.</div></div></div>
+     <div class="wf-ph"><div class="sk still" style="height:46px"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="sk still" style="height:180px"></div><div class="sk still" style="height:180px"></div></div><div class="sk still" style="height:220px"></div></div></div>`;
+    return;
+  }
+  const d=RO[t.key], st=t.st, closed=d.status==="Closed";
+  if(!closed){ if(W.level==="beginner") return renderBeginner(t); if(W.level==="expert") return renderExpert(t); }
+  const job=j=>`<div class="job ${j.done?"isdone":""} ${j.flash?"flash":""}" id="job-${j.L}">
+     <div class="job-h"><span class="jl">${j.L}</span><div class="jt">${esc(j.title)} <span class="opc">${esc(j.code)}</span>${j.ai?aitag("job:"+j.L):""}${j.done?'<span class="tag acc">'+gi("check",12)+" Done</span>":""}</div>
+       ${closed?"":`<div class="job-ctl">${runCtl(t,j)}
+       <button class="chip ${j.story?"on":""}" data-act="story" data-j="${j.L}" aria-expanded="${!!j.story}">${gi("file",13)} Story <span class="sn">${storyN(j)}/3</span></button>
+       <label class="tog"><input type="checkbox" data-act="done" data-j="${j.L}" ${j.done?"checked":""}>Done</label></div>`}</div>
+     ${closed?"":conflictHTML(t,j)}
+     <div class="concern">“${esc(j.concern)}”</div>
+     ${!closed&&j.story?storyHTML(t,j,"k"):""}
+     <table class="lines"><thead><tr><th style="width:110px">Labor op</th><th>Description</th><th style="width:70px">Hrs</th><th style="width:150px">Tech</th></tr></thead><tbody>
+       ${j.labor.map(l=>`<tr><td>${esc(l.op)}</td><td>${esc(l.desc)}</td><td>${esc(l.hrs)}</td><td>${TECH_USER.short}</td></tr>`).join("")}</tbody>
+       ${j.parts.length?`<thead><tr><th>Part #</th><th>Part</th><th>Qty</th><th>Status</th></tr></thead><tbody>${j.parts.map((p,i)=>`<tr class="${p.flash?"flash":""}"><td>${esc(p.pn)}</td><td>${esc(p.desc)} ${p.ai?aitag("part:"+j.L+":"+i):""}</td><td>${esc(p.qty)}</td><td class="lbl">${esc(p.st)}</td></tr>`).join("")}</tbody>`:""}
+     </table>
+     ${closed?"":`<div class="job-foot"><button class="btn" data-act="addmenu" data-j="${j.L}">${gi("plus",13)} Add part</button><span class="lbl">or ask the chat</span>
+       ${j.menu?`<div class="addmenu"><div class="lbl" style="padding:4px 8px">Common for this vehicle</div>${partMenu(j)}</div>`:""}</div>`}
+   </div>`;
+  const conc=st.jobs.filter(j=>j.group==="concern"), asr=st.jobs.filter(j=>j.group!=="concern");
+  const ready=st.jobs.filter(j=>!j.done&&(j.cause||"").trim()&&(j.corr||"").trim()).length;
+  ws.innerHTML=`<div class="pane">
+    <div class="ro-head"><div><div class="ro-title">RO ${t.key} <small>· Tag ${d.tag}</small><span class="dag" title="Concept placeholder record">†</span></div>
+      <div class="ro-sub">${esc(d.vehicle)} · Promised ${esc(d.promised)} · Advisor ${esc(d.advisor)}${closed?"":` · <span class="asg">${gi("user",12)} Assigned to you</span>`}</div></div>
+      <div class="ro-actions">${closed?'<span class="tag">'+gi("lock",12)+" Closed · read-only</span>":`${ready?`<button class="btn" data-act="finall">${gi("check",13)} Finish ${ready} ready line${ready>1?"s":""}</button>`:""}<select class="status" aria-label="RO status"><option>${esc(roStatus(t))}</option><option>Waiting on Parts</option><option>Waiting on Approval</option><option>Ready for Review</option></select>`}</div></div>
+    <div class="rsec-h"><h2>Customer Initial Concerns (${conc.length})</h2></div>
+    ${conc.map(job).join("")}
+    ${asr.length||!closed?`<div class="rsec-h"><h2>Additional Service Recommendations (${asr.length})</h2>${closed?"":`<button class="btn" data-act="asr">${gi("plus",13)} ASR</button>`}</div>${asr.map(job).join("")}`:""}
+    ${closed?"":wrapUpHTML(t,"k")}
+  </div>`;
+  clearFlash(st);
+}
+
+/* ---------- Beginner ---------- */
+function bSteps(t){
+  const st=t.st, k=t.key, steps=[];
+  const started=(W.clock&&W.clock.ro===k)||st.jobs.some(j=>j.done||j.punches.some(p=>p.type==="labor"));
+  steps.push({id:"start",label:"Start time",done:!!started});
+  st.jobs.forEach(j=>{
+    steps.push({id:"cause:"+j.L,L:j.L,label:"Line "+j.L+": what you found",done:!!(j.cause||"").trim()||j.done});
+    steps.push({id:"done:"+j.L,L:j.L,label:"Line "+j.L+": correction and finish",done:j.done});
+  });
+  steps.push({id:"odo",label:"Odometer out",done:!!st.odoOut});
+  steps.push({id:"review",label:"Send for review",done:!!st.review});
+  return steps;
+}
+function renderBeginner(t){
+  const d=RO[t.key], st=t.st, steps=bSteps(t), cur=steps.find(x=>!x.done)||steps[steps.length-1];
+  const curL=cur.L||(st.jobs.find(j=>!j.done)||st.jobs[0]).L;
+  const open=st.bOpen||curL, n=steps.indexOf(cur)+1;
+  const cj=st.jobs.find(x=>x.L===curL)||st.jobs[0];
+  const priorDiag=lineTot(cj,"diag");
+  let next="";
+  if(cur.id==="start") next=`<div class="k">Step 1 of ${steps.length}</div><h2>Start your time on line ${curL}</h2>
+     <p>Pick the kind of time you're about to spend. <b>Diagnostic</b> is finding the problem. <b>Labor</b> is doing the repair. Your time goes against line ${curL}, and you can see it in AIVA Insights on the right.${priorDiag?` You already have <b>${hrsOf(priorDiag)} h</b> of diagnostic time on this line from earlier today.`:""}</p>
+     <div class="bbtns"><button class="btn primary big" data-act="rstart" data-type="labor" data-j="${curL}">${gi("play",13)} Start labor time on line ${curL}</button><button class="btn big" data-act="rstart" data-type="diag" data-j="${curL}">${gi("play",13)} Start diagnostic time</button></div>
+     ${conflictHTML(t,cj)}
+     <div class="tip">${gi("term",14)}<span><b>From the keyboard:</b> arrow keys move the highlight, <kbd>Enter</kbd> acts, <kbd>Esc</kbd> steps back, <kbd>F2</kbd> asks AIVA.</span></div>`;
+  else if(cur.id.startsWith("cause")){ const j=st.jobs.find(x=>x.L===cur.L);
+    next=`<div class="k">Step ${n} of ${steps.length}</div><h2>Line ${j.L}: write what you found</h2>
+     <p>This is the <b>cause</b>. Tap what you found, or type it in your own words. ${esc(d.advisor)} uses it to explain the repair to the customer.</p>
+     <button class="btn primary big" data-act="bfocus" data-j="${j.L}">${gi("file",14)} Go to the cause</button>
+     ${W.clock&&W.clock.ro===t.key&&W.clock.L!==j.L?"":`<div class="tip">${gi("clock",14)}<span>Your ${W.clock&&W.clock.ro===t.key?typeName(W.clock.type).toLowerCase()+" time is running on this line.":"time isn't running. Start it from the line below."}</span></div>`}
+     <details class="whyd"><summary>${gi("book",13)} What are the 3C's?</summary><div><b>Complaint</b>: what the customer said (already filled in).<br><b>Cause</b>: what you found.<br><b>Correction</b>: what you did to fix it.<br>Warranty claims are rejected when one is missing, so every line needs all three.</div></details>`; }
+  else if(cur.id.startsWith("done")){ const j=st.jobs.find(x=>x.L===cur.L);
+    next=`<div class="k">Step ${n} of ${steps.length}</div><h2>Line ${j.L}: check the correction, then finish</h2>
+     <p>AIVA started the <b>correction</b> from ${j.corrSrc?"<b>"+esc(j.corrSrc)+"</b>":"your dealer's story library"} and your cause. Read it and change anything that isn't what you did. Then mark the line finished.</p>
+     <div class="bbtns"><button class="btn big" data-act="bfocusc" data-j="${j.L}">${gi("file",14)} Go to the correction</button><button class="btn primary big" data-act="bdone" data-j="${j.L}">${gi("check",14)} Mark line ${j.L} finished</button></div>
+     ${st.bMoved?`<div class="tip">${gi("clock",14)}<span>Your labor time moved to line ${j.L} automatically.</span></div>`:""}`; }
+  else if(cur.id==="odo") next=`<div class="k">Step ${n} of ${steps.length}</div><h2>Record the odometer out</h2>
+     <p>Read the odometer before the vehicle leaves your bay. It came in at <b>${d.miles} mi</b>.</p>
+     <div class="bodo"><span class="odo"><input data-field="odo" value="${esc(st.odoOut)}" inputmode="numeric" placeholder="${d.miles}" aria-label="Odometer out"><span>mi</span></span><button class="btn primary big" data-act="bodo">${gi("check",14)} Save odometer</button></div>`;
+  else next=st.review?`<div class="k">All done</div><h2>Sent to ${esc(d.advisor)} for review</h2><p>Nice work. ${esc(d.advisor)} reviews the RO and contacts the customer.</p>${(k=>k?`<button class="btn primary big" data-act="openro" data-ro="${k}">${gi("car",14)} Open your next job: RO ${k}</button><div class="tip">${gi("user",14)}<span>It's already assigned to you: ${esc(RO[k].vehicle)}, ${esc(RO[k].summary.toLowerCase())}, promised ${esc(RO[k].promised)}.</span></div>`:"")(nextAssigned(t.key))}`
+     :`<div class="k">Last step</div><h2>Send the RO back to your advisor</h2><p>Every line is finished. Sending it sets the status to <b>Ready for Review</b> and tells ${esc(d.advisor)} the vehicle is done.</p>
+     <button class="btn primary big" data-act="breview">${gi("check",14)} Send for review</button>`;
+  const job=j=>{
+    if(j.L!==open) return `<button class="bcol" data-act="bopen" data-j="${j.L}"><span class="jl">${j.L}</span><span style="flex:1"><b>${esc(j.title)}</b><div class="lbl" style="font-size:12.5px">${j.done?"Finished":j.L===curL?"Working now":"Up next, after line "+curL}</div></span>${j.done?'<span class="tag acc">'+gi("check",12)+" Finished</span>":'<span class="lbl">Show</span>'}${j.ai?aitag("job:"+j.L):""}</button>`;
+    if(!j.done) ensureDraft(j);
+    return `<div class="bjob ${j.L===curL&&!j.done?"cur":""} ${j.flash?"flash":""}" id="job-${j.L}">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span class="jl">${j.L}</span><h3 class="bt">${esc(j.title)}</h3>${j.ai?aitag("job:"+j.L):""}${j.done?'<span class="tag acc">'+gi("check",12)+" Finished</span>":""}<span style="margin-left:auto">${runCtl(t,j)}</span></div>
+      ${conflictHTML(t,j)}
+      <div class="lab">The job</div><div style="font-size:14px">${j.labor.map(l=>`${esc(l.desc)} · <b>${esc(l.hrs)} h</b> paid time`).join("<br>")}</div>
+      <details class="whyd"><summary>${gi("book",13)} Why ${esc(j.labor[0].hrs)} hours?</summary><div>This is the flat-rate time for job code <b>${esc(j.labor[0].op)}</b>. You're paid the flagged time when the line is finished, however long the job actually takes. Your clock time is still tracked for efficiency.</div></details>
+      ${j.done?`<div class="lab">Story</div><div class="said">${esc(j.cause)}<br>${esc(j.corr)}</div>`:storyHTML(t,j,"b")}
+      <div class="lab">Parts for this job</div>
+      <div class="bparts">${j.parts.length?j.parts.map((p,i)=>`<div class="pr ${p.flash?"flash":""}"><span class="badge" style="width:26px;height:26px">${gi("box",13)}</span><span style="flex:1">${esc(p.desc)} <span class="lbl">× ${esc(p.qty)}</span> ${p.ai?aitag("part:"+j.L+":"+i):""}</span><span class="lbl">${esc(p.st)}</span></div>`).join(""):'<div class="pr lbl">No parts yet. Add any you use.</div>'}</div>
+      <div class="bfoot"><button class="btn" data-act="addmenu" data-j="${j.L}">${gi("plus",13)} Add a part</button>
+        <span class="lbl">Tip: you can also ask the chat, e.g. "add front brake pads"</span>
+        ${j.menu?`<div class="addmenu"><div class="lbl" style="padding:4px 8px">Parts that fit this vehicle</div>${partMenu(j,true)}</div>`:""}</div>
+    </div>`;
+  };
+  const conc=st.jobs.filter(j=>j.group==="concern"), asr=st.jobs.filter(j=>j.group!=="concern");
+  $("#wscontent").innerHTML=`<div class="pane">
+    <div class="learnbar">${gi("spark",18)}<div class="grow"><b>Beginner mode.</b> You know the work. This guides you through where it goes in the system, one step at a time. Everything here also works from the keyboard.</div><button class="linkbtn" data-act="who">Change mode</button></div>
+    <div style="margin-bottom:14px"><div class="ro-title">${esc(d.vehicle)}<span class="dag" title="Concept placeholder record">†</span></div><div class="ro-sub">Repair order ${t.key} · Due back to the customer ${esc(d.promised)} · <span class="asg">${gi("user",12)} Assigned to you</span></div></div>
+    <div class="stepper">${steps.map((x,i)=>`<div class="stp ${x.done?"done":""} ${x===cur&&!x.done?"cur":""}"><span class="c">${x.done?gi("check",13):i+1}</span><span>${esc(x.label)}</span></div>`).join("")}</div>
+    <div class="nextcard">${next}</div>
+    <div class="rsec-h"><h2>What the customer came in for</h2></div>
+    ${conc.map(job).join("")}
+    <div class="rsec-h"><h2>Recommend more work</h2></div>
+    <div class="tip" style="margin:0 0 12px">${gi("alert",14)}<span>If you find something else (worn tires, a leak), recommend it here. The advisor asks the customer before any work starts.</span></div>
+    ${asr.map(job).join("")}
+    <button class="btn" data-act="asr">${gi("plus",13)} Recommend more work</button>
+  </div>`;
+  clearFlash(st);
+}
+
+/* ---------- Expert ---------- */
+function xStoryRow(t,j){
+  const lib=libFor(j), tags=lib?lib.tags:[], on=activeTags(j).map(x=>x[0]);
+  return `<tr class="xs" data-story="${j.L}"><td></td><td colspan="8"><div class="xstory">
+    <span class="xs-l">Complaint</span><span class="xs-c">${esc(j.concern)}</span>
+    <span class="xs-l">Cause</span><input class="xin wide ${j.causeAI?"ai":""} ${j.need==="cause"?"need":""}" data-field="cause" data-j="${j.L}" value="${esc(j.cause)}" placeholder="What did you find?" aria-label="Cause line ${j.L}">
+    <span></span><span class="xs-chips">${tags.map((tg,i)=>`<button class="xchip ${on.includes(tg[0])?"on":""}" data-act="ctag" data-j="${j.L}" data-i="${i}" aria-pressed="${on.includes(tg[0])}"><kbd>${i+1}</kbd>${esc(tg[0])}</button>`).join("")}</span>
+    <span class="xs-l">Correction</span><textarea class="xin wide xta ${j.corrAI?"ai":""} ${j.need==="corr"?"need":""}" data-field="corr" data-j="${j.L}" rows="2" placeholder="What did you do?" aria-label="Correction line ${j.L}">${esc(j.corr)}</textarea>
+    <span></span><span class="xs-src">${j.corrAI?`${gi("spark",11)} AIVA · ${esc(j.corrSrc)} <button class="xact" data-act="undo" data-what="corr:${j.L}">Undo</button>`:j.corrSrc?`Started from ${esc(j.corrSrc)} · edited`:""}${j.need?` <b class="xneed">${j.need==="cause"?"Cause":"Correction"} required to finish</b>`:""}</span>
+    <span class="xs-l">Odometer</span><span class="xs-c">in ${RO[t.key].miles} → out <input class="xin xodo" data-field="odo" data-j="${j.L}" value="${esc(t.st.odoOut)}" inputmode="numeric" aria-label="Odometer out"> mi<span class="xs-saved" id="saved-${j.L}">${j.saved?"saved "+hm(j.saved):"autosaves"}</span><span class="lbl"><kbd>Ctrl</kbd><kbd>↵</kbd> finish line</span></span>
+  </div></td></tr>`;
+}
+function xRun(t,j){
+  const l=lineTot(j,"labor"), dg=lineTot(j,"diag"), tot=(l||dg)?`<span class="rtot">${dg?"D "+hrsOf(dg):""}${dg&&l?" ":""}${l?"L "+hrsOf(l):""}</span>`:"";
+  if(j.done) return tot;
+  if(W.clock&&W.clock.ro===t.key&&W.clock.L===j.L) return `<span class="xrun"><i></i>${W.clock.type==="diag"?"Diag":"Labor"} <b data-tick>${fmtClock(Date.now()-W.clock.t)}</b></span><button class="xbtn" data-act="rhold" data-j="${j.L}" title="Hold (H)">Hold</button>`;
+  return `<button class="xbtn" data-act="rstart" data-type="diag" data-j="${j.L}" title="Diagnostic (D)">${gi("play",10)} D</button><button class="xbtn" data-act="rstart" data-type="labor" data-j="${j.L}" title="Labor (C)">${gi("play",10)} L</button>${j.hold?'<span class="held">held</span>':""}${tot}`;
+}
+function renderExpert(t){
+  const d=RO[t.key], st=t.st; st.sel=st.sel||st.jobs[0].L;
+  const row=j=>`<tr class="xl ${st.sel===j.L?"sel":""} ${j.done?"isdone":""} ${j.flash?"flash":""}" data-act="xsel" data-j="${j.L}" id="job-${j.L}">
+     <td><b>${j.L}</b></td><td>${esc(j.labor[0].op)}</td><td>${esc(j.title)} ${j.ai?aitag("job:"+j.L):""}</td><td>${j.labor.reduce((a,l)=>a+(parseFloat(l.hrs)||0),0).toFixed(2)}</td>
+     <td class="xrc">${xRun(t,j)}</td>
+     <td><button class="xbtn ${j.story?"on":""}" data-act="story" data-j="${j.L}" title="Story (S)" aria-expanded="${!!j.story}">${gi("file",11)} ${storyN(j)}/3</button></td>
+     <td><input type="checkbox" class="xcb" data-act="done" data-j="${j.L}" ${j.done?"checked":""} aria-label="Done line ${j.L}"></td>
+     <td>${j.parts.length}</td>
+     <td style="position:relative"><button class="xact" data-act="addmenu" data-j="${j.L}" title="Add part (P)" aria-label="Add part">${gi("plus",13)}</button>${j.causeAI?aitag("note:"+j.L):""}
+       ${j.menu?`<div class="xmenu" style="right:0;top:28px">${partMenu(j)}</div>`:""}</td></tr>
+     ${st.conflict&&st.conflict.L===j.L?`<tr class="xs"><td></td><td colspan="8">${conflictHTML(t,j,true)}</td></tr>`:""}
+     ${j.story&&!j.done?xStoryRow(t,j):""}
+     ${j.parts.map((p,i)=>`<tr class="xp ${p.flash?"flash":""}"><td></td><td>${esc(p.pn)}</td><td>↳ ${esc(p.desc)} ${p.ai?aitag("part:"+j.L+":"+i):""}</td><td>${esc(p.qty)}</td><td colspan="3" class="lbl">${esc(p.st)}</td><td></td><td></td></tr>`).join("")}`;
+  const conc=st.jobs.filter(j=>j.group==="concern"), asr=st.jobs.filter(j=>j.group!=="concern");
+  const doneN=st.jobs.filter(j=>j.done).length, flag=st.jobs.filter(j=>j.done).reduce((a,j)=>a+j.labor.reduce((b,l)=>b+(parseFloat(l.hrs)||0),0),0);
+  const ready=st.jobs.filter(j=>!j.done&&(j.cause||"").trim()&&(j.corr||"").trim()).length;
+  $("#wscontent").innerHTML=`<div class="pane dense">
+   <div class="xhead"><b>RO ${t.key}</b><span class="lbl">Tag ${d.tag}<span class="dag">†</span></span><span class="sep"></span><span>${esc(d.vehicle)}</span><span class="sep"></span><span>Due ${esc(d.promised)}</span><span class="sep"></span>
+     <select aria-label="RO status"><option>${esc(roStatus(t))}</option><option>Waiting on Parts</option><option>Ready for Review</option></select>
+     ${ready?`<button class="xbtn" data-act="finall">${gi("check",12)} Finish ${ready} (F)</button>`:""}
+     <span style="margin-left:auto" class="lbl">${doneN}/${st.jobs.length} lines · ${flag.toFixed(2)} h flagged</span></div>
+   <div style="overflow-x:auto"><table class="x"><thead><tr><th style="width:34px">Ln</th><th>Op</th><th>Description</th><th>Hrs</th><th>Time</th><th>Story</th><th>Done</th><th>Pts</th><th></th></tr></thead>
+   <tbody><tr class="xg"><td colspan="9">Customer concerns</td></tr>${conc.map(row).join("")}
+   <tr class="xg"><td colspan="9">Recommendations <button class="xact" data-act="asr" style="float:right;font-size:11px;text-transform:none;letter-spacing:0">+ ASR (R)</button></td></tr>${asr.map(row).join("")}</tbody></table></div>
+   ${wrapUpHTML(t,"x")}
+   <div class="xkeys"><span><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> move</span><span><kbd>Enter</kbd> edit</span><span><kbd>C</kbd> labor</span><span><kbd>D</kbd> diag</span><span><kbd>H</kbd> hold</span><span><kbd>S</kbd> story</span><span><kbd>1</kbd>–<kbd>6</kbd> cause</span><span><kbd>Ctrl</kbd><kbd>↵</kbd> finish line</span><span><kbd>F</kbd> finish ready</span><span><kbd>N</kbd> next job</span><span><kbd>P</kbd> part</span><span><kbd>R</kbd> ASR</span><span><kbd>F2</kbd> chat</span></div>
+  </div>`;
+  clearFlash(st);
+}
+
+/* ---------- 2 + 4 · My Hours: punch times and flagged hours ---------- */
+const T0=(()=>{ const d=new Date(VNOW0); d.setHours(7,0,0,0); return Math.min(+d,VNOW0-340*MIN)-VOFF; })();
+const SEED_TODAY=[
+  {s:T0,e:T0+20*MIN,type:"shop",what:"Shop time · bay setup and safety check"},
+  {s:T0+20*MIN,e:T0+88*MIN,type:"labor",ro:"13440",L:"A",op:"BRK02",what:"Front brake pad replacement",flag:1.2,pay:"Customer pay"},
+  {s:T0+95*MIN,e:T0+125*MIN,type:"diag",ro:"13444",L:"A",op:"DIAG1",what:"Check engine light"},
+  {s:T0+125*MIN,e:T0+200*MIN,type:"labor",ro:"13444",L:"A",op:"DIAG1",what:"Check engine light",flag:1.5,pay:"Warranty"},
+  {s:T0+205*MIN,e:T0+235*MIN,type:"labor",ro:"13447",L:"B",op:"ROT01",what:"Tire rotation and balance",flag:0.5,pay:"Customer pay"}];
+const yAt=(h,m)=>{ const d=new Date(Date.now()+VOFF); d.setDate(d.getDate()-1); d.setHours(h,m,0,0); return +d-VOFF; };
+const SEED_YDAY=[
+  {s:yAt(7,0),e:yAt(7,15),type:"shop",what:"Shop time · morning meeting"},
+  {s:yAt(7,15),e:yAt(8,30),type:"labor",ro:"13421",L:"A",op:"ALN01",what:"Four-wheel alignment",flag:1.5,pay:"Customer pay"},
+  {s:yAt(8,35),e:yAt(9,40),type:"diag",ro:"13425",L:"A",op:"DIAG1",what:"Intermittent no-start"},
+  {s:yAt(9,40),e:yAt(11,10),type:"labor",ro:"13425",L:"A",op:"DIAG1",what:"Intermittent no-start",flag:2.4,pay:"Warranty"},
+  {s:yAt(11,45),e:yAt(12,10),type:"labor",ro:"13428",L:"B",op:"BAT01",what:"Battery replacement",flag:0.4,pay:"Customer pay"},
+  {s:yAt(12,15),e:yAt(14,20),type:"labor",ro:"13430",L:"A",op:"M30K",what:"30,000 mile maintenance",flag:2.0,pay:"Customer pay"},
+  {s:yAt(14,30),e:yAt(16,20),type:"labor",ro:"13433",L:"A",op:"SUS22",what:"Front strut replacement",flag:2.3,pay:"Customer pay"}];
+function livePunches(){
+  const out=[]; RO_QUEUE.concat(Object.keys(W.ros)).filter((k,i,a)=>a.indexOf(k)===i).forEach(k=>{ const s=roState(k);
+    s.jobs.forEach(j=>j.punches.forEach(p=>out.push({s:p.s,e:p.e,type:p.type,ro:k,L:j.L,op:j.labor[0].op,what:j.title,live:true,hold:j.hold&&p===j.punches[j.punches.length-1]}))); });
+  return out;
+}
+function liveFlagged(){
+  const out=[]; Object.keys(W.ros).forEach(k=>W.ros[k].jobs.filter(j=>j.done).forEach(j=>out.push({ro:k,L:j.L,op:j.labor[0].op,what:j.title,flag:j.labor.reduce((a,l)=>a+(parseFloat(l.hrs)||0),0),pay:RO[k].warranty&&/recall/i.test(j.title)?"Warranty":"Customer pay",doneAt:j.doneAt||Date.now()}))); return out;
+}
+function dayData(day){
+  if(day===0){ const p=SEED_TODAY.concat(livePunches()).sort((a,b)=>a.s-b.s);
+    const f=SEED_TODAY.filter(x=>x.flag).map(x=>Object.assign({doneAt:x.e},x)).concat(liveFlagged()).sort((a,b)=>a.doneAt-b.doneAt);
+    return {p,f}; }
+  if(day===-1) return {p:SEED_YDAY,f:SEED_YDAY.filter(x=>x.flag).map(x=>Object.assign({doneAt:x.e},x))};
+  return {p:[],f:[]};
+}
+function hoursTotals(day){
+  const {p,f}=dayData(day), dur=x=>(x.e||Date.now())-x.s, sum=ty=>p.filter(x=>x.type===ty).reduce((a,x)=>a+dur(x),0);
+  const diag=sum("diag"), labor=sum("labor"), shop=sum("shop"), flag=f.reduce((a,x)=>a+x.flag,0), onJobs=(diag+labor)/HR;
+  return {diag,labor,shop,flag,eff:onJobs?Math.round(flag/onJobs*100):0};
+}
+const dayLabel=day=>{ const d=new Date(); d.setDate(d.getDate()+day); const s=d.toLocaleDateString([], {weekday:"short",month:"short",day:"numeric"}); return day===0?"Today · "+s:day===-1?"Yesterday · "+s:s; };
+function roLink(x){ return x.ro?(RO[x.ro]?`<button class="linkbtn" data-act="openro" data-ro="${x.ro}">RO ${x.ro}</button>`:`<b>RO ${x.ro}</b>`)+` · line ${x.L}`:'<span class="lbl">No RO</span>'; }
+function renderHours(){
+  const v=W.hrs.view, day=W.hrs.day, {p,f}=dayData(day), T=hoursTotals(day);
+  const days=[0,-1,-2].map(x=>`<button class="chip ${day===x?"on":""}" data-act="hrsday" data-d="${x}" aria-pressed="${day===x}">${esc(dayLabel(x))}</button>`).join("");
+  const stat=(k,val,sub)=>`<div class="hstat"><div class="k">${k}</div><div class="v">${val}</div>${sub?`<div class="lbl">${sub}</div>`:""}</div>`;
+  const stats=`<div class="hstats">${stat("On jobs",((T.diag+T.labor)/HR).toFixed(2)+" h",`Diagnostic ${hrsOf(T.diag)} · Labor ${hrsOf(T.labor)}`)}${stat("Shop time",hrsOf(T.shop)+" h","Not tied to an RO")}${stat("Flagged",T.flag.toFixed(1)+" h",day===0?"of 8.0 h goal":"")}${stat("Efficiency",T.eff+"%","Flagged ÷ time on jobs")}</div>`;
+  let body;
+  if(!p.length&&!f.length) body=`<div class="hempty">${gi("clock",26)}<h3>No time recorded on ${esc(dayLabel(day))}</h3><p>You weren't clocked on any RO that day, so there are no punch times and no flagged hours. Flagged hours show up here once a line you worked is marked done.</p><button class="btn" data-act="hrsday" data-d="0">Back to today</button></div>`;
+  else if(v==="punch") body=stats+`<table class="lines htab"><thead><tr><th>Time</th><th>RO</th><th>Job</th><th>Type</th><th>Length</th><th>Status</th></tr></thead><tbody>${p.map(x=>{ const run=!x.e;
+      return `<tr class="${run?"hrun":""}"><td>${hm(x.s)} – ${run?"now":hm(x.e)}</td><td>${roLink(x)}</td><td>${x.op?`<span class="opc">${esc(x.op)}</span> `:""}${esc(x.what)}</td><td><span class="ptype ${x.type}">${typeName(x.type)}</span></td><td class="mono" ${run?"data-tick":""}>${fmtClock((x.e||Date.now())-x.s)}</td><td>${run?'<span class="rlive sm"><i></i>Running</span>':x.hold?'<span class="held">On hold</span>':'<span class="lbl">Stopped</span>'}</td></tr>`; }).join("")}</tbody></table>
+      <div class="lbl" style="margin-top:8px">Every start, hold and stop on a line is a punch. This is the same record the advisor and payroll see. † Placeholder records.</div>`;
+  else { const pend=day===0?Object.keys(W.ros).concat(RO_QUEUE).filter((k,i,a)=>a.indexOf(k)===i).flatMap(k=>roState(k).jobs.filter(j=>!j.done&&j.punches.length).map(j=>({k,j}))):[];
+    body=stats+(f.length?`<table class="lines htab"><thead><tr><th>Finished</th><th>RO</th><th>Job</th><th>Pay type</th><th>Flagged</th></tr></thead><tbody>${f.map(x=>`<tr><td>${hm(x.doneAt)}</td><td>${roLink(x)}</td><td><span class="opc">${esc(x.op)}</span> ${esc(x.what)}</td><td>${esc(x.pay)}</td><td class="mono"><b>${x.flag.toFixed(2)} h</b></td></tr>`).join("")}</tbody></table>`:"")
+      +(pend.length?`<div class="rsec-h"><h2>Worked, not flagged yet (${pend.length})</h2></div><div class="hpend">${pend.map(({k,j})=>`<div class="hp">${gi("clock",14)}<div class="grow"><b>RO ${k} · line ${j.L}</b> · ${esc(j.title)}<div class="lbl">${hrsOf(lineTot(j,"diag")+lineTot(j,"labor"))} h of time on it. It flags ${esc(j.labor[0].hrs)} h when you mark the line done.</div></div><button class="btn sm" data-act="openro" data-ro="${k}">Open RO ${k}</button></div>`).join("")}</div>`:"")
+      +`<div class="lbl" style="margin-top:8px">Flagged hours are the book hours for each line you finish. They're what you're paid. † Placeholder records.</div>`; }
+  $("#wscontent").innerHTML=`<div class="pane">
+    <div class="ro-head"><div><div class="ro-title">My Hours</div><div class="ro-sub">${TECH_USER.name} · Statler Toyota ${TECH_USER.bay}</div></div>
+      <div class="ro-actions"><div class="seg" role="tablist" aria-label="View"><button role="tab" class="${v==="punch"?"on":""}" aria-selected="${v==="punch"}" data-act="hrsview" data-v="punch">${gi("clock",13)} Punch times</button><button role="tab" class="${v==="flag"?"on":""}" aria-selected="${v==="flag"}" data-act="hrsview" data-v="flag">${gi("check",13)} Flagged hours</button></div></div></div>
+    <div class="hdays">${days}</div>${body}</div>`;
+}
+function hoursDossier(){
+  const T=hoursTotals(0), pend=Object.keys(W.ros).flatMap(k=>W.ros[k].jobs.filter(j=>!j.done&&j.punches.length).map(j=>`RO ${k} line ${j.L}`));
+  return insHTML("spark",`Efficiency today: ${T.eff}%`,`${T.flag.toFixed(1)} h flagged against ${((T.diag+T.labor)/HR).toFixed(2)} h on jobs. Over 100% means you beat book time.`)
+    +(pend.length?insHTML("clock","Time not flagged yet",`${esc(pend.join(", "))}. Hours flag when the line is marked done.`):"")
+    +insHTML("book","What the types mean","<b>Diagnostic</b>: finding the problem. <b>Labor</b>: doing the repair. <b>Shop time</b>: paid time that isn't on an RO.");
+}
+
+/* ---------- 3 · punch times on the RO, in AIVA Insights ---------- */
+function punchSecHTML(t){
+  normJobs(t.st); const st=t.st, f=st.pf||"all", all=st.jobs.flatMap(j=>j.punches.map(p=>({p,j})));
+  const n=all.length, nd=all.filter(x=>x.p.type==="diag").length, nl=n-nd;
+  const rows=st.jobs.map(j=>{ const ps=j.punches.filter(p=>f==="all"||p.type===f); if(!ps.length) return "";
+    return `<div class="pgrp"><div class="pg-h"><b>Line ${j.L}</b> · ${esc(j.labor[0].op)}<span class="lbl">D ${hrsOf(lineTot(j,"diag"))} · L ${hrsOf(lineTot(j,"labor"))} h of ${esc(j.labor[0].hrs)}</span></div>
+      ${ps.map(p=>`<div class="pun"><span class="pic ${p.type}">${gi(p.type==="diag"?"wrench":"clock",12)}</span><div class="ptx">${typeName(p.type)}<div class="lbl">${hm(p.s)} → ${p.e?hm(p.e):"running"}</div></div><div class="pdur" ${p.e?"":"data-tick"}>${fmtClock((p.e||Date.now())-p.s)}</div></div>`).join("")}</div>`; }).join("");
+  return `<div class="dsec ${st.open.punch?"open":""}"><button class="dsec-h" data-act="dsec" data-k="punch" aria-expanded="${!!st.open.punch}"><span class="badge">${gi("clock",14)}</span><span class="tx"><div class="t">Punch times (${n})</div><div class="s">Every start, hold and stop on this RO</div></span><span class="chev">${gi("chev",16)}</span></button>
+    <div class="dsec-b"><div><div class="in"><div class="pf">${[["all","All",n],["diag","Diagnostic",nd],["labor","Labor",nl]].map(([k,l,c])=>`<button class="chip sm ${f===k?"on":""}" data-act="pf" data-f="${k}" aria-pressed="${f===k}">${l} (${c})</button>`).join("")}</div>${rows||'<div class="lbl">No punches yet. Start time on a line and it appears here.</div>'}</div></div></div></div>`;
+}
+function timerHTML(t){
+  if(!W.clock) return "";
+  const ms=Date.now()-W.clock.t;
+  if(t.kind==="ro"&&t.key===W.clock.ro){
+    const j=t.st.jobs.find(x=>x.L===W.clock.L);
+    return `<div class="timer"><div class="ttop"><div><div class="tl"><i></i>${typeName(W.clock.type)} time · Line ${W.clock.L}</div><div class="big" id="tmrBig" data-tick>${fmtClock(ms)}</div></div>
+      <div class="tbtns"><button class="stop" data-act="rhold" data-j="${W.clock.L}">${gi("pause",12)} Hold</button><button class="stop" data-act="rstop" data-j="${W.clock.L}">${gi("stopsq",12)} Stop</button></div></div>
+      <div class="tsub"><span>${j?esc(j.labor[0].op)+" · "+esc(j.title):""}</span><span>${j?`Diag ${hrsOf(lineTot(j,"diag"))} · Labor ${hrsOf(lineTot(j,"labor"))} · Est ${esc(j.labor[0].hrs)} h`:""}</span></div></div>`;
+  }
+  return `<button class="timer-mini" data-act="openro" data-ro="${W.clock.ro}">${gi("clock",14)} ${typeName(W.clock.type)} on RO ${W.clock.ro} · line ${W.clock.L}<b data-tick>${fmtClock(ms)}</b></button>`;
+}
+function timeHTML(rail){
+  const T=hoursTotals(0);
+  const line=W.clock?`${typeName(W.clock.type)} on RO ${W.clock.ro} · line ${W.clock.L}`:"Not clocked on a job";
+  return `<button class="mtime-btn" data-act="openwf" data-name="My Hours"><div class="mtime"><span>Flagged${rail?"":" hours"}</span><b>${T.flag.toFixed(1)} / 8.0${rail?" h":""}<span class="dag">†</span></b></div><div class="mbar"><i style="width:${Math.min(100,T.flag/8*100)}%"></i></div></button><div class="lbl" style="margin-top:8px" id="clockline">${esc(line)}${rail?"":" · <button class=\"linkbtn\" data-act=\"openwf\" data-name=\"My Hours\">Punch times and flagged hours</button>"}</div>`;
+}
+function openWf(name){
+  if(name==="Time Clock") name="My Hours";
+  if(name==="Technician Workflow"&&S.persona==="tech") return openRO(RO_QUEUE.find(q=>!isOpenRO(q))||RO_QUEUE[0]);
+  closePops(); closeMega();
+  const id="wf:"+name; let t=tabById(id);
+  if(!t){ t={id,kind:"wf",key:name,loaded:false}; W.tabs.push(t); }
+  const wasHome=W.mode==="home";
+  W.active=id; setStage("work"); renderTabs();
+  if(!t.loaded){ showSkeleton(); renderDossier(true); setTimeout(()=>{ t.loaded=true; if(W.active===id){ renderPane(); renderDossier(); } },wasHome?850:600); }
+  else { renderPane(); renderDossier(); }
+}
+TECH_PINS.forEach(p=>{ if(p[1]==="Time Clock"){ p[0]="MH"; p[1]="My Hours"; } });
+WF_ALL.forEach(p=>{ if(p[1]==="Time Clock"){ p[0]="MH"; p[1]="My Hours"; } });
+PERSONAS.tech.wf=PERSONAS.tech.wf.map(x=>x==="Time Clock"?"My Hours":x);
+
+/* ---------- actions ---------- */
+const curRO=()=>activeRO();
+Object.assign(ACT,{
+  rstart:el=>runStart(curRO(),el.dataset.j,el.dataset.type),
+  rhold:el=>runStop(curRO(),el.dataset.j,true),
+  rstop:el=>runStop(curRO(),el.dataset.j,false),
+  rconf:el=>{ const t=curRO(), c=t&&t.st.conflict; if(c) runStart(t,c.L,c.type,{confirmed:true}); },
+  rcancel:()=>{ const t=curRO(); if(t){ t.st.conflict=null; renderPane(); } },
+  bclock:el=>runStart(curRO(),el.dataset.j,"labor"),
+  diag:el=>runStart(curRO(),el.dataset.j,"diag"),
+  story:el=>{ const t=curRO(), j=t.st.jobs.find(x=>x.L===el.dataset.j); j.story=!j.story; if(j.story) ensureDraft(j); if(W.level==="expert") t.st.sel=j.L; renderPane(); },
+  ctag:el=>toggleTag(curRO(),el.dataset.j,+el.dataset.i),
+  draft:el=>{ const t=curRO(), j=t.st.jobs.find(x=>x.L===el.dataset.j); j.corrDismissed=false; ensureDraft(j); renderPane(); setTimeout(()=>aivaHit(document.querySelector(`[data-field="corr"][data-j="${j.L}"]`),"Drafted by AIVA"),60); },
+  finline:el=>finishLine(curRO(),el.dataset.j),
+  finall:()=>finishAll(curRO()),
+  done:el=>{ const t=curRO(); if(el.checked){ if(!finishLine(t,el.dataset.j)) el.checked=false; } else { markDone(t,el.dataset.j,false); refreshWork(); } },
+  bfocusc:el=>{ const t=curRO(); t.st.bOpen=el.dataset.j; renderPane(); focusSel(`[data-field="corr"][data-j="${el.dataset.j}"]`,true); },
+  bdone:el=>{ const t=curRO(), L=el.dataset.j; const was=W.clock&&W.clock.ro===t.key&&W.clock.L===L;
+    if(!finishLine(t,L)) return; const nx=t.st.jobs.find(x=>!x.done); t.st.bOpen=nx?nx.L:null; t.st.bMoved=false;
+    if(nx&&was&&!W.clock){ setClock({ro:t.key,L:nx.L,t:Date.now(),type:"labor"}); t.st.bMoved=true; }
+    refreshWork(); const w=$("#wscontent"); if(w.scrollTo) w.scrollTo({top:0,behavior:"smooth"}); },
+  bodo:()=>{ const t=curRO(); if(!t.st.odoOut){ toast("Enter the odometer reading first"); focusSel('.nextcard [data-field="odo"]',true); return; } refreshWork(); },
+  hrsview:el=>{ W.hrs.view=el.dataset.v; renderPane(); },
+  hrsday:el=>{ W.hrs.day=+el.dataset.d; renderPane(); },
+  pf:el=>{ const t=curRO(); if(!t) return; t.st.pf=el.dataset.f; renderDossier(); }
+});
+
+/* Autosave, live redraft, odometer sync */
+document.addEventListener("input",e=>{
+  const f=e.target.dataset&&e.target.dataset.field; if(!f) return; const t=activeRO(); if(!t) return;
+  if(f==="odo"){ t.st.odoOut=e.target.value; document.querySelectorAll('[data-field="odo"]').forEach(x=>{ if(x!==e.target) x.value=e.target.value; }); return; }
+  const j=t.st.jobs.find(x=>x.L===e.target.dataset.j); if(!j) return;
+  j.saved=Date.now(); j.need=null; const sv=document.getElementById("saved-"+j.L); if(sv) sv.innerHTML=(W.level==="expert"?"":gi("save",12)+" ")+"Saved "+hm(j.saved);
+  if(f==="corr"){ j.corrAI=false; return; }
+  if(f==="cause"&&j.corrAI){ const d=draftFor(j); if(d){ j.corr=d.text; j.corrSrc=d.src; const c=document.querySelector(`[data-field="corr"][data-j="${j.L}"]`); if(c&&c!==e.target){ c.value=d.text; c.classList.remove("redraft"); void c.offsetWidth; c.classList.add("redraft"); } } }
+});
+document.addEventListener("change",e=>{ if(e.target.dataset&&e.target.dataset.field==="odo"&&W.level==="beginner"&&activeRO()&&e.target.closest(".nextcard")) renderPane(); });
+
+/* Keyboard: finish a line with Ctrl+Enter from its story; expert single-key commands */
+document.addEventListener("keydown",e=>{
+  const t=activeRO(); if(!t||!t.loaded||RO[t.key].status==="Closed") return;
+  const ae=document.activeElement; if(ae===$("#input")) return;
+  if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)){
+    const s=ae&&ae.closest&&ae.closest("[data-story]");
+    if(s){ e.preventDefault(); e.stopImmediatePropagation(); finishLine(t,s.dataset.story,{keys:true}); return; }
+    const w=ae&&ae.closest&&ae.closest(".wrapup,.nextcard"); if(w&&t.st.jobs.every(j=>j.done)&&!t.st.review){ e.preventDefault(); ACT.breview(); return; }
+    return;
+  }
+  if(W.level!=="expert"||e.metaKey||e.ctrlKey||e.altKey||megaOpen()||(typeof TOUR_STATE!=="undefined"&&TOUR_STATE.on)) return;
+  if(ae&&ae.closest&&ae.closest(".ppop,#chatdock,#runBar,#mega")) return;
+  const parked=isTextF(ae)&&K.on&&K.el===ae&&!K.editing;
+  if(isTextF(ae)&&!parked) return;
+  if(ae&&ae.tagName==="SELECT"&&K.editing) return;
+  const k=(e.key||"").toLowerCase(), sel=t.st.jobs.find(j=>j.L===t.st.sel)||t.st.jobs[0];
+  const run=fn=>{ e.preventDefault(); e.stopImmediatePropagation(); fn(); };
+  if(k==="c") return run(()=>W.clock&&W.clock.ro===t.key&&W.clock.L===sel.L&&W.clock.type==="labor"?runStop(t,sel.L,false):runStart(t,sel.L,"labor"));
+  if(k==="d") return run(()=>runStart(t,sel.L,"diag"));
+  if(k==="h") return run(()=>runStop(t,(W.clock&&W.clock.ro===t.key)?W.clock.L:sel.L,true));
+  if(k==="s") return run(()=>{ sel.story=!sel.story; if(sel.story) ensureDraft(sel); renderPane(); if(sel.story) focusSel(`[data-field="cause"][data-j="${sel.L}"]`,true); });
+  if(k==="x") return run(()=>{ if(sel.done){ markDone(t,sel.L,false); refreshWork(); } else finishLine(t,sel.L,{keys:true}); });
+  if(k==="f") return run(()=>finishAll(t));
+  if(k==="n") return run(()=>{ const nk=nextAssigned(t.key); if(nk) openRO(nk); });
+  if(k==="p") return run(()=>{ t.st.jobs.forEach(x=>{ if(x!==sel) x.menu=false; }); sel.menu=!sel.menu; renderPane(); });
+  if(k==="r") return run(()=>ACT.asr());
+  if(/^[1-9]$/.test(k)&&sel.story) return run(()=>toggleTag(t,sel.L,+k-1));
+  if(parked&&e.key.length===1) e.preventDefault();   // Enter edits a parked field
+},true);
+
+/* Keep the highlight on the same line when its controls change shape (Labor ↔ Hold) */
+function kAfterRender(){
+  kInjectHint();
+  if(!K.on||!K.key||document.activeElement===$("#input")) return kMark();
+  const fs=kFields(); let m=fs.find(el=>kKey(el)===K.key);
+  if(!m){ const p=K.key.split("|"); if(p[2]) m=fs.find(el=>el.dataset.j===p[2]&&(el.dataset.act||"").startsWith("r")===p[1].startsWith("r")&&el.dataset.act)||fs.find(el=>el.dataset.j===p[2]); }
+  if(m) kSet(m,false); else { K.el=null; kMark(); }
+}
+function kHint(){
+  const on=K.on&&K.el&&document.contains(K.el), el=K.el, inStory=on&&el.closest&&el.closest("[data-story]");
+  let h;
+  if(!on) h='<kbd>↓</kbd> work from the keyboard · <kbd>F2</kbd> ask AIVA · hold <kbd>Ctrl</kbd><kbd>Space</kbd> talk';
+  else if(K.editing) h=isTextF(el)?`Editing · ${inStory?"<kbd>Ctrl</kbd><kbd>Enter</kbd> finish line · ":""}<kbd>Esc</kbd> back to moving · <kbd>F2</kbd> chat`:'Choosing · <kbd>↑</kbd><kbd>↓</kbd> change · <kbd>Enter</kbd> done';
+  else { const verb=isTextF(el)?"edit":el.tagName==="SELECT"?"choose":el.type==="checkbox"?"toggle":"select";
+    h=`<kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> move · <kbd>Enter</kbd> ${verb}${inStory?" · <kbd>Ctrl</kbd><kbd>Enter</kbd> finish line":""} · <kbd>Esc</kbd> exit · <kbd>F2</kbd> chat`; }
+  document.querySelectorAll(".khint").forEach(x=>{ x.innerHTML=h; x.classList.toggle("on",!!on); });
+}
+
+/* ---------- chat: new intents for the six workflows ---------- */
+function roRoute(text){
+  const t=(text||"").toLowerCase().trim(), code=(text||"").trim().toUpperCase();
+  const cur=activeRO(), tech=S.persona==="tech", live=cur&&RO[cur.key].status!=="Closed";
+  const brief=o=>Object.assign({node:"monitor",trace:["Service · repair orders"],blocks:[srcLine(["se"],"† concept placeholder record")],chips:[],brief:true},o);
+  const lineOf=()=>{ const m=/\bline ([a-z])\b/.exec(t); const L=m?m[1].toUpperCase():null; return cur&&(cur.st.jobs.find(j=>j.L===L)||cur.st.jobs.find(j=>!j.done)||cur.st.jobs[0]); };
+  if(tech&&/\b(my hours|punch(es| times?)?|flagged( hours)?|time ?card|efficiency)\b/.test(t)&&!/\bon (this|the) ro\b/.test(t)){
+    const flag=/flag|efficien/.test(t);
+    return brief({dest:"work",trace:["Service · technician time"],lead:`Opening <b>My Hours</b> on ${flag?"flagged hours":"punch times"} for today.`,after:()=>{ W.hrs.view=flag?"flag":"punch"; W.hrs.day=0; openWf("My Hours"); aivaOpened(); }});
+  }
+  if(code==="FN"||/^finish (all|the ready|ready|my) lines?|^finish lines?$/.test(t)){
+    if(!live) return brief({lead:"Open an RO first, and I'll finish every line that has a complete story.",blocks:[]});
+    const n=cur.st.jobs.filter(j=>!j.done&&(j.cause||"").trim()&&(j.corr||"").trim()).length;
+    return brief({dest:n?"work":undefined,node:n?"auto":"monitor",lead:n?`Finished <b>${n}</b> line${n>1?"s":""} with complete stories. Hours are flagged.`:"No line has a complete story yet. Each line needs a cause and a correction first.",after:()=>{ if(n){ finishAll(cur); aivaRegion("#workspace"); } }});
+  }
+  if(live&&/(write|draft|start|do) (the |my )?(story|correction|3 ?c'?s)|draft (the )?correction|^story\b/.test(t)){
+    const j=lineOf(); if(!j) return null;
+    return brief({dest:"work",node:"auto",lead:`The story for <b>line ${j.L}</b> is open in the line. ${libFor(j)?"I started the correction from <b>"+esc(libFor(j).src)+"</b>":"No library story is mapped to this op, so I drafted from your cause"}. It updates as you pick the cause.`,
+      after:()=>{ j.story=true; j.corrDismissed=false; ensureDraft(j); if(W.level==="expert") cur.st.sel=j.L; if(W.level==="beginner") cur.st.bOpen=j.L; renderPane(); setTimeout(()=>{ const el=document.querySelector(`[data-field="corr"][data-j="${j.L}"]`); if(el){ if(el.scrollIntoView) el.scrollIntoView({behavior:"smooth",block:"center"}); aivaHit(el,"Drafted by AIVA"); } },80); }});
+  }
+  if(live&&/^(start|run|clock on( to)?) (labor|diag(nostic)?)/.test(t)){
+    const j=lineOf(), ty=/diag/.test(t)?"diag":"labor";
+    return brief({dest:"work",node:"auto",lead:`Starting ${typeName(ty).toLowerCase()} time on <b>line ${j.L}</b>.`,after:()=>{ runStart(cur,j.L,ty); setTimeout(()=>{ aivaHit(document.querySelector("#job-"+j.L+" .rlive, #job-"+j.L+" .xrun, #job-"+j.L+" .conflict"),"From AIVA"); },80); }});
+  }
+  if(live&&/^(hold|pause)\b/.test(t)&&W.clock&&W.clock.ro===cur.key){ const L=W.clock.L;
+    return brief({dest:"work",node:"auto",lead:`Line ${L} is on hold. Resume it from the line.`,after:()=>runStop(cur,L,true)}); }
+  return roRouteV24(text);
+}
+
+/* Demo steps for the six workflows */
+const _scriptV24=ACT.script;
+ACT.script=el=>{
+  const s=el.dataset.s;
+  if(s==="focus"){ closePops(); const go=()=>{ if(W.mode!=="work"||!activeRO()) openRO("13456B"); setTimeout(()=>{ renderPane(); setWFocus(true); },W.mode==="work"&&activeRO()?50:1150); }; if(S.persona!=="tech"){ switchPersona("tech"); setTimeout(go,450); } else go(); return; }
+  if(!["conflict","kstory","punch","hours","nextjob"].includes(s)) return _scriptV24(el);
+  closePops();
+  const asTech=fn=>{ if(S.persona!=="tech"){ switchPersona("tech"); setTimeout(fn,450); } else fn(); };
+  const onRO=(k,fn)=>asTech(()=>{ if(W.active!=="ro:"+k||W.mode!=="work"){ openRO(k); setTimeout(fn,1150); } else fn(); });
+  if(s==="conflict") return asTech(()=>{ const t=ensureROTab("13461C"); if(!(W.clock&&W.clock.ro==="13461C")) setClock({ro:"13461C",L:"A",t:Date.now()-12*MIN,type:"labor"}); renderMyDay();
+    onRO("13456B",()=>{ runStart(activeRO(),"A","labor"); }); });
+  if(s==="kstory") return onRO("13456B",()=>{ const t=activeRO(), j=t.st.jobs.find(x=>!x.done)||t.st.jobs[0]; j.story=true; ensureDraft(j); if(W.level==="expert") t.st.sel=j.L; if(W.level==="beginner") t.st.bOpen=j.L; renderPane();
+    focusSel(`[data-field="cause"][data-j="${j.L}"]`,false); });
+  if(s==="punch") return onRO("13456B",()=>{ const t=activeRO(); t.st.open.punch=true; $("#stage").classList.add("dos-open"); renderDossier(); aivaRegion("#dossier"); setTimeout(()=>{ const h=document.querySelector('[data-k="punch"]'); if(h){ if(h.scrollIntoView) h.scrollIntoView({behavior:"smooth",block:"start"}); aivaHit(h.closest(".dsec"),"Punch times"); } },120); });
+  if(s==="hours") return asTech(()=>{ W.hrs.view="punch"; W.hrs.day=0; openWf("My Hours"); });
+  if(s==="nextjob") return onRO("13456B",()=>{ const t=activeRO(); t.st.jobs.forEach(j=>{ if(!j.done){ if(!(j.cause||"").trim()){ j.tags=[(libFor(j)||{tags:[[""]]}).tags[0][0]]; j.cause=j.tags[0]+"."; } ensureDraft(j); } }); finishAll(t); if(!t.st.odoOut) t.st.odoOut="34,012"; refreshWork(); focusSel('.wrapup [data-act="breview"]',false); });
+};
+
+
+
+/* ==========================================================================
+   v26 — EXPERT FOCUS MODE
+   Expert only. My Day and AIVA Insights slide off to slim side tabs so the
+   screen holds the workflow, the top nav and the AIVA chat. Open tabs are
+   kept; the Focus control sits apart from them at the end of the tab bar.
+   A side tab opens its panel over the work for a moment; Esc or a click
+   back in the work closes it.
+   ========================================================================== */
+Object.assign(GI,{maxi:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',mini:'<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>',cal:'<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>'});
+W.focus=false; W.insNew=0;
+function syncSideTabs(){
+  const L=$("#sideL"), R=$("#sideR"); if(!L||!R) return;
+  const alerts=S.persona==="tech"?TECH_ALERTS.length:0;
+  L.innerHTML=`${gi("cal",16)}<span class="vt">My Day</span>${alerts?`<span class="sb hot" title="${alerts} alerts">${alerts}</span>`:""}`;
+  R.innerHTML=`${gi("spark",16)}<span class="vt">AIVA Insights</span>${W.clock?'<span class="sclk" title="Time is running"></span>':""}${W.insNew?`<span class="sb" title="${W.insNew} new">${W.insNew}</span>`:""}`;
+  R.classList.toggle("new",!!W.insNew);
+}
+function setWFocus(on){
+  const st=$("#stage"); W.focus=!!on&&W.mode==="work";
+  st.classList.toggle("wfocus",W.focus); st.classList.remove("peek-l","peek-r");
+  if(!W.focus) W.insNew=0;
+  syncSideTabs(); renderTabs(); kAfterRender();
+}
+function peek(side){
+  const st=$("#stage"), cls="peek-"+side, open=st.classList.contains(cls);
+  st.classList.remove("peek-l","peek-r");
+  if(!open){ st.classList.add(cls); if(side==="r"){ W.insNew=0; renderDossier(); } else renderMyDay(); syncSideTabs(); }
+}
+function renderTabs(){
+  const on=W.focus, ex=true;
+  $("#tabbar").innerHTML=`<button class="icon-btn m-only" data-act="gohome" aria-label="Back to My Day" title="My Day">${gi("home",18)}</button>`+W.tabs.map(t=>`<div class="wtab ${t.id===W.active?"active":""}" role="tab" aria-selected="${t.id===W.active}" data-tab="${esc(t.id)}"><button data-act="tab" data-id="${esc(t.id)}">${tabIcon(t)}${esc(tabLabel(t))}</button><span class="wx" role="button" tabindex="0" aria-label="Close ${esc(tabLabel(t))}" data-act="closetab" data-id="${esc(t.id)}">${gi("x",13)}</span></div>`).join("")
+   +`<span style="flex:1"></span><button class="btn sm dos-btn" data-act="dossier" style="align-self:center;margin-bottom:4px">${gi("spark",13)} Insights</button>`
+   +(ex&&W.mode==="work"?`<span class="tb-sep" aria-hidden="true"></span><button class="btn sm wf-focus ${on?"on":""}" data-act="wfocus" aria-pressed="${on}" title="${on?"Bring back My Day and AIVA Insights":"Hide My Day and AIVA Insights to focus on the workflow"}">${gi(on?"mini":"maxi",13)} ${on?"Exit focus":"Focus"}</button>`:"");
+}
+
+function kZone(el){ return !!el&&!!el.closest&&!!el.closest("#tabbar,#wscontent,#canvas,.stage.wfocus .sidetab,.stage.home #mdFull"); }
+const _kFieldsV21=kFields;
+kFields=function(){
+  if(W.mode==="home") return [...document.querySelectorAll("#mdFull button,#mdFull input,#mdFull select,#mdFull textarea,#mdFull summary,#mdFull a[href]")].filter(el=>!el.disabled&&el.getBoundingClientRect().width>0&&!el.closest(".khint"));
+  const f=_kFieldsV21(); return W.focus?f.concat([...document.querySelectorAll(".stage.wfocus .sidetab")].filter(el=>el.getBoundingClientRect().width>0)):f; };
+ACT.wfocus=()=>setWFocus(!W.focus);
+/* v27 — keyboard on the expanded My Day: same keys, same highlight */
+const _kInjectHintV21=kInjectHint;
+kInjectHint=function(){
+  if(W.mode==="home"){ const h=$("#mdFull"); if(h&&!h.querySelector(":scope > .khint")) h.insertAdjacentHTML("afterbegin",'<div class="khint" aria-live="polite"></div>'); kHint(); return; }
+  _kInjectHintV21();
+};
+const _renderMyDayV26=renderMyDay;
+renderMyDay=function(){ _renderMyDayV26(); if(W.mode==="home") kAfterRender(); };
+
+const _levelV25=ACT.level;
+ACT.level=el=>{ _levelV25(el); renderTabs(); };
+document.addEventListener("click",e=>{
+  const g=s=>e.target.closest&&e.target.closest(s), st=$("#stage");
+  const side=g(".sidetab"); if(side){ e.preventDefault(); e.stopPropagation(); peek(side.dataset.side); return; }
+  if(!st.classList.contains("wfocus")) return;
+  if(st.classList.contains("peek-l")&&!g("#myday")) st.classList.remove("peek-l");
+  else if(st.classList.contains("peek-l")&&g("#myday [data-act],#myday [data-prompt]")) setTimeout(()=>st.classList.remove("peek-l"),60);
+  if(st.classList.contains("peek-r")&&!g("#dossier")) st.classList.remove("peek-r");
+},true);
+window.addEventListener("keydown",e=>{
+  const st=$("#stage"); if(e.key!=="Escape"||!st.classList.contains("wfocus")) return;
+  if(st.classList.contains("peek-l")||st.classList.contains("peek-r")){ e.preventDefault(); e.stopImmediatePropagation(); st.classList.remove("peek-l","peek-r"); }
+},true);
+const _setClockV25=setClock;
+setClock=function(c){ _setClockV25(c); if(W.focus) syncSideTabs(); };
+
+/* ==========================================================================
    EVENTS — one delegated listener
    ========================================================================== */
 document.addEventListener("click",e=>{
@@ -3528,6 +4755,7 @@ document.addEventListener("click",e=>{
   if(g("#themeBtn")) return toggleTheme();
   if(g("#cvClose")) return aivaCloseStage();
 
+  if(g("#f2Hint")) return chatFocus();
   if(g("#atBtn")){ const i=$("#input"); i.value+=(i.value&&!/\s$/.test(i.value)?" ":"")+"@"; i.focus(); i.selectionStart=i.value.length; return onInput(); }
   if(g("#slashBtn")){ const i=$("#input"); i.value="/"; i.focus(); return onInput(); }
   if(g("#sendBtn")) return send();
@@ -3539,6 +4767,7 @@ $("#input").addEventListener("keydown",e=>{
     if(e.key==="Enter"||e.key==="Tab"){ e.preventDefault(); return choosePop(POP.sel); }
     if(e.key==="Escape"){ return closePop(); }
   }
+  if(e.key==="Escape"){ e.preventDefault(); e.stopPropagation(); if(panelOpen()) closePanel(); else chatReturn(); return; }
   // Phone convention: Return makes a new line; the send button sends.
   if(e.key==="Enter"&&!e.shiftKey&&!(isMobile()&&MQ.matches)){ e.preventDefault(); send(); }
 });
@@ -3548,7 +4777,7 @@ $("#input").addEventListener("keydown",e=>{
    ========================================================================== */
 (function boot(){
   let th=null; try{ th=localStorage.getItem("aiva-theme"); }catch(e){}
-  document.documentElement.dataset.theme = th || "dark";
+  document.documentElement.dataset.theme = th || "light";
   document.querySelectorAll(".mark-slot").forEach(s=>s.innerHTML=markSVG(+s.dataset.size));
   try{ S.preview=localStorage.getItem("aiva-preview")==="1"; }catch(e){}
   applyMode(); if(MQ.addEventListener) MQ.addEventListener("change",applyMode);
