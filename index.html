@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0e1014">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>AIVA — Unify (v29)</title>
+<title>AIVA — Unify (v30)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -1286,6 +1286,42 @@ tr.hrun td{background:color-mix(in srgb,var(--brand) 6%,transparent)}
 .demo-focus .side{width:34%;animation:dfSide 3s ease-in-out infinite}
 @keyframes dfSide{0%,25%{width:26%}55%,85%{width:6%}100%{width:26%}}
 @media (prefers-reduced-motion:reduce){.demo-land *,.demo-focus .side,.demo-talk .wave i{animation:none}}
+
+/* v30 — company themes */
+html[data-dealer]{--brand:var(--dl-l);
+  --bg:color-mix(in srgb,var(--dl-l) 9%,#f4f5f7); --surface-2:color-mix(in srgb,var(--dl-l) 6%,#f1f3f6); --surface-3:color-mix(in srgb,var(--dl-l) 9%,#e9ecf1);
+  --border:color-mix(in srgb,var(--dl-l) 12%,#e2e6ec); --border-strong:color-mix(in srgb,var(--dl-l) 18%,#cfd5de); --user-bubble:color-mix(in srgb,var(--dl-l) 12%,#fff)}
+html[data-dealer][data-theme="dark"]{--brand:var(--dl-d);
+  --bg:color-mix(in srgb,var(--dl-d) 9%,#0c0e12); --surface:color-mix(in srgb,var(--dl-d) 4%,#161920); --surface-2:color-mix(in srgb,var(--dl-d) 7%,#1c2028); --surface-3:color-mix(in srgb,var(--dl-d) 10%,#242935);
+  --border:color-mix(in srgb,var(--dl-d) 14%,#2a2f3a); --border-strong:color-mix(in srgb,var(--dl-d) 20%,#3a4150); --user-bubble:color-mix(in srgb,var(--dl-d) 20%,#161920)}
+html[data-dealer] .plat{background:linear-gradient(100deg,var(--dl-h) 0%,color-mix(in srgb,var(--dl-h) 78%,var(--dl-l)) 100%);border-bottom:0;box-shadow:inset 0 -3px 0 var(--dl-l);color:#fff}
+html[data-dealer][data-theme="dark"] .plat{background:linear-gradient(100deg,var(--dl-hd) 0%,color-mix(in srgb,var(--dl-hd) 80%,var(--dl-d)) 100%);box-shadow:inset 0 -3px 0 var(--dl-d)}
+html[data-dealer] .plat .icon-btn,html[data-dealer] .plat .dname,html[data-dealer] .plat .whoBtn .n{color:#fff}
+html[data-dealer] .plat .prod{color:rgba(255,255,255,.72);border-left-color:rgba(255,255,255,.28)}
+html[data-dealer] .plat .whoBtn .r{color:rgba(255,255,255,.7)}
+html[data-dealer] .plat .lvl{background:rgba(255,255,255,.16);color:#fff}
+html[data-dealer] .plat .icon-btn:hover,html[data-dealer] .plat .whoBtn:hover{background:rgba(255,255,255,.12)}
+html[data-dealer] .plat .demo-pill{border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.1);color:#fff}
+html[data-dealer] .plat .cdk-dot{border-color:#fff}
+html[data-dealer] #chatdock .composer:focus-within{border-color:var(--brand)!important}
+/* logo system: white rounded-square mark, one glyph in the dealer colour, two-line wordmark */
+.dname.has-mark{display:flex;align-items:center;gap:9px;margin-left:4px}
+.dl-mark{width:30px;height:30px;border-radius:9px;background:#fff;color:var(--c);display:inline-grid;place-items:center;flex:none;box-shadow:0 1px 2px rgba(0,0,0,.18)}
+.dl-mark.cdk{background:#006CFA;color:#fff;font-size:11px;font-weight:800;letter-spacing:-.3px}
+.dl-word{display:flex;flex-direction:column;line-height:1}
+.dl-word b{font-size:15px;font-weight:700;letter-spacing:-.2px}
+.dl-word small{font-size:9px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;opacity:.75;margin-top:3px}
+/* picker */
+.dl-pick{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.dl-opt{display:flex;align-items:center;gap:8px;border:1px solid var(--border);background:var(--surface);border-radius:10px;padding:6px 8px;text-align:left;font-size:12.5px;font-weight:600;color:var(--text);cursor:pointer}
+.dl-opt:hover{border-color:var(--c)}
+.dl-opt.sel{border-color:var(--c);box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 30%,transparent);background:color-mix(in srgb,var(--c) 8%,var(--surface))}
+.dl-opt .dl-mark.pick{width:24px;height:24px;border-radius:7px;background:var(--c);color:#fff;box-shadow:none}
+.dl-opt .dl-mark.pick svg{width:15px;height:15px}
+.dl-opt .dl-mark.cdk.pick{font-size:9.5px}
+.app.m .dl-word small{display:none}
+.app.m .dname.has-mark{gap:7px}
+.app.m .dl-mark{width:26px;height:26px;border-radius:8px}
 </style>
 </head>
 <body>
@@ -1294,7 +1330,7 @@ tr.hrun td{background:color-mix(in srgb,var(--brand) 6%,transparent)}
   <header class="plat" id="plat">
     <button class="icon-btn" id="megaBtn" aria-label="Open navigation menu" title="Navigation"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="3.4" height="3.4" rx=".7"/><rect x="10.3" y="4" width="3.4" height="3.4" rx=".7"/><rect x="16.6" y="4" width="3.4" height="3.4" rx=".7"/><rect x="4" y="10.3" width="3.4" height="3.4" rx=".7"/><rect x="10.3" y="10.3" width="3.4" height="3.4" rx=".7"/><rect x="16.6" y="10.3" width="3.4" height="3.4" rx=".7"/><rect x="4" y="16.6" width="3.4" height="3.4" rx=".7"/><rect x="10.3" y="16.6" width="3.4" height="3.4" rx=".7"/><rect x="16.6" y="16.6" width="3.4" height="3.4" rx=".7"/></svg></button>
     <button class="cdk-dot" id="cdkLogoBtn" title="My Day" aria-label="CDK — go to My Day">CDK</button>
-    <span class="dname">Statler Toyota</span>
+    <span class="dname" id="dealerLogo"><span class="dn">Statler Toyota</span></span>
     <span class="prod">Unify</span>
     <span class="sp"></span>
     <button class="demo-pill" id="demoBtn">Demo controls</button>
@@ -1344,13 +1380,9 @@ tr.hrun td{background:color-mix(in srgb,var(--brand) 6%,transparent)}
   <div class="ppop" id="demoPop" style="right:12px;width:340px">
     <div class="mh3">Demo controls <span class="lbl" style="text-transform:none;letter-spacing:0;font-weight:500">(not part of the concept)</span></div>
     <div class="drow"><span class="lbl" style="width:60px">Role</span><select class="rsel" id="demoRole" aria-label="Role"></select></div>
-    <div class="drow"><span class="lbl" style="width:60px">Accent</span>
-      <span class="sw sel" data-act="accent" data-c="#006CFA" style="background:#006CFA"></span>
-      <span class="sw" data-act="accent" data-c="#b3261e" style="background:#b3261e"></span>
-      <span class="sw" data-act="accent" data-c="#1d6b46" style="background:#1d6b46"></span>
-      <span class="sw" data-act="accent" data-c="#7c3aed" style="background:#7c3aed"></span>
-      <span class="sw" data-act="accent" data-c="#64748b" style="background:#64748b"></span>
-    </div>
+    <div class="mh3" style="margin-top:12px">Company theme</div>
+    <div class="dl-pick" id="dealerPick"></div>
+    <div class="lbl" style="font-size:11.5px;margin:6px 0 4px">Five fictional dealerships, for demonstration. Statler Toyota is the CDK default.</div>
     <label class="drow" style="cursor:pointer"><input type="checkbox" id="notesToggle"> Show concept notes</label>
     <div class="mh3" style="margin-top:12px">Technician walkthrough</div>
     <button class="step" data-act="script" data-s="next"><span class="n">1</span><span>Ask chat <b>"What's my next RO?"</b>. The RO loads with a skeleton.</span></button>
@@ -2047,7 +2079,7 @@ function driveAnswer(cmd,arg){
 function newHireBriefing(first){
   const tasks=briefingTasks("newHire");
   return {node:"monitor",trace:["Orientation"],
-    lead:`${first?greetingWord()+". ":""}Welcome to your first day at <b>Statler Toyota</b>. Nothing here is urgent — start with the tour, then try a command or two.`,
+    lead:`${first?greetingWord()+". ":""}Welcome to your first day at <b>${esc(DN())}</b>. Nothing here is urgent — start with the tour, then try a command or two.`,
     blocks:[{t:"tasks",title:"Start here",items:tasks},
       {t:"kbd",html:`Work from the keyboard: <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> move · <kbd>Enter</kbd> act · <kbd>Esc</kbd> step back · <kbd>F2</kbd> ask AIVA`},
       srcLine(["se","crm-red","dm"],"orientation")],
@@ -2149,7 +2181,7 @@ function showWelcome(){
   el.innerHTML=`<div class="ob-scrim"></div><div class="ob-modal" role="dialog" aria-modal="true" aria-labelledby="obTitle">
     <div class="ob-mark">${markSVG(56)}<i class="ob-spark s1"></i><i class="ob-spark s2"></i><i class="ob-spark s3"></i></div>
     <h2 id="obTitle">Welcome to Unify</h2>
-    <p>You're set up as a <b>Service Advisor</b> at Statler Toyota. Everything starts with a conversation — ask for what you need and AIVA brings the right tool to you.</p>
+    <p>You're set up as a <b>Service Advisor</b> at <span class="dn">Statler Toyota</span>. Everything starts with a conversation — ask for what you need and AIVA brings the right tool to you.</p>
     <div class="ob-points">
       <div><span class="ob-ic">${markSVG(18)}</span><span><b>Ask in plain words</b><small>Type <kbd>/</kbd> to discover every command</small></span></div>
       <div><span class="ob-ic"><kbd>F2</kbd></span><span><b>Work from the keyboard</b><small>Arrows move · <kbd>Enter</kbd> acts · <kbd>Esc</kbd> steps back · <kbd>F2</kbd> asks AIVA</small></span></div>
@@ -2298,7 +2330,7 @@ function briefingAnswer(pk,first){
   if(pk==="newHire") return newHireBriefing(first);
   const p=PERSONAS[pk], tasks=briefingTasks(pk), hi=tasks.filter(t=>t.pri==="high").length;
   const apps=[...new Set(tasks.map(t=>t.app).concat(p.apps||[]))].filter(a=>APPS[a]);
-  const lead = `${first?greetingWord()+". ":""}You have <b>${tasks.length} things</b> on your plate at Statler Toyota today${hi?` — <b>${hi} ${hi>1?"are":"is"} time-sensitive</b>`:""}. ${esc(p.banner.replace(/\\'/g,"'"))}`;
+  const lead = `${first?greetingWord()+". ":""}You have <b>${tasks.length} things</b> on your plate at ${esc(DN())} today${hi?` — <b>${hi} ${hi>1?"are":"is"} time-sensitive</b>`:""}. ${esc(p.banner.replace(/\\'/g,"'"))}`;
   return {node:"monitor",trace:apps.map(a=>APPS[a].name),lead,
     blocks:[{t:"tasks",items:tasks}].concat(pk==="tech"?[{t:"h",text:"Your queue †"},{t:"tbl",head:["RO","Vehicle","Work","Promised"],rows:RO_QUEUE.map(k=>[`<b>${k}</b>`,esc(RO[k].vehicle),esc(RO[k].summary),esc(RO[k].promised)]),click:RO_QUEUE.map(k=>"RO "+k)}]:[]).concat([{t:"h",text:"Your numbers"},{t:"parts",cards:p.cards||[]},srcLine(apps,"as of "+hhmm(now()))]),
     chips:first?starters(pk).slice(1).concat([{label:"Show every command",prompt:"/help"}]):starters(pk).slice(1)};
@@ -2453,8 +2485,8 @@ function renderRail(){
   $("#threadList").innerHTML=Object.entries(groups).filter(g=>g[1].length).map(([g,ts])=>`<div class="rail-h">${g}</div>`+ts.map(t=>`<div class="th${t.id===S.cur?" on":""}" data-thread="${t.id}"><span class="t">${esc(t.title)}</span><button class="icon-btn${t.pinned?" pinned":""}" data-pin="${t.id}" title="${t.pinned?"Unpin":"Pin"}"><svg width="13" height="13" viewBox="0 0 24 24" fill="${t.pinned?"currentColor":"none"}" stroke="currentColor" stroke-width="2"><path d="M12 17v5M8 3h8l-1 6 3 4H6l3-4z"/></svg></button><button class="icon-btn" data-del="${t.id}" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></div>`).join("")).join("");
   const p=P(), tech=S.persona==="tech", inits=x=>x.split(/[ /&]+/).filter(Boolean).map(w=>w[0]).join("").slice(0,2).toUpperCase();
   const name=tech?TECH_USER.name:p.label, lvl=LEVELS.find(x=>x[0]===W.level)[1];
-  $("#personaBtn").innerHTML=`<span class="avatar" style="background:${PERSONA_COLOR[S.persona]}">${inits(tech?name:p.short)}</span><span class="tx"><div class="n">${esc(name)}</div><div class="r">${esc(tech?p.short:"Statler Toyota")}<span class="lvl">${lvl}</span></div></span>`;
-  $("#whoAcct").innerHTML=`<div style="font-size:13px"><b>${esc(name)}</b><div class="lbl">${esc(p.label)} · Statler Toyota</div></div>`;
+  $("#personaBtn").innerHTML=`<span class="avatar" style="background:${PERSONA_COLOR[S.persona]}">${inits(tech?name:p.short)}</span><span class="tx"><div class="n">${esc(name)}</div><div class="r">${esc(tech?p.short:DN())}<span class="lvl">${lvl}</span></div></span>`;
+  $("#whoAcct").innerHTML=`<div style="font-size:13px"><b>${esc(name)}</b><div class="lbl">${esc(p.label)} · ${esc(DN())}</div></div>`;
   $("#roleList").innerHTML=PERSONA_ORDER.map(k=>{ const q=PERSONAS[k]; return `<button data-persona="${k}" class="${k===S.persona?"on":""}"><span class="avatar" style="background:${PERSONA_COLOR[k]}">${inits(q.short)}</span>${esc(q.label)}</button>`; }).join("");
   const dr=$("#demoRole"); if(dr) dr.value=S.persona;
   const lc=$("#logCount"); lc.hidden=!S.log.length; lc.textContent=S.log.length;
@@ -2502,7 +2534,7 @@ function renderCanvas(){ _renderCanvas(); kAfterRender(); }
 function _renderCanvas(){
   const c=S.canvas, body=$("#cvBody");
   if(c.kind==="app"){
-    const a=APPS[c.app]; $("#cvTile").innerHTML=tileHTML(c.app); $("#cvTitle").innerHTML=`${esc(a.name)}<small>Statler Toyota</small>`;
+    const a=APPS[c.app]; $("#cvTile").innerHTML=tileHTML(c.app); $("#cvTitle").innerHTML=`${esc(a.name)}<small>${esc(DN())}</small>`;
     const items=allItems().filter(i=>i.icon===c.app&&i.persona!=="newHire"), cards=allCards().filter(x=>cardApp(x)===c.app);
     const tabs=["Overview","Needs attention","Dashboards"].concat(c.app==="dm"?["Documents"]:[]);
     const tab=c.tab||(c.rec?"Overview":"Overview");
@@ -2641,7 +2673,7 @@ function newChatClick(){
   if(S.streaming) S.streaming.stop();
   const th=newThread(S.persona,"New chat"); S.cur=th.id; renderThread();
   const p=P();
-  $("#thread").innerHTML=`<div class="hero">${markSVG(40)}<h2 style="margin:16px 0 6px;font-size:26px;letter-spacing:-.4px">${greetingWord()}. What can I help with?</h2><p class="lbl" style="font-size:14px">${esc(p.label)} · Statler Toyota</p></div><div class="starters">${starters(S.persona).map(s=>`<button class="card" style="text-align:left;cursor:pointer" data-prompt="${esc(s.prompt)}"><b style="font-size:13.5px">${esc(s.label)}</b><span class="lbl">${esc(s.prompt===s.label?"Ask AIVA":s.prompt)}</span></button>`).join("")}</div><p style="text-align:center;margin-top:14px"><button class="chip" data-prompt="/help">Show every command</button></p>`;
+  $("#thread").innerHTML=`<div class="hero">${markSVG(40)}<h2 style="margin:16px 0 6px;font-size:26px;letter-spacing:-.4px">${greetingWord()}. What can I help with?</h2><p class="lbl" style="font-size:14px">${esc(p.label)} · ${esc(DN())}</p></div><div class="starters">${starters(S.persona).map(s=>`<button class="card" style="text-align:left;cursor:pointer" data-prompt="${esc(s.prompt)}"><b style="font-size:13.5px">${esc(s.label)}</b><span class="lbl">${esc(s.prompt===s.label?"Ask AIVA":s.prompt)}</span></button>`).join("")}</div><p style="text-align:center;margin-top:14px"><button class="chip" data-prompt="/help">Show every command</button></p>`;
   $("#input").focus();
 }
 function micClick(){
@@ -2758,7 +2790,7 @@ function goHome(){ closeMega(); closePops(); setStage("home"); }
 function dayModel(pk){
   const p=PERSONAS[pk];
   if(pk==="tech"){
-    return {greet:", "+TECH_USER.first,sub:`${p.short} · Statler Toyota ${TECH_USER.bay}`,queueTitle:"Assigned to me today",
+    return {greet:", "+TECH_USER.first,sub:`${p.short} · ${DN()} ${TECH_USER.bay}`,queueTitle:"Assigned to me today",
       queue:RO_QUEUE.map((k,i)=>({ro:k,next:i===0,title:"RO "+k,meta:RO[k].vehicle,line:RO[k].summary+" · "+RO[k].status,why:RO[k].why,tag:i===0?"Next up":"Queue",tagCls:i===0?"acc":"",rk:"Promised",rv:RO[k].promised})),
       smart:TECH_TASKS.map(t=>({id:t.id,t:t.t,s:t.s,ro:t.ro,wf:t.wf})),
       alerts:TECH_ALERTS, time:true, pins:TECH_PINS.map(x=>x[1])};
@@ -2769,7 +2801,7 @@ function dayModel(pk){
   if(pk==="newHire") smart=tasks.map((t,i)=>({id:pk+":l"+i,t:t.title,s:t.sub,prompt:t.cta&&!t.cta.tour?t.cta.prompt:null,tour:!!(t.cta&&t.cta.tour)}));
   else if(!smart.length) smart=tasks.slice(0,3).map((t,i)=>({id:pk+":r"+i,t:"Review "+t.title,s:t.sub,prompt:"What's happening with "+t.title+"?"}));
   const alerts=tasks.filter(t=>t.pri==="high").slice(0,3).map(t=>({b:"!",t:t.title,s:t.sub,prompt:"What's happening with "+t.title+"?",hot:true}));
-  return {greet:"",sub:`${p.label} · Statler Toyota`,queueTitle:pk==="newHire"?"Start here":"My queue today",queue,smart,alerts,time:false,cards:p.cards||[],pins:p.wf||[]};
+  return {greet:"",sub:`${p.label} · ${DN()}`,queueTitle:pk==="newHire"?"Start here":"My queue today",queue,smart,alerts,time:false,cards:p.cards||[],pins:p.wf||[]};
 }
 function qcardHTML(q){
   const badge=q.ro?`<span class="badge">${gi("car",20)}</span>`:tileHTML(q.app,"lg");
@@ -3350,7 +3382,7 @@ function togglePop(id){ const p=$("#"+id), on=!p.classList.contains("show"); clo
 function resetDemo(){
   if(S.streaming) S.streaming.stop();
   setClock(null); W.taskDone={}; W.lastEdit=null; S.log=[]; S.threads={}; S.dup=null; INDEX=null;
-  document.documentElement.style.removeProperty("--brand"); document.querySelectorAll("#demoPop .sw").forEach((s,i)=>s.classList.toggle("sel",i===0));
+  applyDealer("statler");
   document.body.classList.remove("notes"); $("#notesToggle").checked=false;
   switchPersona(S.persona); toast("Demo reset");
 }
@@ -3395,7 +3427,7 @@ const ACT={
   addrecall:()=>{ const L=addRecall(); if(L){ W.lastEdit="job:"+L; toast("Recall 23S12 added as line "+L+" — Undo is on the line"); } },
   askrotor:()=>ask("Add front rotors to line A"),
   undo:el=>{ if(undoEdit(el.dataset.what)) toast("Undone"); },
-  accent:el=>{ document.documentElement.style.setProperty("--brand",el.dataset.c); document.querySelectorAll("#demoPop .sw").forEach(s=>s.classList.toggle("sel",s===el)); },
+  dealer:el=>applyDealer(el.dataset.d),
   reset:resetDemo,
   script:el=>{ closePops(); const s=el.dataset.s;
     const asTech=fn=>{ if(S.persona!=="tech"){ switchPersona("tech"); setTimeout(fn,450); } else fn(); };
@@ -3498,12 +3530,12 @@ const CASE_AUTO={
     rows:()=>[["Customer",CASE.customer.name],["Vehicle",CASE.vehicle.desc],["Slot","Thursday 9:00am · waiter"],["Work","Maintenance interval + recall"],["Special order",CASE.blocker.po+" — released to arrive Wednesday"]],
     note:"Books the bay, texts and emails her the confirmation, and releases the special order.",
     done:"Booked Bonita Murray Thursday 9:00am; confirmation sent; special order PO #178658 released.",
-    onDone:()=>{ CASE.booked=true; caseNote("Appointment booked Thursday 9:00am; special order released"); custMsg("Statler Toyota: you're booked Thursday 9:00am. We'll have you waiting — coffee's on us."); caseRefresh(); }},
+    onDone:()=>{ CASE.booked=true; caseNote("Appointment booked Thursday 9:00am; special order released"); custMsg(DN()+": you're booked Thursday 9:00am. We'll have you waiting — coffee's on us."); caseRefresh(); }},
   estimate:{re:NEVER,label:"Send the engine estimate to Bonita Murray",
     rows:()=>[["Customer",CASE.customer.name+" · "+CASE.customer.phone],["RO","#"+CASE.ro.num],["Finding","Coolant in the oil"],["Repair","Engine replacement · $9,480"],["Time","5–7 days"]],
     note:"Texts her the estimate with Approve and Decline. Nothing proceeds until she answers.",yes:"Send it",
     done:"Sent the $9,480 engine estimate to Bonita Murray for approval.",
-    onDone:()=>{ CASE.estimateSent=true; caseNote("Engine estimate sent for approval"); custMsg("Statler Toyota: your inspection found coolant in the oil. Engine replacement is $9,480 and takes 5–7 days. Approve the repair?",true); }},
+    onDone:()=>{ CASE.estimateSent=true; caseNote("Engine estimate sent for approval"); custMsg(DN()+": your inspection found coolant in the oil. Engine replacement is $9,480 and takes 5–7 days. Approve the repair?",true); }},
   equity:{re:NEVER,label:"Flag the equity position",
     rows:()=>[["Customer",CASE.customer.name],["Vehicle value","$21,400"],["Owed","$0 — owned outright"],["Repair estimate","$9,480"],["Equity","$21,400"]],
     note:"Flags the position on the case so Sales can see it. It does not contact her.",yes:"Flag it",no:"Not yet",
@@ -3656,7 +3688,7 @@ function caseDossier(){
 function caseRefresh(){ const t=activeTab(); if(W.mode==="work"&&t&&t.kind==="cv"&&t.st.kind==="case"){ renderCanvas(); renderDossier(); } }
 function caseCanvas(body,view){
   const [app,sec]=CASE_VIEWS[view], C=CASE;
-  $("#cvTile").innerHTML=tileHTML(app); $("#cvTitle").innerHTML=`${esc(APPS[app].name)} · ${esc(sec)}<small>Statler Toyota · demonstration data †</small>`;
+  $("#cvTile").innerHTML=tileHTML(app); $("#cvTitle").innerHTML=`${esc(APPS[app].name)} · ${esc(sec)}<small>${esc(DN())} · demonstration data †</small>`;
   const row=(cells,hl)=>`<tr class="${hl?"case-hl":""}">${cells.map(c=>`<td>${c}</td>`).join("")}</tr>`;
   const tbl=(head,rows)=>`<table class="tbl"><thead><tr>${head.map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table>`;
   const sec_=(t,h)=>`<div class="cv-sec"><div class="sec-h">${esc(t)}<span class="line"></span></div>${h}</div>`;
@@ -4047,7 +4079,7 @@ const typeName=x=>x==="diag"?"Diagnostic":x==="labor"?"Labor":"Shop time";
 
 /* Dealer story library, mapped to labor ops. Placeholder text (†). */
 const STORY_LIB={
- BRK01:{src:"Statler Toyota story library · BRK01",
+ BRK01:{get src(){ return DN()+" story library · BRK01"; },
    base:"Inspected the brake system: measured pad thickness and checked the rotors, calipers and hardware.",
    tags:[["Pads worn below minimum","Front pads were worn below minimum thickness; replaced the front pad set and cleaned and lubricated the caliper slides.",/below (the )?(\d+ ?mm )?minimum|worn below/i],
          ["Loose lining","The inner pad lining was loose on its backing plate; replaced with the new pad set.",/loose lining|lining (is )?loose/i],
@@ -4056,19 +4088,19 @@ const STORY_LIB={
          ["Caliper slide sticking","Caliper slide pins were sticking; cleaned and lubricated the slide pins.",/slide|sticking/i],
          ["Pad corrosion","Pad abutments were corroded; cleaned them and replaced the abutment clips.",/corro/i]],
    end:"Torqued to specification and road tested. The noise is no longer present."},
- OF002:{src:"Statler Toyota story library · OF002",
+ OF002:{get src(){ return DN()+" story library · OF002"; },
    base:"Drained the engine oil and replaced the oil filter. Refilled with 5.7 qt 0W-20 synthetic.",
    tags:[["Due by mileage","",/mileage|schedule/i],["Oil life below 15%","",/oil life/i],["Oil dark and dirty","",/dark|dirty/i],["Drain plug gasket worn","Replaced the drain plug gasket.",/gasket/i]],
    end:"Reset the oil life monitor and checked for leaks."},
- M60K:{src:"Statler Toyota story library · M60K",
+ M60K:{get src(){ return DN()+" story library · M60K"; },
    base:"Performed the 60,000 mile maintenance per the manufacturer schedule.",
    tags:[["Due by schedule","",/schedule/i],["Engine air filter dirty","Replaced the engine air filter.",/air filter/i],["Cabin filter dirty","Replaced the cabin air filter.",/cabin/i],["Tires due for rotation","Rotated the tires and set pressures.",/rotat/i]],
    end:"Reset the maintenance reminder and road tested."},
- AC100:{src:"Statler Toyota story library · AC100",
+ AC100:{get src(){ return DN()+" story library · AC100"; },
    base:"Performed an A/C performance test and checked system pressures.",
    tags:[["Compressor clutch not engaging","Replaced the A/C compressor.",/clutch|compressor/i],["Refrigerant low","Evacuated and recharged the system to specification.",/low|leak/i]],
    end:"Verified vent temperature at specification."},
- SUS22:{src:"Statler Toyota story library · SUS22",
+ SUS22:{get src(){ return DN()+" story library · SUS22"; },
    base:"Inspected the front suspension.",
    tags:[["Strut leaking","Replaced both front strut assemblies.",/leak/i],["Strut mount worn","Replaced the strut mounts with the assemblies.",/mount/i]],
    end:"Torqued to specification, checked alignment angles and road tested. The clunk is gone."}
@@ -4456,7 +4488,7 @@ function renderHours(){
       +(pend.length?`<div class="rsec-h"><h2>Worked, not flagged yet (${pend.length})</h2></div><div class="hpend">${pend.map(({k,j})=>`<div class="hp">${gi("clock",14)}<div class="grow"><b>RO ${k} · line ${j.L}</b> · ${esc(j.title)}<div class="lbl">${hrsOf(lineTot(j,"diag")+lineTot(j,"labor"))} h of time on it. It flags ${esc(j.labor[0].hrs)} h when you mark the line done.</div></div><button class="btn sm" data-act="openro" data-ro="${k}">Open RO ${k}</button></div>`).join("")}</div>`:"")
       +`<div class="lbl" style="margin-top:8px">Flagged hours are the book hours for each line you finish. They're what you're paid. † Placeholder records.</div>`; }
   $("#wscontent").innerHTML=`<div class="pane">
-    <div class="ro-head"><div><div class="ro-title">My Hours</div><div class="ro-sub">${TECH_USER.name} · Statler Toyota ${TECH_USER.bay}</div></div>
+    <div class="ro-head"><div><div class="ro-title">My Hours</div><div class="ro-sub">${TECH_USER.name} · ${DN()} ${TECH_USER.bay}</div></div>
       <div class="ro-actions"><div class="seg" role="tablist" aria-label="View"><button role="tab" class="${v==="punch"?"on":""}" aria-selected="${v==="punch"}" data-act="hrsview" data-v="punch">${gi("clock",13)} Punch times</button><button role="tab" class="${v==="flag"?"on":""}" aria-selected="${v==="flag"}" data-act="hrsview" data-v="flag">${gi("check",13)} Flagged hours</button></div></div></div>
     <div class="hdays">${days}</div>${body}</div>`;
 }
@@ -4710,6 +4742,50 @@ window.addEventListener("keydown",e=>{
 const _setClockV25=setClock;
 setClock=function(c){ _setClockV25(c); if(W.focus) syncSideTabs(); };
 
+
+/* ==========================================================================
+   v30 — COMPANY THEMES
+   Statler Toyota is the CDK default (no theme). The other five are fictional
+   dealer groups. l = light-mode brand (white text passes on it), d = dark-mode
+   brand (reads on near-black), h / hd = header tone in light / dark.
+   ========================================================================== */
+const DEALERS={
+  statler:{name:"Statler Toyota",word:"Statler",sub:"Toyota",l:"#006CFA",d:"#006CFA"},
+  bayside:{name:"Bayside Auto Group",word:"Bayside",sub:"Auto Group",l:"#1d5fc2",d:"#5b97f5",h:"#0f2f63",hd:"#0b1f42",
+    glyph:'<path d="M3.5 9.6c2.1-2.1 4.2-2.1 6.3 0s4.2 2.1 6.3 0c1.3-1.3 2.6-1.8 4.4-1.4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M3.5 15.6c2.1-2.1 4.2-2.1 6.3 0s4.2 2.1 6.3 0c1.3-1.3 2.6-1.8 4.4-1.4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>'},
+  cardinal:{name:"Cardinal Motors",word:"Cardinal",sub:"Motors",l:"#b42318",d:"#f0665c",h:"#6b120c",hd:"#3b0a07",
+    glyph:'<path d="M3 19 12 4.5 21 19h-4.7L12 11.8 7.7 19z" fill="currentColor"/>'},
+  evergreen:{name:"Evergreen Auto",word:"Evergreen",sub:"Auto",l:"#17694a",d:"#3fb883",h:"#0c3a29",hd:"#08261b",
+    glyph:'<path d="M12 3.2 17.4 10.4h-2.9L18.8 16.6H5.2l4.3-6.2H6.6z" fill="currentColor"/><rect x="10.9" y="16.4" width="2.2" height="4.4" rx=".7" fill="currentColor"/>'},
+  northstar:{name:"Northstar Automotive",word:"Northstar",sub:"Automotive",l:"#5b3fb0",d:"#a08af7",h:"#2a1b5e",hd:"#1a1240",
+    glyph:'<path d="M12 2.6 13.9 10.1 21.4 12 13.9 13.9 12 21.4 10.1 13.9 2.6 12 10.1 10.1z" fill="currentColor"/>'},
+  ironwood:{name:"Ironwood Motorcars",word:"Ironwood",sub:"Motorcars",l:"#94621f",d:"#d19b4f",h:"#1d2125",hd:"#121518",
+    glyph:'<circle cx="12" cy="12" r="8.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/>'}
+};
+const DEALER_ORDER=["statler","bayside","cardinal","evergreen","northstar","ironwood"];
+let DEALER_KEY="statler";
+const DN=()=>DEALERS[DEALER_KEY].name;
+function dealerMark(k,cls){ const d=DEALERS[k]; return d.glyph?`<span class="dl-mark ${cls||""}" style="--c:${d.l}"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">${d.glyph}</svg></span>`:`<span class="dl-mark cdk ${cls||""}">ST</span>`; }
+function dealerLogoHTML(k){ const d=DEALERS[k]; return d.glyph?`${dealerMark(k)}<span class="dl-word"><b>${esc(d.word)}</b><small>${esc(d.sub)}</small></span>`:`<span class="dn">${esc(d.name)}</span>`; }
+function renderDealerPick(){
+  const el=$("#dealerPick"); if(!el) return;
+  el.innerHTML=DEALER_ORDER.map(k=>{ const d=DEALERS[k]; return `<button class="dl-opt ${k===DEALER_KEY?"sel":""}" data-act="dealer" data-d="${k}" aria-pressed="${k===DEALER_KEY}" style="--c:${d.l}">${dealerMark(k,"pick")}<span>${esc(d.name)}</span></button>`; }).join("");
+}
+function applyDealer(k){
+  if(!DEALERS[k]) k="statler"; DEALER_KEY=k; const d=DEALERS[k], r=document.documentElement;
+  if(k==="statler"){ delete r.dataset.dealer; ["--dl-l","--dl-d","--dl-h","--dl-hd"].forEach(v=>r.style.removeProperty(v)); }
+  else { r.dataset.dealer=k; r.style.setProperty("--dl-l",d.l); r.style.setProperty("--dl-d",d.d); r.style.setProperty("--dl-h",d.h); r.style.setProperty("--dl-hd",d.hd); }
+  r.style.removeProperty("--brand");
+  const logo=$("#dealerLogo"); if(logo){ logo.innerHTML=dealerLogoHTML(k); logo.title=d.name; logo.classList.toggle("has-mark",!!d.glyph); }
+  document.querySelectorAll(".dn").forEach(e=>{ if(!e.closest("#dealerLogo")) e.textContent=d.name; });
+  renderDealerPick();
+  if(typeof renderMyDay==="function"&&$("#mdFull")) renderMyDay();
+  if(typeof renderRail==="function"&&$("#personaBtn")) renderRail();
+  const t=typeof activeTab==="function"&&activeTab();
+  if(t&&W.mode==="work"){ if(t.kind==="cv") renderCanvas(); else if(t.loaded) renderPane(); }
+}
+document.addEventListener("DOMContentLoaded",()=>applyDealer(DEALER_KEY));
+if(document.readyState!=="loading") setTimeout(()=>applyDealer(DEALER_KEY),0);
 /* ==========================================================================
    EVENTS — one delegated listener
    ========================================================================== */
